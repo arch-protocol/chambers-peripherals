@@ -1,3 +1,5 @@
+@openzeppelin/=lib/openzeppelin-contracts/
+chambers/=lib/chambers/src/
 ds-test/=lib/forge-std/lib/ds-test/src/
 forge-std/=lib/forge-std/src/
-@openzeppelin/=lib/openzeppelin-contracts/
+solmate/=lib/solmate/src/
