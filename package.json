@@ -1,0 +1,26 @@
+{
+  "name": "ramp-contracts",
+  "description": "on chain operation for arch ramp",
+  "version": "1.0.0",
+  "main": "index.js",
+  "directories": {
+    "lib": "lib",
+    "test": "test"
+  },
+  "scripts": {
+    "lint": "solhint -f table src/**/*.sol"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/arch-protocol/ramp-contracts.git"
+  },
+  "author": "Arch",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/arch-protocol/ramp-contracts/issues"
+  },
+  "homepage": "https://github.com/arch-protocol/ramp-contracts#readme",
+  "dependencies": {
+    "solhint": "^3.3.7"
+  }
+}
