@@ -6,7 +6,7 @@ import {ChamberTestUtils} from "test/utils/ChamberTestUtils.sol";
 import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import {ERC20} from "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import {Chamber} from "chambers/Chamber.sol";
-import {ChamberFactory} from "test/utils/factories.sol";
+import {ChamberFactory} from "test/utils/Factories.sol";
 import {IssuerWizard} from "chambers/IssuerWizard.sol";
 import {IVault} from "src/interfaces/IVault.sol";
 import {IChamber} from "chambers/interfaces/IChamber.sol";
