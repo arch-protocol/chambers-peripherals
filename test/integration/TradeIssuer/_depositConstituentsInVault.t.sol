@@ -10,7 +10,7 @@ import {IChamber} from "chambers/interfaces/IChamber.sol";
 import {PreciseUnitMath} from "chambers/lib/PreciseUnitMath.sol";
 import {ExposedTradeIssuer} from "test/utils/ExposedTradeIssuer.sol";
 import {Chamber} from "chambers/Chamber.sol";
-import {ChamberFactory} from "test/utils/factories.sol";
+import {ChamberFactory} from "test/utils/Factories.sol";
 
 contract TradeIssuerIntegrationInternalDepositAssetsInVaultsTest is Test {
     using PreciseUnitMath for uint256;

@@ -10,7 +10,7 @@ import {IChamber} from "chambers/interfaces/IChamber.sol";
 import {IIssuerWizard} from "chambers/interfaces/IIssuerWizard.sol";
 import {IssuerWizard} from "chambers/IssuerWizard.sol";
 import {Chamber} from "chambers/Chamber.sol";
-import {ChamberFactory} from "test/utils/factories.sol";
+import {ChamberFactory} from "test/utils/Factories.sol";
 import {PreciseUnitMath} from "chambers/lib/PreciseUnitMath.sol";
 
 contract TradeIssuerIntegrationIngernalCheckAndIncreaseAllowanceOfConstituentsTest is Test {

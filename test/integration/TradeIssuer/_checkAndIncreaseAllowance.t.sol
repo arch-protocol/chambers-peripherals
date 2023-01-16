@@ -7,7 +7,7 @@ import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import {SafeERC20} from "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 import {ExposedTradeIssuer} from "test/utils/ExposedTradeIssuer.sol";
 import {Chamber} from "chambers/Chamber.sol";
-import {ChamberFactory} from "test/utils/factories.sol";
+import {ChamberFactory} from "test/utils/Factories.sol";
 import {PreciseUnitMath} from "chambers/lib/PreciseUnitMath.sol";
 
 contract TradeIssuerIntegrationIngernalCheckAndIncreaseAllowanceTest is Test {
