@@ -1,15 +1,33 @@
-# foundry-template
-Starter Pack for on-chain projects
+[![Lint](https://github.com/arch-protocol/chambers-peripherals/actions/workflows/CI.yml/badge.svg)](https://github.com/arch-protocol/chambers-peripherals/actions/workflows/CI.yml)
+[![Slither](https://github.com/arch-protocol/chambers-peripherals/actions/workflows/slither.yml/badge.svg)](https://github.com/arch-protocol/chambers-peripherals/actions/workflows/slither.yml)
+[![Unit Tests](https://github.com/arch-protocol/chambers-peripherals/actions/workflows/tests-unit.yml/badge.svg)](https://github.com/arch-protocol/chambers-peripherals/actions/workflows/tests-unit.yml)
+[![Trade Issuer Integration](https://github.com/arch-protocol/chambers-peripherals/actions/workflows/tests-int-trade-issuer.yml/badge.svg)](https://github.com/arch-protocol/chambers-peripherals/actions/workflows/tests-int-trade-issuer.yml)
 
-Dependencies:
-- [Foundry](https://book.getfoundry.sh/)
-- Node & NPM 
- 
+# Chambers Peripherals 
 
-Configs needed:
+This repository contains peripheral contracts for an enhanced interaction with `Arch Chambers`.
 
-- install npm packages: `npm i`
-- init project with: `forge init . --force`
-- install solidity dependencies: `forge install`.
-- to check that everything works try to compile the project with: `forge build`.
-- remember to add the secrets to the repository in order to get the actions running correctly (`ALCHEMY_POLY_API_KEY` & `ALCHEMY_ETH_API_KEY`).
+#### Full documentation [here](https://docs.arch.finance/chambers/periphery/)
+
+## About Arch
+
+Arch is a decentralized finance (DeFi) asset manager that enables passive investment in the decentralized (Web3) economy.
+
+We curate a comprehensive family of market indices and tokenized products to help investors build and manage their Web3 portfolios. 
+
+## Peripherals contracts overview
+
+Peripheral contracts main purpose is to enhance the interaction with Chambers core contracts. This type of contracts aren't part of Chambers Core contracts since they're not necessary for a fully functional chamber. Only External Wizard functions are called from peripheral contracts.
+
+### Trade Issuer
+
+The main function of this contract is to facilitate the purchase/sale of all the assets necessary for the issuance or redemption of tokens.
+
+Using this contract, a user can mint or redeem Chamber Tokens with any erc20 asset or the native token of the network as input/output.
+
+
+## Licensing
+
+The primary license for Chambers Peripherals Contracts is Apache 2.0.
+
+
