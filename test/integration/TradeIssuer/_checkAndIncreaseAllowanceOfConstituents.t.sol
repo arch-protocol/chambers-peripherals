@@ -9,8 +9,8 @@ import {ExposedTradeIssuer} from "test/utils/ExposedTradeIssuer.sol";
 import {IChamber} from "chambers/interfaces/IChamber.sol";
 import {IIssuerWizard} from "chambers/interfaces/IIssuerWizard.sol";
 import {IssuerWizard} from "chambers/IssuerWizard.sol";
+import {ChamberGod} from "chambers/ChamberGod.sol";
 import {Chamber} from "chambers/Chamber.sol";
-import {ChamberFactory} from "test/utils/Factories.sol";
 import {PreciseUnitMath} from "chambers/lib/PreciseUnitMath.sol";
 
 contract TradeIssuerIntegrationIngernalCheckAndIncreaseAllowanceOfConstituentsTest is Test {
@@ -21,20 +21,21 @@ contract TradeIssuerIntegrationIngernalCheckAndIncreaseAllowanceOfConstituentsTe
                               VARIABLES
     //////////////////////////////////////////////////////////////*/
     ExposedTradeIssuer public tradeIssuer;
-    ChamberFactory public chamberFactory;
+    ChamberGod public chamberGod;
     Chamber public chamber;
     IssuerWizard public issuerWizard;
     address payable public dexAgg = payable(address(0x1));
     address public chamberAddress;
     address public issuerWizardAddress;
     address public tradeIssuerAddress;
-    address public chamberGodAddress = vm.addr(0x791782394);
     address public dAI = 0x6B175474E89094C44Da98b954EedeAC495271d0F; // dAI on ETH
     address public yFI = 0x0bc529c00C6401aEF6D220BE8C6Ea1667F6Ad93e; // YFI on ETH
     address public wETH = 0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2; // WETH on ETH
     address public inputToken = 0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48; // USDC on ETH
     address[] public constituents = new address[](2);
     uint256[] public constituentsQuantities = new uint256[](2);
+    address[] public wizards = new address[](1);
+    address[] public managers = new address[](0);
 
     /*//////////////////////////////////////////////////////////////
                               SET UP
@@ -48,20 +49,13 @@ contract TradeIssuerIntegrationIngernalCheckAndIncreaseAllowanceOfConstituentsTe
         constituents[0] = dAI;
         constituents[1] = yFI;
 
-        issuerWizard = new IssuerWizard();
+        chamberGod = new ChamberGod();
+        issuerWizard = new IssuerWizard(address(chamberGod));
+        chamberGod.addWizard(address(issuerWizard));
+
         issuerWizardAddress = address(issuerWizard);
-        address[] memory wizards = new address[](1);
-        address[] memory managers = new address[](0);
 
         wizards[0] = issuerWizardAddress;
-
-        chamberFactory = new ChamberFactory(
-          address(this),
-          "name",
-          "symbol",
-          wizards,
-          managers
-        );
     }
 
     /*//////////////////////////////////////////////////////////////
@@ -84,7 +78,11 @@ contract TradeIssuerIntegrationIngernalCheckAndIncreaseAllowanceOfConstituentsTe
         constituentsQuantities[0] = constituent0Quantity;
         constituentsQuantities[1] = constituent1Quantity;
 
-        chamber = chamberFactory.getChamberWithCustomTokens(constituents, constituentsQuantities);
+        chamber = Chamber(
+            chamberGod.createChamber(
+                "name", "symbol", constituents, constituentsQuantities, wizards, managers
+            )
+        );
         chamberAddress = address(chamber);
 
         vm.expectRevert(bytes("Chamber amount cannot be zero"));
@@ -118,8 +116,11 @@ contract TradeIssuerIntegrationIngernalCheckAndIncreaseAllowanceOfConstituentsTe
         constituentsQuantities[0] = constituent0Quantity;
         constituentsQuantities[1] = constituent1Quantity;
 
-        chamber = chamberFactory.getChamberWithCustomTokens(constituents, constituentsQuantities);
-
+        chamber = Chamber(
+            chamberGod.createChamber(
+                "name", "symbol", constituents, constituentsQuantities, wizards, managers
+            )
+        );
         chamberAddress = address(chamber);
 
         vm.expectCall(
@@ -174,8 +175,11 @@ contract TradeIssuerIntegrationIngernalCheckAndIncreaseAllowanceOfConstituentsTe
         vm.assume(randomApproveAmount > 0);
         vm.assume(randomApproveAmount < constituentsQuantities[0].preciseMulCeil(mintAmount, 18));
 
-        chamber = chamberFactory.getChamberWithCustomTokens(constituents, constituentsQuantities);
-
+        chamber = Chamber(
+            chamberGod.createChamber(
+                "name", "symbol", constituents, constituentsQuantities, wizards, managers
+            )
+        );
         chamberAddress = address(chamber);
 
         vm.expectCall(
@@ -237,8 +241,11 @@ contract TradeIssuerIntegrationIngernalCheckAndIncreaseAllowanceOfConstituentsTe
         vm.prank(tradeIssuerAddress);
         IERC20(yFI).approve(issuerWizardAddress, type(uint256).max);
 
-        chamber = chamberFactory.getChamberWithCustomTokens(constituents, constituentsQuantities);
-
+        chamber = Chamber(
+            chamberGod.createChamber(
+                "name", "symbol", constituents, constituentsQuantities, wizards, managers
+            )
+        );
         chamberAddress = address(chamber);
 
         vm.expectCall(
@@ -292,8 +299,11 @@ contract TradeIssuerIntegrationIngernalCheckAndIncreaseAllowanceOfConstituentsTe
         vm.prank(tradeIssuerAddress);
         IERC20(yFI).approve(issuerWizardAddress, type(uint256).max);
 
-        chamber = chamberFactory.getChamberWithCustomTokens(constituents, constituentsQuantities);
-
+        chamber = Chamber(
+            chamberGod.createChamber(
+                "name", "symbol", constituents, constituentsQuantities, wizards, managers
+            )
+        );
         chamberAddress = address(chamber);
 
         vm.expectCall(

@@ -22,7 +22,7 @@ contract DeployContracts is Script {
         vm.startBroadcast(deployerPrivateKey);
 
         ChamberGod god = new ChamberGod();
-        IssuerWizard issuerWizard = new IssuerWizard();
+        IssuerWizard issuerWizard = new IssuerWizard(address(god));
         StreamingFeeWizard streamingFeeWizard = new StreamingFeeWizard();
         RebalanceWizard rebalanceWizard = new RebalanceWizard();
 
