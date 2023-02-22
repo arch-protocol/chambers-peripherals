@@ -112,9 +112,7 @@ contract TradeIssuerIntegrationInternalWithdrawConstituentsFromVaultsTest is Cha
         baseQuantities[0] = constituentQuantity0;
         baseQuantities[1] = constituentQuantity1;
         Chamber chamber = Chamber(
-            chamberGod.createChamber(
-                "name", "symbol", vaults, baseQuantities, wizards, managers
-            )
+            chamberGod.createChamber("name", "symbol", vaults, baseQuantities, wizards, managers)
         );
         uint256 pricePerShare0 = IVault(vaults[0]).pricePerShare();
         uint256 pricePerShare1 = IVault(vaults[1]).pricePerShare();
@@ -171,9 +169,7 @@ contract TradeIssuerIntegrationInternalWithdrawConstituentsFromVaultsTest is Cha
         baseQuantities[0] = constituentQuantity0;
         baseQuantities[1] = constituentQuantity1;
         Chamber chamber = Chamber(
-            chamberGod.createChamber(
-                "name", "symbol", vaults, baseQuantities, wizards, managers
-            )
+            chamberGod.createChamber("name", "symbol", vaults, baseQuantities, wizards, managers)
         );
         vaultQuantities[0] = 1;
         vaultQuantities[1] = 1;
@@ -207,9 +203,7 @@ contract TradeIssuerIntegrationInternalWithdrawConstituentsFromVaultsTest is Cha
         baseQuantities[0] = constituentQuantity0;
         baseQuantities[1] = constituentQuantity1;
         Chamber chamber = Chamber(
-            chamberGod.createChamber(
-                "name", "symbol", vaults, baseQuantities, wizards, managers
-            )
+            chamberGod.createChamber("name", "symbol", vaults, baseQuantities, wizards, managers)
         );
         uint256 pricePerShare0 = IVault(vaults[0]).pricePerShare();
         uint256 pricePerShare1 = IVault(vaults[1]).pricePerShare();
@@ -271,9 +265,7 @@ contract TradeIssuerIntegrationInternalWithdrawConstituentsFromVaultsTest is Cha
         baseQuantities[0] = constituentQuantity0;
         baseQuantities[1] = constituentQuantity1;
         Chamber chamber = Chamber(
-            chamberGod.createChamber(
-                "name", "symbol", vaults, baseQuantities, wizards, managers
-            )
+            chamberGod.createChamber("name", "symbol", vaults, baseQuantities, wizards, managers)
         );
         uint256 pricePerShare0 = IVault(vaults[0]).pricePerShare();
         uint256 pricePerShare1 = IVault(vaults[1]).pricePerShare();
@@ -353,9 +345,7 @@ contract TradeIssuerIntegrationInternalWithdrawConstituentsFromVaultsTest is Cha
         baseQuantities[0] = constituentQuantity0;
         baseQuantities[1] = constituentQuantity1;
         Chamber chamber = Chamber(
-            chamberGod.createChamber(
-                "name", "symbol", vaults, baseQuantities, wizards, managers
-            )
+            chamberGod.createChamber("name", "symbol", vaults, baseQuantities, wizards, managers)
         );
         uint256 pricePerShare0 = IVault(vaults[0]).pricePerShare();
         uint256 pricePerShare1 = IVault(vaults[1]).pricePerShare();

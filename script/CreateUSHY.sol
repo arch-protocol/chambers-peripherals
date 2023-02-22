@@ -24,8 +24,10 @@ contract CreateUSHY is Script {
 
         IChamberGod god = IChamberGod(0x0000000000000000000000000000000000000000);
         IIssuerWizard issuerWizard = IIssuerWizard(0x0000000000000000000000000000000000000000);
-        IStreamingFeeWizard streamingFeeWizard = IStreamingFeeWizard(0x0000000000000000000000000000000000000000);
-        IRebalanceWizard rebalanceWizard = IRebalanceWizard(0x0000000000000000000000000000000000000000);
+        IStreamingFeeWizard streamingFeeWizard =
+            IStreamingFeeWizard(0x0000000000000000000000000000000000000000);
+        IRebalanceWizard rebalanceWizard =
+            IRebalanceWizard(0x0000000000000000000000000000000000000000);
 
         address[] memory wizards = new address[](3);
         wizards[0] = address(issuerWizard);
@@ -47,12 +49,14 @@ contract CreateUSHY is Script {
 
         uint256[] memory quantities = new uint256[](3);
         quantities[0] = 10e18 / (3 * IVault(yvUSDC).pricePerShare()); // 10e18 / (3 * pricePerShare * 1 USD)
-        quantities[1] = 10e18 / (3 * IVault(yvUSDT).pricePerShare()); 
+        quantities[1] = 10e18 / (3 * IVault(yvUSDT).pricePerShare());
         quantities[2] = 10e18 / (3 * IVault(yvDAI).pricePerShare());
 
-        address chamber = god.createChamber("Arch Stable Dollar Yield", "SDY", constituents, quantities, wizards, managers);
+        address chamber = god.createChamber(
+            "Arch Stable Dollar Yield", "SDY", constituents, quantities, wizards, managers
+        );
         Chamber(chamber).transferOwnership(ushyOwner);
-        
+
         vm.stopBroadcast();
     }
 }

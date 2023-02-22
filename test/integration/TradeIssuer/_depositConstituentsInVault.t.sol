@@ -75,9 +75,7 @@ contract TradeIssuerIntegrationInternalDepositAssetsInVaultsTest is Test {
         chamberQuantities[0] = constituentQuantity0;
         chamberQuantities[1] = constituentQuantity1;
         chamber = Chamber(
-            chamberGod.createChamber(
-                "name", "symbol", vaults, chamberQuantities, wizards, managers
-            )
+            chamberGod.createChamber("name", "symbol", vaults, chamberQuantities, wizards, managers)
         );
         chamberAddress = address(chamber);
 
@@ -130,9 +128,7 @@ contract TradeIssuerIntegrationInternalDepositAssetsInVaultsTest is Test {
         chamberQuantities[1] = constituentQuantity1;
 
         chamber = Chamber(
-            chamberGod.createChamber(
-                "name", "symbol", vaults, chamberQuantities, wizards, managers
-            )
+            chamberGod.createChamber("name", "symbol", vaults, chamberQuantities, wizards, managers)
         );
         chamberAddress = address(chamber);
 
@@ -185,9 +181,7 @@ contract TradeIssuerIntegrationInternalDepositAssetsInVaultsTest is Test {
         chamberQuantities[0] = constituentQuantity0;
         chamberQuantities[1] = constituentQuantity1;
         chamber = Chamber(
-            chamberGod.createChamber(
-                "name", "symbol", vaults, chamberQuantities, wizards, managers
-            )
+            chamberGod.createChamber("name", "symbol", vaults, chamberQuantities, wizards, managers)
         );
         chamberAddress = address(chamber);
 
@@ -236,9 +230,7 @@ contract TradeIssuerIntegrationInternalDepositAssetsInVaultsTest is Test {
         chamberQuantities[0] = constituentQuantity0;
         chamberQuantities[1] = constituentQuantity1;
         chamber = Chamber(
-            chamberGod.createChamber(
-                "name", "symbol", vaults, chamberQuantities, wizards, managers
-            )
+            chamberGod.createChamber("name", "symbol", vaults, chamberQuantities, wizards, managers)
         );
         chamberAddress = address(chamber);
 
@@ -291,9 +283,7 @@ contract TradeIssuerIntegrationInternalDepositAssetsInVaultsTest is Test {
         chamberQuantities[0] = constituentQuantity0;
         chamberQuantities[1] = constituentQuantity1;
         chamber = Chamber(
-            chamberGod.createChamber(
-                "name", "symbol", vaults, chamberQuantities, wizards, managers
-            )
+            chamberGod.createChamber("name", "symbol", vaults, chamberQuantities, wizards, managers)
         );
         chamberAddress = address(chamber);
 
@@ -341,9 +331,7 @@ contract TradeIssuerIntegrationInternalDepositAssetsInVaultsTest is Test {
         chamberQuantities[0] = constituentQuantity0;
         chamberQuantities[1] = constituentQuantity1;
         chamber = Chamber(
-            chamberGod.createChamber(
-                "name", "symbol", vaults, chamberQuantities, wizards, managers
-            )
+            chamberGod.createChamber("name", "symbol", vaults, chamberQuantities, wizards, managers)
         );
         chamberAddress = address(chamber);
 
@@ -400,9 +388,7 @@ contract TradeIssuerIntegrationInternalDepositAssetsInVaultsTest is Test {
         chamberQuantities[0] = constituentQuantity0;
         chamberQuantities[1] = constituentQuantity1;
         chamber = Chamber(
-            chamberGod.createChamber(
-                "name", "symbol", vaults, chamberQuantities, wizards, managers
-            )
+            chamberGod.createChamber("name", "symbol", vaults, chamberQuantities, wizards, managers)
         );
         chamberAddress = address(chamber);
 
@@ -455,9 +441,7 @@ contract TradeIssuerIntegrationInternalDepositAssetsInVaultsTest is Test {
         chamberQuantities[0] = constituentQuantity0;
         chamberQuantities[1] = constituentQuantity1;
         chamber = Chamber(
-            chamberGod.createChamber(
-                "name", "symbol", vaults, chamberQuantities, wizards, managers
-            )
+            chamberGod.createChamber("name", "symbol", vaults, chamberQuantities, wizards, managers)
         );
         chamberAddress = address(chamber);
 
@@ -495,9 +479,7 @@ contract TradeIssuerIntegrationInternalDepositAssetsInVaultsTest is Test {
         chamberQuantities[0] = constituentQuantity0;
         chamberQuantities[1] = constituentQuantity1;
         chamber = Chamber(
-            chamberGod.createChamber(
-                "name", "symbol", vaults, chamberQuantities, wizards, managers
-            )
+            chamberGod.createChamber("name", "symbol", vaults, chamberQuantities, wizards, managers)
         );
         chamberAddress = address(chamber);
 
