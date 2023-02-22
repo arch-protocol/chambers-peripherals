@@ -9,8 +9,8 @@ import {IVault} from "src/interfaces/IVault.sol";
 import {IChamber} from "chambers/interfaces/IChamber.sol";
 import {PreciseUnitMath} from "chambers/lib/PreciseUnitMath.sol";
 import {ExposedTradeIssuer} from "test/utils/ExposedTradeIssuer.sol";
+import {ChamberGod} from "chambers/ChamberGod.sol";
 import {Chamber} from "chambers/Chamber.sol";
-import {ChamberFactory} from "test/utils/Factories.sol";
 
 contract TradeIssuerIntegrationInternalDepositAssetsInVaultsTest is Test {
     using PreciseUnitMath for uint256;
@@ -20,7 +20,7 @@ contract TradeIssuerIntegrationInternalDepositAssetsInVaultsTest is Test {
                               VARIABLES
     //////////////////////////////////////////////////////////////*/
     ExposedTradeIssuer public tradeIssuer;
-    ChamberFactory public chamberFactory;
+    ChamberGod public chamberGod;
     Chamber public chamber;
     address public tradeIssuerAddress;
     address payable public dexAgg = payable(address(0x1));
@@ -34,6 +34,8 @@ contract TradeIssuerIntegrationInternalDepositAssetsInVaultsTest is Test {
     address[] public vaultAssets = new address[](2);
     uint256[] public vaultQuantities = new uint256[](2);
     uint256[] public chamberQuantities = new uint256[](2);
+    address[] public wizards = new address[](0);
+    address[] public managers = new address[](0);
 
     /*//////////////////////////////////////////////////////////////
                               SET UP
@@ -47,17 +49,7 @@ contract TradeIssuerIntegrationInternalDepositAssetsInVaultsTest is Test {
         vaults[1] = yDAI;
         vaultAssets[0] = uSDC;
         vaultAssets[1] = dAI;
-
-        address[] memory wizards = new address[](0);
-        address[] memory managers = new address[](0);
-
-        chamberFactory = new ChamberFactory(
-          address(this),
-          "name",
-          "symbol",
-          wizards,
-          managers
-        );
+        chamberGod = new ChamberGod();
     }
 
     /*//////////////////////////////////////////////////////////////
@@ -82,7 +74,9 @@ contract TradeIssuerIntegrationInternalDepositAssetsInVaultsTest is Test {
 
         chamberQuantities[0] = constituentQuantity0;
         chamberQuantities[1] = constituentQuantity1;
-        chamber = chamberFactory.getChamberWithCustomTokens(vaults, chamberQuantities);
+        chamber = Chamber(
+            chamberGod.createChamber("name", "symbol", vaults, chamberQuantities, wizards, managers)
+        );
         chamberAddress = address(chamber);
 
         uint256 pricePerShare0 = IVault(vaults[0]).pricePerShare();
@@ -133,7 +127,9 @@ contract TradeIssuerIntegrationInternalDepositAssetsInVaultsTest is Test {
         chamberQuantities[0] = constituentQuantity0 * 1e6;
         chamberQuantities[1] = constituentQuantity1;
 
-        chamber = chamberFactory.getChamberWithCustomTokens(vaults, chamberQuantities);
+        chamber = Chamber(
+            chamberGod.createChamber("name", "symbol", vaults, chamberQuantities, wizards, managers)
+        );
         chamberAddress = address(chamber);
 
         uint256 pricePerShare1 = IVault(vaults[1]).pricePerShare();
@@ -184,7 +180,9 @@ contract TradeIssuerIntegrationInternalDepositAssetsInVaultsTest is Test {
 
         chamberQuantities[0] = constituentQuantity0;
         chamberQuantities[1] = constituentQuantity1;
-        chamber = chamberFactory.getChamberWithCustomTokens(vaults, chamberQuantities);
+        chamber = Chamber(
+            chamberGod.createChamber("name", "symbol", vaults, chamberQuantities, wizards, managers)
+        );
         chamberAddress = address(chamber);
 
         uint256 pricePerShare0 = IVault(vaults[0]).pricePerShare();
@@ -231,7 +229,9 @@ contract TradeIssuerIntegrationInternalDepositAssetsInVaultsTest is Test {
 
         chamberQuantities[0] = constituentQuantity0;
         chamberQuantities[1] = constituentQuantity1;
-        chamber = chamberFactory.getChamberWithCustomTokens(vaults, chamberQuantities);
+        chamber = Chamber(
+            chamberGod.createChamber("name", "symbol", vaults, chamberQuantities, wizards, managers)
+        );
         chamberAddress = address(chamber);
 
         uint256 pricePerShare0 = IVault(vaults[0]).pricePerShare();
@@ -282,7 +282,9 @@ contract TradeIssuerIntegrationInternalDepositAssetsInVaultsTest is Test {
 
         chamberQuantities[0] = constituentQuantity0;
         chamberQuantities[1] = constituentQuantity1;
-        chamber = chamberFactory.getChamberWithCustomTokens(vaults, chamberQuantities);
+        chamber = Chamber(
+            chamberGod.createChamber("name", "symbol", vaults, chamberQuantities, wizards, managers)
+        );
         chamberAddress = address(chamber);
 
         vaultQuantities[0] = 0;
@@ -328,7 +330,9 @@ contract TradeIssuerIntegrationInternalDepositAssetsInVaultsTest is Test {
 
         chamberQuantities[0] = constituentQuantity0;
         chamberQuantities[1] = constituentQuantity1;
-        chamber = chamberFactory.getChamberWithCustomTokens(vaults, chamberQuantities);
+        chamber = Chamber(
+            chamberGod.createChamber("name", "symbol", vaults, chamberQuantities, wizards, managers)
+        );
         chamberAddress = address(chamber);
 
         uint256 pricePerShare0 = IVault(vaults[0]).pricePerShare();
@@ -383,7 +387,9 @@ contract TradeIssuerIntegrationInternalDepositAssetsInVaultsTest is Test {
 
         chamberQuantities[0] = constituentQuantity0;
         chamberQuantities[1] = constituentQuantity1;
-        chamber = chamberFactory.getChamberWithCustomTokens(vaults, chamberQuantities);
+        chamber = Chamber(
+            chamberGod.createChamber("name", "symbol", vaults, chamberQuantities, wizards, managers)
+        );
         chamberAddress = address(chamber);
 
         uint256 pricePerShare0 = IVault(vaults[0]).pricePerShare();
@@ -434,7 +440,9 @@ contract TradeIssuerIntegrationInternalDepositAssetsInVaultsTest is Test {
 
         chamberQuantities[0] = constituentQuantity0;
         chamberQuantities[1] = constituentQuantity1;
-        chamber = chamberFactory.getChamberWithCustomTokens(vaults, chamberQuantities);
+        chamber = Chamber(
+            chamberGod.createChamber("name", "symbol", vaults, chamberQuantities, wizards, managers)
+        );
         chamberAddress = address(chamber);
 
         address[] memory emptyVaults = new address[](0);
@@ -470,7 +478,9 @@ contract TradeIssuerIntegrationInternalDepositAssetsInVaultsTest is Test {
 
         chamberQuantities[0] = constituentQuantity0;
         chamberQuantities[1] = constituentQuantity1;
-        chamber = chamberFactory.getChamberWithCustomTokens(vaults, chamberQuantities);
+        chamber = Chamber(
+            chamberGod.createChamber("name", "symbol", vaults, chamberQuantities, wizards, managers)
+        );
         chamberAddress = address(chamber);
 
         uint256 pricePerShare0 = IVault(vaults[0]).pricePerShare();

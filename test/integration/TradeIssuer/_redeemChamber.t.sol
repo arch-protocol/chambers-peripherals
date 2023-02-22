@@ -5,8 +5,8 @@ pragma solidity ^0.8.17.0;
 import {ChamberTestUtils} from "test/utils/ChamberTestUtils.sol";
 import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import {ERC20} from "@openzeppelin/contracts/token/ERC20/ERC20.sol";
+import {ChamberGod} from "chambers/ChamberGod.sol";
 import {Chamber} from "chambers/Chamber.sol";
-import {ChamberFactory} from "test/utils/Factories.sol";
 import {IssuerWizard} from "chambers/IssuerWizard.sol";
 import {IVault} from "src/interfaces/IVault.sol";
 import {IChamber} from "chambers/interfaces/IChamber.sol";
@@ -24,7 +24,7 @@ contract TradeIssuerIntegrationInternalRedeemChamberTest is ChamberTestUtils {
     //////////////////////////////////////////////////////////////*/
 
     ExposedTradeIssuer public tradeIssuer;
-    ChamberFactory public chamberFactory;
+    ChamberGod public chamberGod;
     Chamber public baseChamber;
     IssuerWizard public issuerWizard;
     mapping(string => address) public tokens;
@@ -39,6 +39,8 @@ contract TradeIssuerIntegrationInternalRedeemChamberTest is ChamberTestUtils {
     address[] public vaults = new address[](2);
     address[] public vaultAssets = new address[](2);
     bytes[] public quotes = new bytes[](2);
+    address[] public wizards = new address[](1);
+    address[] public managers = new address[](0);
 
     /*//////////////////////////////////////////////////////////////
                               SET UP
@@ -56,7 +58,9 @@ contract TradeIssuerIntegrationInternalRedeemChamberTest is ChamberTestUtils {
         tradeIssuerAddress = address(tradeIssuer);
         vm.label(address(tradeIssuer), "TradeIssuer");
 
-        issuerWizard = new IssuerWizard();
+        chamberGod = new ChamberGod();
+        issuerWizard = new IssuerWizard(address(chamberGod));
+        chamberGod.addWizard(address(issuerWizard));
 
         vaults[0] = tokens["yusdc"];
         vaults[1] = tokens["ydai"];
@@ -68,23 +72,16 @@ contract TradeIssuerIntegrationInternalRedeemChamberTest is ChamberTestUtils {
         baseQuantities[0] = 20e6;
         baseQuantities[1] = 20e18;
 
-        address[] memory wizards = new address[](1);
         wizards[0] = address(issuerWizard);
-        address[] memory managers = new address[](0);
 
-        chamberFactory = new ChamberFactory(
-          address(this),
-          "name",
-          "symbol",
-          wizards,
-          managers
+        baseChamber = Chamber(
+            chamberGod.createChamber(
+                "name", "symbol", baseConstituents, baseQuantities, wizards, managers
+            )
         );
-
-        baseChamber = chamberFactory.getChamberWithCustomTokens(baseConstituents, baseQuantities);
-
         vm.label(vm.addr(0x791782394), "ChamberGod");
         vm.label(address(issuerWizard), "IssuerWizard");
-        vm.label(address(chamberFactory), "ChamberFactory");
+        vm.label(address(chamberGod), "ChamberGod");
         vm.label(dexAgg, "ZeroEx");
         vm.label(alice, "Alice");
         vm.label(tokens["weth"], "WETH");
@@ -116,8 +113,11 @@ contract TradeIssuerIntegrationInternalRedeemChamberTest is ChamberTestUtils {
         vaultAssets[0] = tokens["usdc"];
         vaults[0] = tokens["yusdc"];
 
-        baseChamber = chamberFactory.getChamberWithCustomTokens(baseConstituents, baseQuantities);
-
+        baseChamber = Chamber(
+            chamberGod.createChamber(
+                "name", "symbol", baseConstituents, baseQuantities, wizards, managers
+            )
+        );
         componentQuantities[0] = (
             PreciseUnitMath.preciseMulCeil(1e18, baseQuantities[0], 18).preciseMulCeil(
                 IVault(vaults[0]).pricePerShare(), 6
@@ -233,8 +233,11 @@ contract TradeIssuerIntegrationInternalRedeemChamberTest is ChamberTestUtils {
         vaultAssets[0] = tokens["usdc"];
         vaults[0] = tokens["yusdc"];
 
-        baseChamber = chamberFactory.getChamberWithCustomTokens(baseConstituents, baseQuantities);
-
+        baseChamber = Chamber(
+            chamberGod.createChamber(
+                "name", "symbol", baseConstituents, baseQuantities, wizards, managers
+            )
+        );
         componentQuantities[0] = (
             PreciseUnitMath.preciseMulCeil(1e18, baseQuantities[0], 18).preciseMulCeil(
                 IVault(vaults[0]).pricePerShare(), 6
@@ -346,8 +349,11 @@ contract TradeIssuerIntegrationInternalRedeemChamberTest is ChamberTestUtils {
         vaultAssets[0] = tokens["usdc"];
         vaults[0] = tokens["yusdc"];
 
-        baseChamber = chamberFactory.getChamberWithCustomTokens(baseConstituents, baseQuantities);
-
+        baseChamber = Chamber(
+            chamberGod.createChamber(
+                "name", "symbol", baseConstituents, baseQuantities, wizards, managers
+            )
+        );
         componentQuantities[0] = (
             PreciseUnitMath.preciseMulCeil(1e18, baseQuantities[0], 18).preciseMulCeil(
                 IVault(vaults[0]).pricePerShare(), 6
@@ -472,8 +478,11 @@ contract TradeIssuerIntegrationInternalRedeemChamberTest is ChamberTestUtils {
         vaultAssets[0] = tokens["usdc"];
         vaults[0] = tokens["yusdc"];
 
-        baseChamber = chamberFactory.getChamberWithCustomTokens(baseConstituents, baseQuantities);
-
+        baseChamber = Chamber(
+            chamberGod.createChamber(
+                "name", "symbol", baseConstituents, baseQuantities, wizards, managers
+            )
+        );
         componentQuantities[0] = (
             PreciseUnitMath.preciseMulCeil(1e18, baseQuantities[0], 18).preciseMulCeil(
                 IVault(vaults[0]).pricePerShare(), 6
@@ -574,8 +583,11 @@ contract TradeIssuerIntegrationInternalRedeemChamberTest is ChamberTestUtils {
         vaultAssets[0] = tokens["usdc"];
         vaults[0] = tokens["yusdc"];
 
-        baseChamber = chamberFactory.getChamberWithCustomTokens(baseConstituents, baseQuantities);
-
+        baseChamber = Chamber(
+            chamberGod.createChamber(
+                "name", "symbol", baseConstituents, baseQuantities, wizards, managers
+            )
+        );
         componentQuantities[0] = (
             PreciseUnitMath.preciseMulCeil(1e18, baseQuantities[0], 18).preciseMulCeil(
                 IVault(vaults[0]).pricePerShare(), 6
@@ -701,8 +713,11 @@ contract TradeIssuerIntegrationInternalRedeemChamberTest is ChamberTestUtils {
         vaultAssets[0] = tokens["usdc"];
         vaults[0] = tokens["yusdc"];
 
-        baseChamber = chamberFactory.getChamberWithCustomTokens(baseConstituents, baseQuantities);
-
+        baseChamber = Chamber(
+            chamberGod.createChamber(
+                "name", "symbol", baseConstituents, baseQuantities, wizards, managers
+            )
+        );
         componentQuantities[0] = (
             PreciseUnitMath.preciseMulCeil(1e18, baseQuantities[0], 18).preciseMulCeil(
                 IVault(vaults[0]).pricePerShare(), 6
@@ -829,8 +844,11 @@ contract TradeIssuerIntegrationInternalRedeemChamberTest is ChamberTestUtils {
         vaultAssets[0] = tokens["usdc"];
         vaults[0] = tokens["yusdc"];
 
-        baseChamber = chamberFactory.getChamberWithCustomTokens(baseConstituents, baseQuantities);
-
+        baseChamber = Chamber(
+            chamberGod.createChamber(
+                "name", "symbol", baseConstituents, baseQuantities, wizards, managers
+            )
+        );
         componentQuantities[0] = (
             PreciseUnitMath.preciseMulCeil(1e18, baseQuantities[0], 18).preciseMulCeil(
                 IVault(vaults[0]).pricePerShare(), 6
@@ -950,8 +968,11 @@ contract TradeIssuerIntegrationInternalRedeemChamberTest is ChamberTestUtils {
         baseConstituents[1] = tokens["dai"];
         components = baseConstituents;
 
-        baseChamber = chamberFactory.getChamberWithCustomTokens(baseConstituents, baseQuantities);
-
+        baseChamber = Chamber(
+            chamberGod.createChamber(
+                "name", "symbol", baseConstituents, baseQuantities, wizards, managers
+            )
+        );
         componentQuantities[0] = PreciseUnitMath.preciseMulCeil(1e18, baseQuantities[0], 18);
         componentQuantities[1] = PreciseUnitMath.preciseMulCeil(1e18, baseQuantities[1], 18);
 
@@ -1064,8 +1085,11 @@ contract TradeIssuerIntegrationInternalRedeemChamberTest is ChamberTestUtils {
         vaults[0] = tokens["yusdc"];
         vaults[1] = tokens["ydai"];
 
-        baseChamber = chamberFactory.getChamberWithCustomTokens(baseConstituents, baseQuantities);
-
+        baseChamber = Chamber(
+            chamberGod.createChamber(
+                "name", "symbol", baseConstituents, baseQuantities, wizards, managers
+            )
+        );
         componentQuantities[0] = (
             PreciseUnitMath.preciseMulCeil(1e18, baseQuantities[0], 18).preciseMulCeil(
                 IVault(vaults[0]).pricePerShare(), 6
@@ -1196,8 +1220,11 @@ contract TradeIssuerIntegrationInternalRedeemChamberTest is ChamberTestUtils {
         vaultAssets[0] = tokens["usdc"];
         vaults[0] = tokens["yusdc"];
 
-        baseChamber = chamberFactory.getChamberWithCustomTokens(baseConstituents, baseQuantities);
-
+        baseChamber = Chamber(
+            chamberGod.createChamber(
+                "name", "symbol", baseConstituents, baseQuantities, wizards, managers
+            )
+        );
         componentQuantities[0] = (
             PreciseUnitMath.preciseMulCeil(1e18, baseQuantities[0], 18).preciseMulCeil(
                 IVault(vaults[0]).pricePerShare(), 6

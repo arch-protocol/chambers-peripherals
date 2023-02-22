@@ -6,7 +6,7 @@ import {ChamberTestUtils} from "test/utils/ChamberTestUtils.sol";
 import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import {ERC20} from "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import {Chamber} from "chambers/Chamber.sol";
-import {ChamberFactory} from "test/utils/Factories.sol";
+import {ChamberGod} from "chambers/ChamberGod.sol";
 import {IssuerWizard} from "chambers/IssuerWizard.sol";
 import {IVault} from "src/interfaces/IVault.sol";
 import {IChamber} from "chambers/interfaces/IChamber.sol";
@@ -22,7 +22,7 @@ contract TradeIssuerIntegrationInternalWithdrawConstituentsFromVaultsTest is Cha
     //////////////////////////////////////////////////////////////*/
 
     ExposedTradeIssuer public tradeIssuer;
-    ChamberFactory public chamberFactory;
+    ChamberGod public chamberGod;
     Chamber public baseChamber;
     IssuerWizard public issuerWizard;
     mapping(string => address) public tokens;
@@ -36,6 +36,8 @@ contract TradeIssuerIntegrationInternalWithdrawConstituentsFromVaultsTest is Cha
     address[] public vaults = new address[](2);
     address[] public vaultAssets = new address[](2);
     bytes[] public quotes = new bytes[](2);
+    address[] public wizards = new address[](1);
+    address[] public managers = new address[](0);
 
     /*//////////////////////////////////////////////////////////////
                               SET UP
@@ -58,30 +60,26 @@ contract TradeIssuerIntegrationInternalWithdrawConstituentsFromVaultsTest is Cha
         vaultAssets[0] = tokens["usdc"];
         vaultAssets[1] = tokens["dai"];
 
-        issuerWizard = new IssuerWizard();
+        chamberGod = new ChamberGod();
+        issuerWizard = new IssuerWizard(address(chamberGod));
+        chamberGod.addWizard(address(issuerWizard));
 
         baseConstituents[0] = tokens["yusdc"];
         baseConstituents[1] = tokens["ydai"];
         baseQuantities[0] = 2e6;
         baseQuantities[1] = 2e6;
 
-        address[] memory wizards = new address[](1);
         wizards[0] = address(issuerWizard);
-        address[] memory managers = new address[](0);
 
-        chamberFactory = new ChamberFactory(
-          address(this),
-          "name",
-          "symbol",
-          wizards,
-          managers
+        baseChamber = Chamber(
+            chamberGod.createChamber(
+                "name", "symbol", baseConstituents, baseQuantities, wizards, managers
+            )
         );
-
-        baseChamber = chamberFactory.getChamberWithCustomTokens(baseConstituents, baseQuantities);
 
         vm.label(vm.addr(0x791782394), "ChamberGod");
         vm.label(address(issuerWizard), "IssuerWizard");
-        vm.label(address(chamberFactory), "ChamberFactory");
+        vm.label(address(chamberGod), "ChamberGod");
         vm.label(dexAgg, "ZeroEx");
         vm.label(tokens["weth"], "WETH");
         vm.label(tokens["usdc"], "USDC");
@@ -113,8 +111,9 @@ contract TradeIssuerIntegrationInternalWithdrawConstituentsFromVaultsTest is Cha
 
         baseQuantities[0] = constituentQuantity0;
         baseQuantities[1] = constituentQuantity1;
-        Chamber chamber = chamberFactory.getChamberWithCustomTokens(vaults, baseQuantities);
-
+        Chamber chamber = Chamber(
+            chamberGod.createChamber("name", "symbol", vaults, baseQuantities, wizards, managers)
+        );
         uint256 pricePerShare0 = IVault(vaults[0]).pricePerShare();
         uint256 pricePerShare1 = IVault(vaults[1]).pricePerShare();
         uint256 depositAmount0 =
@@ -169,8 +168,9 @@ contract TradeIssuerIntegrationInternalWithdrawConstituentsFromVaultsTest is Cha
 
         baseQuantities[0] = constituentQuantity0;
         baseQuantities[1] = constituentQuantity1;
-        Chamber chamber = chamberFactory.getChamberWithCustomTokens(vaults, baseQuantities);
-
+        Chamber chamber = Chamber(
+            chamberGod.createChamber("name", "symbol", vaults, baseQuantities, wizards, managers)
+        );
         vaultQuantities[0] = 1;
         vaultQuantities[1] = 1;
         vm.expectRevert(); //Generic "EvmError: Revert"
@@ -202,8 +202,9 @@ contract TradeIssuerIntegrationInternalWithdrawConstituentsFromVaultsTest is Cha
 
         baseQuantities[0] = constituentQuantity0;
         baseQuantities[1] = constituentQuantity1;
-        Chamber chamber = chamberFactory.getChamberWithCustomTokens(vaults, baseQuantities);
-
+        Chamber chamber = Chamber(
+            chamberGod.createChamber("name", "symbol", vaults, baseQuantities, wizards, managers)
+        );
         uint256 pricePerShare0 = IVault(vaults[0]).pricePerShare();
         uint256 pricePerShare1 = IVault(vaults[1]).pricePerShare();
         uint256 depositAmount0 =
@@ -263,8 +264,9 @@ contract TradeIssuerIntegrationInternalWithdrawConstituentsFromVaultsTest is Cha
 
         baseQuantities[0] = constituentQuantity0;
         baseQuantities[1] = constituentQuantity1;
-        Chamber chamber = chamberFactory.getChamberWithCustomTokens(vaults, baseQuantities);
-
+        Chamber chamber = Chamber(
+            chamberGod.createChamber("name", "symbol", vaults, baseQuantities, wizards, managers)
+        );
         uint256 pricePerShare0 = IVault(vaults[0]).pricePerShare();
         uint256 pricePerShare1 = IVault(vaults[1]).pricePerShare();
         uint256 depositAmount0 =
@@ -342,8 +344,9 @@ contract TradeIssuerIntegrationInternalWithdrawConstituentsFromVaultsTest is Cha
 
         baseQuantities[0] = constituentQuantity0;
         baseQuantities[1] = constituentQuantity1;
-        Chamber chamber = chamberFactory.getChamberWithCustomTokens(vaults, baseQuantities);
-
+        Chamber chamber = Chamber(
+            chamberGod.createChamber("name", "symbol", vaults, baseQuantities, wizards, managers)
+        );
         uint256 pricePerShare0 = IVault(vaults[0]).pricePerShare();
         uint256 pricePerShare1 = IVault(vaults[1]).pricePerShare();
         uint256 depositAmount0 =
