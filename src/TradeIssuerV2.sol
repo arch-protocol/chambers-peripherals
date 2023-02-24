@@ -160,17 +160,32 @@ contract TradeIssuerV2 is ITradeIssuerV2, Ownable, ReentrancyGuard {
         payable(owner()).transfer(address(this).balance);
     }
 
+    /**
+     * Mints the specified amount of chamber token and sends them to the msg.sender using an ERC20
+     * token as input. Unspent baseToken is also transferred back to the sender.
+     *
+     * @param _chamber                      Chamber address.
+     * @param _issuerWizard                 Issuer wizard that'll be called for mint.
+     * @param _baseToken                    The token that will be used to get the underlying assets.
+     * @param _maxPayAmount                 The maximum amount of the baseToken to be used for the mint.
+     * @param _chamberAmount                Chamber tokens amount to mint.
+     * @param _contractCallInstructions     Instruction array that will be executed in order to get
+     *                                      the underlying assets.
+     *
+     * @return baseTokenUsed                Total amount of the base token used for the mint.
+     *
+     */
     function mintChamberFromToken(
         IChamber _chamber,
         IIssuerWizard _issuerWizard,
         IERC20 _baseToken,
-        uint256 _baseTokenBounds,
+        uint256 _maxPayAmount,
         uint256 _chamberAmount,
         ContractCallInstruction[] memory _contractCallInstructions
     ) external nonReentrant returns (uint256 baseTokenUsed) {
         if (_chamberAmount == 0) revert ZeroChamberAmount();
 
-        _baseToken.safeTransferFrom(msg.sender, address(this), _baseTokenBounds);
+        _baseToken.safeTransferFrom(msg.sender, address(this), _maxPayAmount);
 
         baseTokenUsed = _mintChamber(
             _chamber,
@@ -180,9 +195,11 @@ contract TradeIssuerV2 is ITradeIssuerV2, Ownable, ReentrancyGuard {
             _contractCallInstructions
         );
 
-        if (_baseTokenBounds < baseTokenUsed) revert OversoldBaseToken(baseTokenUsed);
+        if (_maxPayAmount < baseTokenUsed) revert OversoldBaseToken(baseTokenUsed);
 
-        _baseToken.safeTransfer(msg.sender, _baseTokenBounds - baseTokenUsed);
+        uint256 remainingBaseToken = _maxPayAmount - baseTokenUsed;
+
+        _baseToken.safeTransfer(msg.sender, remainingBaseToken);
 
         IERC20(address(_chamber)).safeTransfer(msg.sender, _chamberAmount);
 
@@ -193,6 +210,19 @@ contract TradeIssuerV2 is ITradeIssuerV2, Ownable, ReentrancyGuard {
         return baseTokenUsed;
     }
 
+    /**
+     * Mints the specified amount of chamber token and sends them to the msg.sender using the network
+     * native token as input. Unspent native token is also transferred back to the sender.
+     *
+     * @param _chamber                      Chamber address.
+     * @param _issuerWizard                 Issuer wizard that'll be called for mint.
+     * @param _chamberAmount                Chamber tokens amount to mint.
+     * @param _contractCallInstructions     Instruction array that will be executed in order to get
+     *                                      the underlying assets.
+     *
+     * @return wrappedNativeTokenUsed       Total amount of the wrapped native token used for the mint.
+     *
+     */
     function mintChamberFromNativeToken(
         IChamber _chamber,
         IIssuerWizard _issuerWizard,
@@ -211,9 +241,14 @@ contract TradeIssuerV2 is ITradeIssuerV2, Ownable, ReentrancyGuard {
             _contractCallInstructions
         );
 
+        // use more vars instead of direct calculations
+
         if (msg.value < wrappedNativeTokenUsed) revert OversoldBaseToken(wrappedNativeTokenUsed);
-        WETH(payable(wrappedNativeToken)).withdraw(msg.value - wrappedNativeTokenUsed);
-        payable(msg.sender).sendValue(msg.value - wrappedNativeTokenUsed);
+
+        uint256 remainingWrappedNativeToken = msg.value - wrappedNativeTokenUsed;
+
+        WETH(payable(wrappedNativeToken)).withdraw(remainingWrappedNativeToken);
+        payable(msg.sender).sendValue(remainingWrappedNativeToken);
 
         IERC20(address(_chamber)).safeTransfer(msg.sender, _chamberAmount);
 
@@ -228,11 +263,26 @@ contract TradeIssuerV2 is ITradeIssuerV2, Ownable, ReentrancyGuard {
         return wrappedNativeTokenUsed;
     }
 
+    /**
+     * Redeems the specified amount of chamber token for the required baseToken and sends it to the
+     * msg.sender.
+     *
+     * @param _chamber                      Chamber address.
+     * @param _issuerWizard                 Issuer wizard that'll be called for redeem.
+     * @param _baseToken                    The token that it will be sent to the msg.sender.
+     * @param _minReceiveAmount             The minimum amount of the baseToken to be received.
+     * @param _chamberAmount                Chamber tokens amount to redeem.
+     * @param _contractCallInstructions     Instruction array that will be executed in order to get
+     *                                      the underlying assets.
+     *
+     * @return baseTokenReturned            Total baseToken amount sent to the msg.sender.
+     *
+     */
     function redeemChamberToToken(
         IChamber _chamber,
         IIssuerWizard _issuerWizard,
         IERC20 _baseToken,
-        uint256 _baseTokenBounds,
+        uint256 _minReceiveAmount,
         uint256 _chamberAmount,
         ContractCallInstruction[] memory _contractCallInstructions
     ) external nonReentrant returns (uint256 baseTokenReturned) {
@@ -244,7 +294,7 @@ contract TradeIssuerV2 is ITradeIssuerV2, Ownable, ReentrancyGuard {
             _chamber, _baseToken, _issuerWizard, _chamberAmount, _contractCallInstructions
         );
 
-        if (baseTokenReturned < _baseTokenBounds) {
+        if (baseTokenReturned < _minReceiveAmount) {
             revert RedeemedForLessTokens(baseTokenReturned);
         }
 
@@ -257,10 +307,24 @@ contract TradeIssuerV2 is ITradeIssuerV2, Ownable, ReentrancyGuard {
         return baseTokenReturned;
     }
 
+    /**
+     * Redeems the specified amount of chamber token for the network's native token and sends it to the
+     * msg.sender.
+     *
+     * @param _chamber                      Chamber address.
+     * @param _issuerWizard                 Issuer wizard that'll be called for redeem.
+     * @param _minReceiveAmount             The minimum amount of the baseToken to be received.
+     * @param _chamberAmount                Chamber tokens amount to redeem.
+     * @param _contractCallInstructions     Instruction array that will be executed in order to get
+     *                                      the underlying assets.
+     *
+     * @return wrappedNativeTokenReturned   Total native token amount sent to the msg.sender.
+     *
+     */
     function redeemChamberToNativeToken(
         IChamber _chamber,
         IIssuerWizard _issuerWizard,
-        uint256 _baseTokenBounds,
+        uint256 _minReceiveAmount,
         uint256 _chamberAmount,
         ContractCallInstruction[] memory _contractCallInstructions
     ) external nonReentrant returns (uint256 wrappedNativeTokenReturned) {
@@ -276,7 +340,7 @@ contract TradeIssuerV2 is ITradeIssuerV2, Ownable, ReentrancyGuard {
             _contractCallInstructions
         );
 
-        if (wrappedNativeTokenReturned < _baseTokenBounds) {
+        if (wrappedNativeTokenReturned < _minReceiveAmount) {
             revert RedeemedForLessTokens(wrappedNativeTokenReturned);
         }
 
@@ -297,6 +361,19 @@ contract TradeIssuerV2 is ITradeIssuerV2, Ownable, ReentrancyGuard {
                             INTERNAL FUNCTIONS
     //////////////////////////////////////////////////////////////*/
 
+    /**
+     * Internal function in charge of the generic mint. The main objective is to get the chamber tokens.
+     *
+     * @param _chamber                      Chamber address.
+     * @param _baseToken                    The token that will be used to get the underlying assets.
+     * @param _issuerWizard                 Issuer wizard that'll be called for mint.
+     * @param _chamberAmount                Chamber tokens amount to mint.
+     * @param _contractCallInstructions     Instruction array that will be executed in order to get
+     *                                      the underlying assets.
+     *
+     * @return baseTokenUsed                Total amount of the base token used for the mint.
+     *
+     */
     function _mintChamber(
         IChamber _chamber,
         IERC20 _baseToken,
@@ -312,9 +389,25 @@ contract TradeIssuerV2 is ITradeIssuerV2, Ownable, ReentrancyGuard {
 
         _issuerWizard.issue(_chamber, _chamberAmount);
 
-        return (_baseToken.balanceOf(address(this)) - baseTokenBalanceBefore);
+        baseTokenUsed = _baseToken.balanceOf(address(this)) - baseTokenBalanceBefore;
+
+        return baseTokenUsed;
     }
 
+    /**
+     * Internal function in charge of the generic redeem. The main objective is to get the base token
+     * from the chamber token.
+     *
+     * @param _chamber                      Chamber address.
+     * @param _baseToken                    The token that will be used to get the underlying assets.
+     * @param _issuerWizard                 Issuer wizard that'll be called for mint.
+     * @param _chamberAmount                Chamber tokens amount to mint.
+     * @param _contractCallInstructions     Instruction array that will be executed in order to get
+     *                                      the underlying assets.
+     *
+     * @return totalBaseTokenReturned       Total amount of the base that will be sent to the msg.sender.
+     *
+     */
     function _redeemChamber(
         IChamber _chamber,
         IERC20 _baseToken,
@@ -328,9 +421,18 @@ contract TradeIssuerV2 is ITradeIssuerV2, Ownable, ReentrancyGuard {
 
         _executeInstructions(_contractCallInstructions);
 
-        return (_baseToken.balanceOf(address(this)) - baseTokenBalanceBefore);
+        totalBaseTokenReturned = _baseToken.balanceOf(address(this)) - baseTokenBalanceBefore;
+
+        return totalBaseTokenReturned;
     }
 
+    /**
+     * Executes the array of instructions and verifies that the correct amount of each token
+     * from the instruction is purchased.
+     *
+     * @param _contractCallInstructions     Instruction array that will be executed in order to get
+     *                                      the underlying assets.
+     */
     function _executeInstructions(ContractCallInstruction[] memory _contractCallInstructions)
         internal
     {
@@ -363,13 +465,15 @@ contract TradeIssuerV2 is ITradeIssuerV2, Ownable, ReentrancyGuard {
      * Execute a contract call
      *
      * @param _callData       CallData to be executed on a allowed Target
+     *
+     * @return response       Response from the low-level call
      */
-    function _fillQuote(address target, bytes memory _callData)
+    function _fillQuote(address _target, bytes memory _callData)
         internal
         returns (bytes memory response)
     {
-        //check that the target contract is allowed
-        response = target.functionCall(_callData);
+        if (!isAllowedTarget(_target)) revert InvalidTarget();
+        response = _target.functionCall(_callData);
         if (response.length == 0) revert LowLevelFunctionCallFailed();
         return (response);
     }
@@ -379,6 +483,7 @@ contract TradeIssuerV2 is ITradeIssuerV2, Ownable, ReentrancyGuard {
      *
      * @param _chamber          Chamber token address for mint.
      * @param _issuerWizard     Issuer wizard used at _chamber.
+     * @param _chamberAmount    Amount of the chamber token to mint.
      */
     function _checkAndIncreaseAllowanceOfConstituents(
         IChamber _chamber,
@@ -408,6 +513,10 @@ contract TradeIssuerV2 is ITradeIssuerV2, Ownable, ReentrancyGuard {
     /**
      * For the specified token and amount, checks the allowance between the TraderIssuer and _target.
      * If not enough, it sets the maximum.
+     *
+     * @param _tokenAddress     Address of the token that will be used.
+     * @param _target           Target address of the allowance.
+     * @param _requiredAmount   Required allowance for the operation.
      */
     function _checkAndIncreaseAllowance(
         address _tokenAddress,
