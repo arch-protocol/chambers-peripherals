@@ -145,7 +145,7 @@ contract TradeIssuerV2 is ITradeIssuerV2, Ownable, ReentrancyGuard {
      * @param _tokenToWithdraw     The ERC20 token address to withdraw
      */
     function transferERC20ToOwner(address _tokenToWithdraw) external onlyOwner {
-        if (IERC20(_tokenToWithdraw).balanceOf(address(this)) == 0) revert ZeroBalanceAsset();
+        if (IERC20(_tokenToWithdraw).balanceOf(address(this)) < 1) revert ZeroBalanceAsset();
 
         IERC20(_tokenToWithdraw).safeTransfer(
             owner(), IERC20(_tokenToWithdraw).balanceOf(address(this))
@@ -156,7 +156,7 @@ contract TradeIssuerV2 is ITradeIssuerV2, Ownable, ReentrancyGuard {
      * Transfer all stucked Ether to the owner of the contract
      */
     function transferEthToOwner() external onlyOwner {
-        if (address(this).balance == 0) revert ZeroBalanceAsset();
+        if (address(this).balance < 1) revert ZeroBalanceAsset();
         payable(owner()).transfer(address(this).balance);
     }
 
