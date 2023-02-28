@@ -92,19 +92,19 @@ interface ITradeIssuerV2 {
 
     error CannotRemoveTarget();
 
-    error InvalidTarget();
+    error InvalidTarget(address target);
 
     error LowLevelFunctionCallFailed();
 
-    error OversoldBaseToken(uint256 amount);
+    error OversoldBaseToken();
 
     error RedeemedForLessTokens(uint256 totalBaseTokenReturned);
 
     error TargetAlreadyAllowed();
 
-    error UnderboughtAsset(IERC20 asset, uint256 buyAmount, uint256 amountBought);
+    error UnderboughtAsset(IERC20 asset, uint256 buyAmount);
 
-    error UnderboughtConstituent(IERC20 asset, uint256 buyAmount, uint256 amountBought);
+    error UnderboughtConstituent(IERC20 asset, uint256 buyAmount);
 
     error ZeroChamberAmount();
 
@@ -131,35 +131,35 @@ interface ITradeIssuerV2 {
     function transferEthToOwner() external;
 
     function mintChamberFromToken(
+        ContractCallInstruction[] memory _contractCallInstructions,
         IChamber _chamber,
         IIssuerWizard _issuerWizard,
         IERC20 _baseToken,
         uint256 _baseTokenBounds,
-        uint256 _chamberAmount,
-        ContractCallInstruction[] memory _contractCallInstructions
+        uint256 _chamberAmount
     ) external returns (uint256 baseTokenUsed);
 
     function mintChamberFromNativeToken(
+        ContractCallInstruction[] memory _contractCallInstructions,
         IChamber _chamber,
         IIssuerWizard _issuerWizard,
-        uint256 _chamberAmount,
-        ContractCallInstruction[] memory _contractCallInstructions
+        uint256 _chamberAmount
     ) external payable returns (uint256 wrappedNativeTokenUsed);
 
     function redeemChamberToToken(
+        ContractCallInstruction[] memory _contractCallInstructions,
         IChamber _chamber,
         IIssuerWizard _issuerWizard,
         IERC20 _baseToken,
         uint256 _baseTokenBounds,
-        uint256 _chamberAmount,
-        ContractCallInstruction[] memory _contractCallInstructions
+        uint256 _chamberAmount
     ) external returns (uint256 baseTokenReturned);
 
     function redeemChamberToNativeToken(
+        ContractCallInstruction[] memory _contractCallInstructions,
         IChamber _chamber,
         IIssuerWizard _issuerWizard,
         uint256 _baseTokenBounds,
-        uint256 _chamberAmount,
-        ContractCallInstruction[] memory _contractCallInstructions
+        uint256 _chamberAmount
     ) external returns (uint256 wrappedNativeTokenReturned);
 }
