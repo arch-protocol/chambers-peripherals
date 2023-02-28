@@ -138,7 +138,7 @@ contract TradeIssuer is ITradeIssuer, Ownable, ReentrancyGuard {
             wrappedNativeToken,
             totalNativeTokenUsed,
             _mintParams.chamberAmount
-            );
+        );
 
         return totalNativeTokenUsed;
     }
@@ -175,7 +175,7 @@ contract TradeIssuer is ITradeIssuer, Ownable, ReentrancyGuard {
             address(_mintParams.baseToken),
             totalBaseTokenUsed,
             _mintParams.chamberAmount
-            );
+        );
 
         return totalBaseTokenUsed;
     }
@@ -214,7 +214,7 @@ contract TradeIssuer is ITradeIssuer, Ownable, ReentrancyGuard {
             wrappedNativeToken,
             totalNativeTokenReturned,
             _redeemParams.chamberAmount
-            );
+        );
 
         return totalNativeTokenReturned;
     }
@@ -250,7 +250,7 @@ contract TradeIssuer is ITradeIssuer, Ownable, ReentrancyGuard {
             address(_redeemParams.baseToken),
             totalBaseTokenReturned,
             _redeemParams.chamberAmount
-            );
+        );
 
         return totalBaseTokenReturned;
     }

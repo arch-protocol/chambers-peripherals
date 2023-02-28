@@ -203,7 +203,7 @@ contract TradeIssuerV2 is ITradeIssuerV2, Ownable, ReentrancyGuard {
 
         emit TradeIssuerTokenMinted(
             address(_chamber), msg.sender, address(_baseToken), baseTokenUsed, _chamberAmount
-            );
+        );
 
         return baseTokenUsed;
     }
@@ -254,7 +254,7 @@ contract TradeIssuerV2 is ITradeIssuerV2, Ownable, ReentrancyGuard {
             address(wrappedNativeToken),
             wrappedNativeTokenUsed,
             _chamberAmount
-            );
+        );
 
         return wrappedNativeTokenUsed;
     }
@@ -298,7 +298,7 @@ contract TradeIssuerV2 is ITradeIssuerV2, Ownable, ReentrancyGuard {
 
         emit TradeIssuerTokenRedeemed(
             address(_chamber), msg.sender, address(_baseToken), baseTokenReturned, _chamberAmount
-            );
+        );
 
         return baseTokenReturned;
     }
@@ -349,7 +349,7 @@ contract TradeIssuerV2 is ITradeIssuerV2, Ownable, ReentrancyGuard {
             address(wrappedNativeToken),
             wrappedNativeTokenReturned,
             _chamberAmount
-            );
+        );
 
         return wrappedNativeTokenReturned;
     }
