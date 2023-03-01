@@ -17,7 +17,7 @@ import {TradeIssuerV2} from "src/TradeIssuerV2.sol";
 import {ITradeIssuerV2} from "src/interfaces/ITradeIssuerV2.sol";
 import {stdError} from "forge-std/StdError.sol";
 
-contract TradeIssuerV2IntegrationMintChamberFromTokenTest is ChamberTestUtils {
+contract TradeIssuerV2IntegrationRedeemChamberToTokenTest is ChamberTestUtils {
     using PreciseUnitMath for uint256;
     using PreciseUnitMath for uint64;
 
@@ -122,7 +122,7 @@ contract TradeIssuerV2IntegrationMintChamberFromTokenTest is ChamberTestUtils {
     }
 
     /**
-     * [REVERT] Cannot mint with underbought asset in an instruction.
+     * [REVERT] Cannot redeem with underbought asset in an instruction.
      */
     function testCannotRedeemWithUnderboughtAsset() public {
         ITradeIssuerV2.ContractCallInstruction[] memory instructions =
@@ -225,9 +225,9 @@ contract TradeIssuerV2IntegrationMintChamberFromTokenTest is ChamberTestUtils {
     }
 
     /**
-     * [REVERT] Cannot mint with invalid target in an instruction.
+     * [REVERT] Cannot redeem with invalid target in an instruction.
      */
-    function testCannotMintWithInvalidTarget() public {
+    function testCannoRedeemtWithInvalidTarget() public {
         address payable invalidTarget = payable(address(0x123));
         ITradeIssuerV2.ContractCallInstruction[] memory instructions =
             new ITradeIssuerV2.ContractCallInstruction[] (1);
@@ -275,9 +275,9 @@ contract TradeIssuerV2IntegrationMintChamberFromTokenTest is ChamberTestUtils {
     }
 
     /**
-     * [REVERT] Cannot mint with overspent input token
+     * [REVERT] Cannot redeem if the base token bought is less than required.
      */
-    function testCannotMintAddyWithUnderBoughtBaseToken() public {
+    function testCannotRedeemAddyWithUnderBoughtBaseToken() public {
         ITradeIssuerV2.ContractCallInstruction[] memory instructions =
             new ITradeIssuerV2.ContractCallInstruction[] (5);
         (, uint256[] memory requiredQuantities) =
@@ -384,7 +384,7 @@ contract TradeIssuerV2IntegrationMintChamberFromTokenTest is ChamberTestUtils {
     }
 
     /**
-     * [REVERT] Cannot mint instructions array with wrong order
+     * [REVERT] Cannot redeem with instructions array with wrong order.
      */
     function testCannotRedeemWithWrongOrderAtInstructionsArray() public {
         ITradeIssuerV2.ContractCallInstruction[] memory instructions =
@@ -467,7 +467,7 @@ contract TradeIssuerV2IntegrationMintChamberFromTokenTest is ChamberTestUtils {
     //////////////////////////////////////////////////////////////*/
 
     /**
-     * [SUCCESS] Mint a chamber token with USDC. In the case of addy, usdc is is the underlying
+     * [SUCCESS] Redeem a chamber token with USDC. In the case of addy, usdc is is the underlying
      * asset of a yearn vault so one less instruction is required.
      */
     function testSuccessRedeemAddyToUsdc() public {
