@@ -453,7 +453,7 @@ contract TradeIssuerV2IntegrationRedeemChamberToNativeTokenTest is ChamberTestUt
     /**
      * [SUCCESS] Redeem a chamber token to WETH
      */
-    function testSuccessRedeemAddyToWeth() public {
+    function testSuccessRedeemAddyToNativeToken() public {
         ITradeIssuerV2.ContractCallInstruction[] memory instructions =
             new ITradeIssuerV2.ContractCallInstruction[] (6);
         (, uint256[] memory requiredQuantities) =
