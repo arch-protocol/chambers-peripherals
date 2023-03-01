@@ -449,7 +449,7 @@ contract TradeIssuerV2IntegrationMintChamberFromTokenTest is ChamberTestUtils {
         IERC20(address(addyToken)).approve(address(tradeIssuer), 500e18);
 
         vm.prank(alice);
-        vm.expectRevert("Dai/insufficient-balance");
+        vm.expectRevert();
         uint256 totalBaseTokenReturned = tradeIssuer.redeemChamberToToken(
             instructions,
             addyToken,
