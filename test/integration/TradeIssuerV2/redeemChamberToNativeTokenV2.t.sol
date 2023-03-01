@@ -584,7 +584,7 @@ contract TradeIssuerV2IntegrationRedeemChamberToNativeTokenTest is ChamberTestUt
      * [SUCCESS] Redeem a chamber token to WETH but in a different valid order of the instructions array
      * as the above test.
      */
-    function testSuccessRedeemAddyToWethInDifferentOrder() public {
+    function testSuccessRedeemAddyToNativeTokenInDifferentOrder() public {
         ITradeIssuerV2.ContractCallInstruction[] memory instructions =
             new ITradeIssuerV2.ContractCallInstruction[] (6);
         (, uint256[] memory requiredQuantities) =
