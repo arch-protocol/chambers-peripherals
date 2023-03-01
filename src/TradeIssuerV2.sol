@@ -115,11 +115,11 @@ contract TradeIssuerV2 is ITradeIssuerV2, Ownable, ReentrancyGuard {
      */
     function addTarget(address _target) external onlyOwner nonReentrant {
         if (_target == address(0)) {
-            revert InvalidTarget();
+            revert InvalidTarget(_target);
         }
         if (isAllowedTarget(address(_target))) revert TargetAlreadyAllowed();
 
-        if (allowedTargets.add(_target)) revert CannotAllowTarget();
+        if (!allowedTargets.add(_target)) revert CannotAllowTarget();
 
         emit AllowedTargetAdded(_target);
     }
@@ -131,10 +131,10 @@ contract TradeIssuerV2 is ITradeIssuerV2, Ownable, ReentrancyGuard {
      */
     function removeTarget(address _target) external onlyOwner nonReentrant {
         if (!isAllowedTarget(_target)) {
-            revert InvalidTarget();
+            revert InvalidTarget(_target);
         }
 
-        if (allowedTargets.remove(_target)) revert CannotRemoveTarget();
+        if (!allowedTargets.remove(_target)) revert CannotRemoveTarget();
 
         emit AllowedTargetRemoved(_target);
     }
@@ -160,6 +160,7 @@ contract TradeIssuerV2 is ITradeIssuerV2, Ownable, ReentrancyGuard {
         payable(owner()).transfer(address(this).balance);
     }
 
+    error CustomError(uint256, uint256);
     /**
      * Mints the specified amount of chamber token and sends them to the msg.sender using an ERC20
      * token as input. Unspent baseToken is also transferred back to the sender.
@@ -175,27 +176,24 @@ contract TradeIssuerV2 is ITradeIssuerV2, Ownable, ReentrancyGuard {
      * @return baseTokenUsed                Total amount of the base token used for the mint.
      *
      */
+
     function mintChamberFromToken(
+        ContractCallInstruction[] memory _contractCallInstructions,
         IChamber _chamber,
         IIssuerWizard _issuerWizard,
         IERC20 _baseToken,
         uint256 _maxPayAmount,
-        uint256 _chamberAmount,
-        ContractCallInstruction[] memory _contractCallInstructions
+        uint256 _chamberAmount
     ) external nonReentrant returns (uint256 baseTokenUsed) {
         if (_chamberAmount == 0) revert ZeroChamberAmount();
 
         _baseToken.safeTransferFrom(msg.sender, address(this), _maxPayAmount);
 
         baseTokenUsed = _mintChamber(
-            _chamber,
-            IERC20(wrappedNativeToken),
-            _issuerWizard,
-            _chamberAmount,
-            _contractCallInstructions
+            _chamber, IERC20(_baseToken), _issuerWizard, _chamberAmount, _contractCallInstructions
         );
 
-        if (_maxPayAmount < baseTokenUsed) revert OversoldBaseToken(baseTokenUsed);
+        if (_maxPayAmount < baseTokenUsed) revert OversoldBaseToken();
 
         uint256 remainingBaseToken = _maxPayAmount - baseTokenUsed;
 
@@ -205,7 +203,7 @@ contract TradeIssuerV2 is ITradeIssuerV2, Ownable, ReentrancyGuard {
 
         emit TradeIssuerTokenMinted(
             address(_chamber), msg.sender, address(_baseToken), baseTokenUsed, _chamberAmount
-            );
+        );
 
         return baseTokenUsed;
     }
@@ -224,10 +222,10 @@ contract TradeIssuerV2 is ITradeIssuerV2, Ownable, ReentrancyGuard {
      *
      */
     function mintChamberFromNativeToken(
+        ContractCallInstruction[] memory _contractCallInstructions,
         IChamber _chamber,
         IIssuerWizard _issuerWizard,
-        uint256 _chamberAmount,
-        ContractCallInstruction[] memory _contractCallInstructions
+        uint256 _chamberAmount
     ) external payable nonReentrant returns (uint256 wrappedNativeTokenUsed) {
         if (_chamberAmount == 0) revert ZeroChamberAmount();
         if (msg.value == 0) revert ZeroNativeTokenSent();
@@ -241,9 +239,7 @@ contract TradeIssuerV2 is ITradeIssuerV2, Ownable, ReentrancyGuard {
             _contractCallInstructions
         );
 
-        // use more vars instead of direct calculations
-
-        if (msg.value < wrappedNativeTokenUsed) revert OversoldBaseToken(wrappedNativeTokenUsed);
+        if (msg.value < wrappedNativeTokenUsed) revert OversoldBaseToken();
 
         uint256 remainingWrappedNativeToken = msg.value - wrappedNativeTokenUsed;
 
@@ -258,7 +254,7 @@ contract TradeIssuerV2 is ITradeIssuerV2, Ownable, ReentrancyGuard {
             address(wrappedNativeToken),
             wrappedNativeTokenUsed,
             _chamberAmount
-            );
+        );
 
         return wrappedNativeTokenUsed;
     }
@@ -279,12 +275,12 @@ contract TradeIssuerV2 is ITradeIssuerV2, Ownable, ReentrancyGuard {
      *
      */
     function redeemChamberToToken(
+        ContractCallInstruction[] memory _contractCallInstructions,
         IChamber _chamber,
         IIssuerWizard _issuerWizard,
         IERC20 _baseToken,
         uint256 _minReceiveAmount,
-        uint256 _chamberAmount,
-        ContractCallInstruction[] memory _contractCallInstructions
+        uint256 _chamberAmount
     ) external nonReentrant returns (uint256 baseTokenReturned) {
         if (_chamberAmount == 0) revert ZeroChamberAmount();
 
@@ -302,7 +298,7 @@ contract TradeIssuerV2 is ITradeIssuerV2, Ownable, ReentrancyGuard {
 
         emit TradeIssuerTokenRedeemed(
             address(_chamber), msg.sender, address(_baseToken), baseTokenReturned, _chamberAmount
-            );
+        );
 
         return baseTokenReturned;
     }
@@ -322,11 +318,11 @@ contract TradeIssuerV2 is ITradeIssuerV2, Ownable, ReentrancyGuard {
      *
      */
     function redeemChamberToNativeToken(
+        ContractCallInstruction[] memory _contractCallInstructions,
         IChamber _chamber,
         IIssuerWizard _issuerWizard,
         uint256 _minReceiveAmount,
-        uint256 _chamberAmount,
-        ContractCallInstruction[] memory _contractCallInstructions
+        uint256 _chamberAmount
     ) external nonReentrant returns (uint256 wrappedNativeTokenReturned) {
         if (_chamberAmount == 0) revert ZeroChamberAmount();
 
@@ -353,7 +349,7 @@ contract TradeIssuerV2 is ITradeIssuerV2, Ownable, ReentrancyGuard {
             address(wrappedNativeToken),
             wrappedNativeTokenReturned,
             _chamberAmount
-            );
+        );
 
         return wrappedNativeTokenReturned;
     }
@@ -389,7 +385,7 @@ contract TradeIssuerV2 is ITradeIssuerV2, Ownable, ReentrancyGuard {
 
         _issuerWizard.issue(_chamber, _chamberAmount);
 
-        baseTokenUsed = _baseToken.balanceOf(address(this)) - baseTokenBalanceBefore;
+        baseTokenUsed = baseTokenBalanceBefore - _baseToken.balanceOf(address(this));
 
         return baseTokenUsed;
     }
@@ -451,11 +447,9 @@ contract TradeIssuerV2 is ITradeIssuerV2, Ownable, ReentrancyGuard {
 
             uint256 buyTokenAmountBought =
                 currentInstruction._buyToken.balanceOf(address(this)) - buyTokenBalanceBefore;
-            if (currentInstruction._minBuyAmount < buyTokenAmountBought) {
+            if (currentInstruction._minBuyAmount > buyTokenAmountBought) {
                 revert UnderboughtAsset(
-                    currentInstruction._buyToken,
-                    currentInstruction._minBuyAmount,
-                    buyTokenAmountBought
+                    currentInstruction._buyToken, currentInstruction._minBuyAmount
                 );
             }
         }
@@ -472,7 +466,7 @@ contract TradeIssuerV2 is ITradeIssuerV2, Ownable, ReentrancyGuard {
         internal
         returns (bytes memory response)
     {
-        if (!isAllowedTarget(_target)) revert InvalidTarget();
+        if (!isAllowedTarget(_target)) revert InvalidTarget(_target);
         response = _target.functionCall(_callData);
         if (response.length == 0) revert LowLevelFunctionCallFailed();
         return (response);
@@ -499,9 +493,7 @@ contract TradeIssuerV2 is ITradeIssuerV2, Ownable, ReentrancyGuard {
                     < requiredConstituentsQuantities[i]
             ) {
                 revert UnderboughtConstituent(
-                    IERC20(requiredConstituents[i]),
-                    requiredConstituentsQuantities[i],
-                    IERC20(requiredConstituents[i]).balanceOf(address(this))
+                    IERC20(requiredConstituents[i]), requiredConstituentsQuantities[i]
                 );
             }
             _checkAndIncreaseAllowance(
