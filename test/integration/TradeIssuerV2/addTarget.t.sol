@@ -35,21 +35,6 @@ contract TradeIssuerV2AddTargetTest is Test {
     }
 
     /*//////////////////////////////////////////////////////////////
-                              SUCCESS
-    //////////////////////////////////////////////////////////////*/
-
-    /**
-     * [SUCCESS] The function addTarget should add the target to the allowedTargets enumerableSet
-     * if caller is Owner and the target is not in allowedTargets.
-     */
-    function testAddTargetWithOwner() public {
-        vm.prank(alice);
-        tradeIssuer.addTarget(newTarget);
-        address[] memory targets = tradeIssuer.getAllowedTargets();
-        assertEq(targets[0], newTarget);
-    }
-
-    /*//////////////////////////////////////////////////////////////
                               REVERT
     //////////////////////////////////////////////////////////////*/
 
@@ -70,5 +55,20 @@ contract TradeIssuerV2AddTargetTest is Test {
         vm.expectRevert(ITradeIssuerV2.TargetAlreadyAllowed.selector);
         vm.prank(alice);
         tradeIssuer.addTarget(alice);
+    }
+
+    /*//////////////////////////////////////////////////////////////
+                              SUCCESS
+    //////////////////////////////////////////////////////////////*/
+
+    /**
+     * [SUCCESS] The function addTarget should add the target to the allowedTargets enumerableSet
+     * if caller is Owner and the target is not in allowedTargets.
+     */
+    function testAddTargetWithOwner() public {
+        vm.prank(alice);
+        tradeIssuer.addTarget(newTarget);
+        address[] memory targets = tradeIssuer.getAllowedTargets();
+        assertEq(targets[0], newTarget);
     }
 }

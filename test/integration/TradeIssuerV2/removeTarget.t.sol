@@ -36,23 +36,6 @@ contract TradeIssuerV2RemoveTargetTest is Test {
     }
 
     /*//////////////////////////////////////////////////////////////
-                              SUCCESS
-    //////////////////////////////////////////////////////////////*/
-
-    /**
-     * [SUCCESS] The function removeTarget should remove the target from the allowedTargets enumerableSet
-     * if caller is Owner and the target is in the allowedTargets.
-     */
-    function testRemoveTargetWithOwner() public {
-        bool validTarget = tradeIssuer.isAllowedTarget(target);
-        assertEq(validTarget, true);
-        vm.prank(alice);
-        tradeIssuer.removeTarget(target);
-        validTarget = tradeIssuer.isAllowedTarget(alice);
-        assertEq(validTarget, false);
-    }
-
-    /*//////////////////////////////////////////////////////////////
                               REVERT
     //////////////////////////////////////////////////////////////*/
 
@@ -73,5 +56,22 @@ contract TradeIssuerV2RemoveTargetTest is Test {
         );
         vm.prank(alice);
         tradeIssuer.removeTarget(tokens["weth"]);
+    }
+
+    /*//////////////////////////////////////////////////////////////
+                              SUCCESS
+    //////////////////////////////////////////////////////////////*/
+
+    /**
+     * [SUCCESS] The function removeTarget should remove the target from the allowedTargets enumerableSet
+     * if caller is Owner and the target is in the allowedTargets.
+     */
+    function testRemoveTargetWithOwner() public {
+        bool validTarget = tradeIssuer.isAllowedTarget(target);
+        assertEq(validTarget, true);
+        vm.prank(alice);
+        tradeIssuer.removeTarget(target);
+        validTarget = tradeIssuer.isAllowedTarget(alice);
+        assertEq(validTarget, false);
     }
 }
