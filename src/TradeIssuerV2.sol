@@ -291,7 +291,7 @@ contract TradeIssuerV2 is ITradeIssuerV2, Ownable, ReentrancyGuard {
         );
 
         if (baseTokenReturned < _minReceiveAmount) {
-            revert RedeemedForLessTokens(baseTokenReturned);
+            revert RedeemedForLessTokens();
         }
 
         _baseToken.safeTransfer(msg.sender, baseTokenReturned);
@@ -337,7 +337,7 @@ contract TradeIssuerV2 is ITradeIssuerV2, Ownable, ReentrancyGuard {
         );
 
         if (wrappedNativeTokenReturned < _minReceiveAmount) {
-            revert RedeemedForLessTokens(wrappedNativeTokenReturned);
+            revert RedeemedForLessTokens();
         }
 
         WETH(payable(wrappedNativeToken)).withdraw(wrappedNativeTokenReturned);
