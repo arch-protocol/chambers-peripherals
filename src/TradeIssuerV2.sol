@@ -144,7 +144,7 @@ contract TradeIssuerV2 is ITradeIssuerV2, Ownable, ReentrancyGuard {
      *
      * @param _tokenToWithdraw     The ERC20 token address to withdraw
      */
-    function transferERC20ToOwner(address _tokenToWithdraw) external onlyOwner {
+    function transferERC20ToOwner(address _tokenToWithdraw) external onlyOwner nonReentrant {
         if (IERC20(_tokenToWithdraw).balanceOf(address(this)) < 1) revert ZeroBalanceAsset();
 
         IERC20(_tokenToWithdraw).safeTransfer(
@@ -155,12 +155,11 @@ contract TradeIssuerV2 is ITradeIssuerV2, Ownable, ReentrancyGuard {
     /**
      * Transfer all stucked Ether to the owner of the contract
      */
-    function transferEthToOwner() external onlyOwner {
+    function transferEthToOwner() external onlyOwner nonReentrant {
         if (address(this).balance < 1) revert ZeroBalanceAsset();
         payable(owner()).transfer(address(this).balance);
     }
 
-    error CustomError(uint256, uint256);
     /**
      * Mints the specified amount of chamber token and sends them to the msg.sender using an ERC20
      * token as input. Unspent baseToken is also transferred back to the sender.
@@ -169,28 +168,27 @@ contract TradeIssuerV2 is ITradeIssuerV2, Ownable, ReentrancyGuard {
      * @param _issuerWizard                 Issuer wizard that'll be called for mint.
      * @param _baseToken                    The token that will be used to get the underlying assets.
      * @param _maxPayAmount                 The maximum amount of the baseToken to be used for the mint.
-     * @param _chamberAmount                Chamber tokens amount to mint.
+     * @param _mintAmount                   Chamber tokens amount to mint.
      * @param _contractCallInstructions     Instruction array that will be executed in order to get
      *                                      the underlying assets.
      *
      * @return baseTokenUsed                Total amount of the base token used for the mint.
      *
      */
-
     function mintChamberFromToken(
         ContractCallInstruction[] memory _contractCallInstructions,
         IChamber _chamber,
         IIssuerWizard _issuerWizard,
         IERC20 _baseToken,
         uint256 _maxPayAmount,
-        uint256 _chamberAmount
+        uint256 _mintAmount
     ) external nonReentrant returns (uint256 baseTokenUsed) {
-        if (_chamberAmount == 0) revert ZeroChamberAmount();
+        if (_mintAmount == 0) revert ZeroChamberAmount();
 
         _baseToken.safeTransferFrom(msg.sender, address(this), _maxPayAmount);
 
         baseTokenUsed = _mintChamber(
-            _chamber, IERC20(_baseToken), _issuerWizard, _chamberAmount, _contractCallInstructions
+            _chamber, IERC20(_baseToken), _issuerWizard, _mintAmount, _contractCallInstructions
         );
 
         if (_maxPayAmount < baseTokenUsed) revert OversoldBaseToken();
@@ -199,10 +197,10 @@ contract TradeIssuerV2 is ITradeIssuerV2, Ownable, ReentrancyGuard {
 
         _baseToken.safeTransfer(msg.sender, remainingBaseToken);
 
-        IERC20(address(_chamber)).safeTransfer(msg.sender, _chamberAmount);
+        IERC20(address(_chamber)).safeTransfer(msg.sender, _mintAmount);
 
         emit TradeIssuerTokenMinted(
-            address(_chamber), msg.sender, address(_baseToken), baseTokenUsed, _chamberAmount
+            address(_chamber), msg.sender, address(_baseToken), baseTokenUsed, _mintAmount
         );
 
         return baseTokenUsed;
@@ -214,7 +212,7 @@ contract TradeIssuerV2 is ITradeIssuerV2, Ownable, ReentrancyGuard {
      *
      * @param _chamber                      Chamber address.
      * @param _issuerWizard                 Issuer wizard that'll be called for mint.
-     * @param _chamberAmount                Chamber tokens amount to mint.
+     * @param _mintAmount                   Chamber tokens amount to mint.
      * @param _contractCallInstructions     Instruction array that will be executed in order to get
      *                                      the underlying assets.
      *
@@ -225,9 +223,9 @@ contract TradeIssuerV2 is ITradeIssuerV2, Ownable, ReentrancyGuard {
         ContractCallInstruction[] memory _contractCallInstructions,
         IChamber _chamber,
         IIssuerWizard _issuerWizard,
-        uint256 _chamberAmount
+        uint256 _mintAmount
     ) external payable nonReentrant returns (uint256 wrappedNativeTokenUsed) {
-        if (_chamberAmount == 0) revert ZeroChamberAmount();
+        if (_mintAmount == 0) revert ZeroChamberAmount();
         if (msg.value == 0) revert ZeroNativeTokenSent();
         WETH(payable(wrappedNativeToken)).deposit{value: msg.value}();
 
@@ -235,7 +233,7 @@ contract TradeIssuerV2 is ITradeIssuerV2, Ownable, ReentrancyGuard {
             _chamber,
             IERC20(wrappedNativeToken),
             _issuerWizard,
-            _chamberAmount,
+            _mintAmount,
             _contractCallInstructions
         );
 
@@ -246,14 +244,14 @@ contract TradeIssuerV2 is ITradeIssuerV2, Ownable, ReentrancyGuard {
         WETH(payable(wrappedNativeToken)).withdraw(remainingWrappedNativeToken);
         payable(msg.sender).sendValue(remainingWrappedNativeToken);
 
-        IERC20(address(_chamber)).safeTransfer(msg.sender, _chamberAmount);
+        IERC20(address(_chamber)).safeTransfer(msg.sender, _mintAmount);
 
         emit TradeIssuerTokenMinted(
             address(_chamber),
             msg.sender,
             address(wrappedNativeToken),
             wrappedNativeTokenUsed,
-            _chamberAmount
+            _mintAmount
         );
 
         return wrappedNativeTokenUsed;
@@ -267,7 +265,7 @@ contract TradeIssuerV2 is ITradeIssuerV2, Ownable, ReentrancyGuard {
      * @param _issuerWizard                 Issuer wizard that'll be called for redeem.
      * @param _baseToken                    The token that it will be sent to the msg.sender.
      * @param _minReceiveAmount             The minimum amount of the baseToken to be received.
-     * @param _chamberAmount                Chamber tokens amount to redeem.
+     * @param _redeemAmount                 Chamber tokens amount to redeem.
      * @param _contractCallInstructions     Instruction array that will be executed in order to get
      *                                      the underlying assets.
      *
@@ -280,14 +278,14 @@ contract TradeIssuerV2 is ITradeIssuerV2, Ownable, ReentrancyGuard {
         IIssuerWizard _issuerWizard,
         IERC20 _baseToken,
         uint256 _minReceiveAmount,
-        uint256 _chamberAmount
+        uint256 _redeemAmount
     ) external nonReentrant returns (uint256 baseTokenReturned) {
-        if (_chamberAmount == 0) revert ZeroChamberAmount();
+        if (_redeemAmount == 0) revert ZeroChamberAmount();
 
-        IERC20(address(_chamber)).safeTransferFrom(msg.sender, address(this), _chamberAmount);
+        IERC20(address(_chamber)).safeTransferFrom(msg.sender, address(this), _redeemAmount);
 
         baseTokenReturned = _redeemChamber(
-            _chamber, _baseToken, _issuerWizard, _chamberAmount, _contractCallInstructions
+            _chamber, _baseToken, _issuerWizard, _redeemAmount, _contractCallInstructions
         );
 
         if (baseTokenReturned < _minReceiveAmount) {
@@ -297,7 +295,7 @@ contract TradeIssuerV2 is ITradeIssuerV2, Ownable, ReentrancyGuard {
         _baseToken.safeTransfer(msg.sender, baseTokenReturned);
 
         emit TradeIssuerTokenRedeemed(
-            address(_chamber), msg.sender, address(_baseToken), baseTokenReturned, _chamberAmount
+            address(_chamber), msg.sender, address(_baseToken), baseTokenReturned, _redeemAmount
         );
 
         return baseTokenReturned;
@@ -310,7 +308,7 @@ contract TradeIssuerV2 is ITradeIssuerV2, Ownable, ReentrancyGuard {
      * @param _chamber                      Chamber address.
      * @param _issuerWizard                 Issuer wizard that'll be called for redeem.
      * @param _minReceiveAmount             The minimum amount of the baseToken to be received.
-     * @param _chamberAmount                Chamber tokens amount to redeem.
+     * @param _redeemAmount                 Chamber tokens amount to redeem.
      * @param _contractCallInstructions     Instruction array that will be executed in order to get
      *                                      the underlying assets.
      *
@@ -322,17 +320,17 @@ contract TradeIssuerV2 is ITradeIssuerV2, Ownable, ReentrancyGuard {
         IChamber _chamber,
         IIssuerWizard _issuerWizard,
         uint256 _minReceiveAmount,
-        uint256 _chamberAmount
+        uint256 _redeemAmount
     ) external nonReentrant returns (uint256 wrappedNativeTokenReturned) {
-        if (_chamberAmount == 0) revert ZeroChamberAmount();
+        if (_redeemAmount == 0) revert ZeroChamberAmount();
 
-        IERC20(address(_chamber)).safeTransferFrom(msg.sender, address(this), _chamberAmount);
+        IERC20(address(_chamber)).safeTransferFrom(msg.sender, address(this), _redeemAmount);
 
         wrappedNativeTokenReturned = _redeemChamber(
             _chamber,
             IERC20(wrappedNativeToken),
             _issuerWizard,
-            _chamberAmount,
+            _redeemAmount,
             _contractCallInstructions
         );
 
@@ -348,7 +346,7 @@ contract TradeIssuerV2 is ITradeIssuerV2, Ownable, ReentrancyGuard {
             msg.sender,
             address(wrappedNativeToken),
             wrappedNativeTokenReturned,
-            _chamberAmount
+            _redeemAmount
         );
 
         return wrappedNativeTokenReturned;
@@ -363,7 +361,7 @@ contract TradeIssuerV2 is ITradeIssuerV2, Ownable, ReentrancyGuard {
      * @param _chamber                      Chamber address.
      * @param _baseToken                    The token that will be used to get the underlying assets.
      * @param _issuerWizard                 Issuer wizard that'll be called for mint.
-     * @param _chamberAmount                Chamber tokens amount to mint.
+     * @param _mintAmount                Chamber tokens amount to mint.
      * @param _contractCallInstructions     Instruction array that will be executed in order to get
      *                                      the underlying assets.
      *
@@ -374,16 +372,16 @@ contract TradeIssuerV2 is ITradeIssuerV2, Ownable, ReentrancyGuard {
         IChamber _chamber,
         IERC20 _baseToken,
         IIssuerWizard _issuerWizard,
-        uint256 _chamberAmount,
+        uint256 _mintAmount,
         ContractCallInstruction[] memory _contractCallInstructions
     ) internal returns (uint256 baseTokenUsed) {
         uint256 baseTokenBalanceBefore = _baseToken.balanceOf(address(this));
 
         _executeInstructions(_contractCallInstructions);
 
-        _checkAndIncreaseAllowanceOfConstituents(_chamber, _issuerWizard, _chamberAmount);
+        _checkAndIncreaseAllowanceOfConstituents(_chamber, _issuerWizard, _mintAmount);
 
-        _issuerWizard.issue(_chamber, _chamberAmount);
+        _issuerWizard.issue(_chamber, _mintAmount);
 
         baseTokenUsed = baseTokenBalanceBefore - _baseToken.balanceOf(address(this));
 
@@ -396,10 +394,10 @@ contract TradeIssuerV2 is ITradeIssuerV2, Ownable, ReentrancyGuard {
      *
      * @param _chamber                      Chamber address.
      * @param _baseToken                    The token that will be used to get the underlying assets.
-     * @param _issuerWizard                 Issuer wizard that'll be called for mint.
-     * @param _chamberAmount                Chamber tokens amount to mint.
+     * @param _issuerWizard                 Issuer wizard that'll be called for redeem.
+     * @param _redeemAmount                 Chamber tokens amount to redeem.
      * @param _contractCallInstructions     Instruction array that will be executed in order to get
-     *                                      the underlying assets.
+     *                                      the _baseToken assets.
      *
      * @return totalBaseTokenReturned       Total amount of the base that will be sent to the msg.sender.
      *
@@ -408,12 +406,12 @@ contract TradeIssuerV2 is ITradeIssuerV2, Ownable, ReentrancyGuard {
         IChamber _chamber,
         IERC20 _baseToken,
         IIssuerWizard _issuerWizard,
-        uint256 _chamberAmount,
+        uint256 _redeemAmount,
         ContractCallInstruction[] memory _contractCallInstructions
     ) internal returns (uint256 totalBaseTokenReturned) {
         uint256 baseTokenBalanceBefore = _baseToken.balanceOf(address(this));
 
-        _issuerWizard.redeem(_chamber, _chamberAmount);
+        _issuerWizard.redeem(_chamber, _redeemAmount);
 
         _executeInstructions(_contractCallInstructions);
 
@@ -477,15 +475,15 @@ contract TradeIssuerV2 is ITradeIssuerV2, Ownable, ReentrancyGuard {
      *
      * @param _chamber          Chamber token address for mint.
      * @param _issuerWizard     Issuer wizard used at _chamber.
-     * @param _chamberAmount    Amount of the chamber token to mint.
+     * @param _mintAmount    Amount of the chamber token to mint.
      */
     function _checkAndIncreaseAllowanceOfConstituents(
         IChamber _chamber,
         IIssuerWizard _issuerWizard,
-        uint256 _chamberAmount
+        uint256 _mintAmount
     ) internal {
         (address[] memory requiredConstituents, uint256[] memory requiredConstituentsQuantities) =
-            _issuerWizard.getConstituentsQuantitiesForIssuance(_chamber, _chamberAmount);
+            _issuerWizard.getConstituentsQuantitiesForIssuance(_chamber, _mintAmount);
 
         for (uint256 i = 0; i < requiredConstituents.length; i++) {
             if (
