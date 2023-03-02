@@ -136,7 +136,7 @@ interface ITradeIssuerV2 {
         IChamber _chamber,
         IIssuerWizard _issuerWizard,
         IERC20 _baseToken,
-        uint256 _baseTokenBounds,
+        uint256 _maxPayAmount,
         uint256 _chamberAmount
     ) external returns (uint256 baseTokenUsed);
 
@@ -152,7 +152,7 @@ interface ITradeIssuerV2 {
         IChamber _chamber,
         IIssuerWizard _issuerWizard,
         IERC20 _baseToken,
-        uint256 _baseTokenBounds,
+        uint256 _minReceiveAmount,
         uint256 _chamberAmount
     ) external returns (uint256 baseTokenReturned);
 
@@ -160,7 +160,7 @@ interface ITradeIssuerV2 {
         ContractCallInstruction[] memory _contractCallInstructions,
         IChamber _chamber,
         IIssuerWizard _issuerWizard,
-        uint256 _baseTokenBounds,
+        uint256 _minReceiveAmount,
         uint256 _chamberAmount
     ) external returns (uint256 wrappedNativeTokenReturned);
 }
