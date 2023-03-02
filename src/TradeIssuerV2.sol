@@ -144,7 +144,7 @@ contract TradeIssuerV2 is ITradeIssuerV2, Ownable, ReentrancyGuard {
      *
      * @param _tokenToWithdraw     The ERC20 token address to withdraw
      */
-    function transferERC20ToOwner(address _tokenToWithdraw) external onlyOwner {
+    function transferERC20ToOwner(address _tokenToWithdraw) external onlyOwner nonReentrant {
         if (IERC20(_tokenToWithdraw).balanceOf(address(this)) < 1) revert ZeroBalanceAsset();
 
         IERC20(_tokenToWithdraw).safeTransfer(
@@ -155,12 +155,11 @@ contract TradeIssuerV2 is ITradeIssuerV2, Ownable, ReentrancyGuard {
     /**
      * Transfer all stucked Ether to the owner of the contract
      */
-    function transferEthToOwner() external onlyOwner {
+    function transferEthToOwner() external onlyOwner nonReentrant {
         if (address(this).balance < 1) revert ZeroBalanceAsset();
         payable(owner()).transfer(address(this).balance);
     }
 
-    error CustomError(uint256, uint256);
     /**
      * Mints the specified amount of chamber token and sends them to the msg.sender using an ERC20
      * token as input. Unspent baseToken is also transferred back to the sender.
@@ -176,7 +175,6 @@ contract TradeIssuerV2 is ITradeIssuerV2, Ownable, ReentrancyGuard {
      * @return baseTokenUsed                Total amount of the base token used for the mint.
      *
      */
-
     function mintChamberFromToken(
         ContractCallInstruction[] memory _contractCallInstructions,
         IChamber _chamber,
