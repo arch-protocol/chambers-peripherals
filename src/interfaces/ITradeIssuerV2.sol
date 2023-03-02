@@ -99,7 +99,7 @@ interface ITradeIssuerV2 {
 
     error OversoldBaseToken();
 
-    error RedeemedForLessTokens(uint256 totalBaseTokenReturned);
+    error RedeemedForLessTokens();
 
     error TargetAlreadyAllowed();
 
