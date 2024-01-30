@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: Apache License 2.0
 pragma solidity ^0.8.17.0;
 
-import {Chamber} from "chambers/Chamber.sol";
+import { Chamber } from "chambers/Chamber.sol";
 
 contract ChamberFactory {
     address public owner;
@@ -29,15 +29,8 @@ contract ChamberFactory {
         address[] memory _constituents,
         uint256[] memory _quantities
     ) public returns (Chamber) {
-        Chamber chamber = new Chamber(
-        owner,
-        name,
-        symbol,
-        _constituents,
-        _quantities,
-        wizards,
-        managers
-      );
+        Chamber chamber =
+            new Chamber(owner, name, symbol, _constituents, _quantities, wizards, managers);
         return chamber;
     }
 }

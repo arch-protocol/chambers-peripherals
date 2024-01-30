@@ -2,18 +2,18 @@
 // SPDX-License-Identifier: Apache License 2.0
 pragma solidity ^0.8.17.0;
 
-import {ChamberTestUtils} from "test/utils/ChamberTestUtils.sol";
-import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
-import {ERC20} from "@openzeppelin/contracts/token/ERC20/ERC20.sol";
-import {Chamber} from "chambers/Chamber.sol";
-import {ChamberGod} from "chambers/ChamberGod.sol";
-import {IssuerWizard} from "chambers/IssuerWizard.sol";
-import {IVault} from "src/interfaces/IVault.sol";
-import {IChamber} from "chambers/interfaces/IChamber.sol";
-import {IIssuerWizard} from "chambers/interfaces/IIssuerWizard.sol";
-import {PreciseUnitMath} from "chambers/lib/PreciseUnitMath.sol";
-import {TradeIssuer} from "src/TradeIssuer.sol";
-import {ITradeIssuer} from "src/interfaces/ITradeIssuer.sol";
+import { ChamberTestUtils } from "test/utils/ChamberTestUtils.sol";
+import { IERC20 } from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
+import { ERC20 } from "@openzeppelin/contracts/token/ERC20/ERC20.sol";
+import { Chamber } from "chambers/Chamber.sol";
+import { ChamberGod } from "chambers/ChamberGod.sol";
+import { IssuerWizard } from "chambers/IssuerWizard.sol";
+import { IVault } from "src/interfaces/IVault.sol";
+import { IChamber } from "chambers/interfaces/IChamber.sol";
+import { IIssuerWizard } from "chambers/interfaces/IIssuerWizard.sol";
+import { PreciseUnitMath } from "chambers/lib/PreciseUnitMath.sol";
+import { TradeIssuer } from "src/TradeIssuer.sol";
+import { ITradeIssuer } from "src/interfaces/ITradeIssuer.sol";
 
 contract TradeIssuerIntegrationlMintChamberFromTokenTest is ChamberTestUtils {
     using PreciseUnitMath for uint256;
@@ -30,10 +30,10 @@ contract TradeIssuerIntegrationlMintChamberFromTokenTest is ChamberTestUtils {
     mapping(string => address) public tokens;
     address payable public alice = payable(address(0x123456));
     address payable public dexAgg = payable(address(0xDef1C0ded9bec7F1a1670819833240f027b25EfF));
-    uint256[] public componentQuantities = new uint256[] (3);
+    uint256[] public componentQuantities = new uint256[](3);
     uint256[] public vaultQuantities = new uint256[](3);
-    uint256[] public baseQuantities = new uint256[] (3);
-    address[] public components = new address[] (3);
+    uint256[] public baseQuantities = new uint256[](3);
+    address[] public components = new address[](3);
     address[] public baseConstituents = new address[](3);
     address[] public vaults = new address[](3);
     address[] public vaultAssets = new address[](3);

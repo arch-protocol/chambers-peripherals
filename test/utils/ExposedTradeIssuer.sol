@@ -2,15 +2,15 @@
 // SPDX-License-Identifier: Apache License 2.0
 pragma solidity ^0.8.17.0;
 
-import {TradeIssuer} from "src/TradeIssuer.sol";
-import {IChamber} from "chambers/interfaces/IChamber.sol";
-import {IIssuerWizard} from "chambers/interfaces/IIssuerWizard.sol";
-import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
+import { TradeIssuer } from "src/TradeIssuer.sol";
+import { IChamber } from "chambers/interfaces/IChamber.sol";
+import { IIssuerWizard } from "chambers/interfaces/IIssuerWizard.sol";
+import { IERC20 } from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 
 contract ExposedTradeIssuer is TradeIssuer {
     constructor(address payable _dexAggregator, address _wrappedNativeToken)
         TradeIssuer(_dexAggregator, _wrappedNativeToken)
-    {}
+    { }
 
     function redeemChamber(IssuanceParams memory _redeemParams)
         public

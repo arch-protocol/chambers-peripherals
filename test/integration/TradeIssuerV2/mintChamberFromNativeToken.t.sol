@@ -2,19 +2,19 @@
 // SPDX-License-Identifier: Apache License 2.0
 pragma solidity ^0.8.17.0;
 
-import {console} from "forge-std/console.sol";
-import {ChamberTestUtils} from "test/utils/ChamberTestUtils.sol";
-import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
-import {ERC20} from "@openzeppelin/contracts/token/ERC20/ERC20.sol";
-import {ChamberGod} from "chambers/ChamberGod.sol";
-import {Chamber} from "chambers/Chamber.sol";
-import {IssuerWizard} from "chambers/IssuerWizard.sol";
-import {IVault} from "src/interfaces/IVault.sol";
-import {IChamber} from "chambers/interfaces/IChamber.sol";
-import {IIssuerWizard} from "chambers/interfaces/IIssuerWizard.sol";
-import {PreciseUnitMath} from "chambers/lib/PreciseUnitMath.sol";
-import {TradeIssuerV2} from "src/TradeIssuerV2.sol";
-import {ITradeIssuerV2} from "src/interfaces/ITradeIssuerV2.sol";
+import { console } from "forge-std/console.sol";
+import { ChamberTestUtils } from "test/utils/ChamberTestUtils.sol";
+import { IERC20 } from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
+import { ERC20 } from "@openzeppelin/contracts/token/ERC20/ERC20.sol";
+import { ChamberGod } from "chambers/ChamberGod.sol";
+import { Chamber } from "chambers/Chamber.sol";
+import { IssuerWizard } from "chambers/IssuerWizard.sol";
+import { IVault } from "src/interfaces/IVault.sol";
+import { IChamber } from "chambers/interfaces/IChamber.sol";
+import { IIssuerWizard } from "chambers/interfaces/IIssuerWizard.sol";
+import { PreciseUnitMath } from "chambers/lib/PreciseUnitMath.sol";
+import { TradeIssuerV2 } from "src/TradeIssuerV2.sol";
+import { ITradeIssuerV2 } from "src/interfaces/ITradeIssuerV2.sol";
 
 contract TradeIssuerV2IntegrationmintChamberFromNativeTokenTest is ChamberTestUtils {
     using PreciseUnitMath for uint256;
@@ -32,7 +32,7 @@ contract TradeIssuerV2IntegrationmintChamberFromNativeTokenTest is ChamberTestUt
     address payable public alice = payable(address(0x1));
     address payable public dexAgg = payable(address(0xDef1C0ded9bec7F1a1670819833240f027b25EfF));
     mapping(string => address) public tokens;
-    uint256[] public componentQuantities = new uint256[] (3);
+    uint256[] public componentQuantities = new uint256[](3);
 
     /*//////////////////////////////////////////////////////////////
                               SET UP
@@ -47,7 +47,7 @@ contract TradeIssuerV2IntegrationmintChamberFromNativeTokenTest is ChamberTestUt
         tokens["yusdc"] = 0xa354F35829Ae975e850e23e9615b11Da1B3dC4DE;
         tokens["yusdt"] = 0x3B27F92C0e212C671EA351827EDF93DB27cc0c65;
 
-        tradeIssuer = new TradeIssuerV2( tokens["weth"]);
+        tradeIssuer = new TradeIssuerV2(tokens["weth"]);
         tradeIssuer.addTarget(dexAgg);
         tradeIssuer.addTarget(tokens["yusdc"]);
         tradeIssuer.addTarget(tokens["ydai"]);
@@ -75,11 +75,11 @@ contract TradeIssuerV2IntegrationmintChamberFromNativeTokenTest is ChamberTestUt
      */
     function testCannotMintZeroChamberAmount() public {
         ITradeIssuerV2.ContractCallInstruction[] memory instructions =
-            new ITradeIssuerV2.ContractCallInstruction[] (1);
+            new ITradeIssuerV2.ContractCallInstruction[](1);
 
         vm.prank(alice);
         vm.expectRevert(ITradeIssuerV2.ZeroChamberAmount.selector);
-        uint256 totalBaseTokenUsed = tradeIssuer.mintChamberFromNativeToken{value: 0}(
+        uint256 totalBaseTokenUsed = tradeIssuer.mintChamberFromNativeToken{ value: 0 }(
             instructions, addyToken, issuerWizard, 0
         );
         assertEq(totalBaseTokenUsed, 0);
@@ -90,11 +90,11 @@ contract TradeIssuerV2IntegrationmintChamberFromNativeTokenTest is ChamberTestUt
      */
     function testCannotMintWithoutBaseTokenBalance() public {
         ITradeIssuerV2.ContractCallInstruction[] memory instructions =
-            new ITradeIssuerV2.ContractCallInstruction[] (1);
+            new ITradeIssuerV2.ContractCallInstruction[](1);
 
         vm.prank(alice);
         vm.expectRevert(ITradeIssuerV2.ZeroNativeTokenSent.selector);
-        uint256 totalBaseTokenUsed = tradeIssuer.mintChamberFromNativeToken{value: 0}(
+        uint256 totalBaseTokenUsed = tradeIssuer.mintChamberFromNativeToken{ value: 0 }(
             instructions, addyToken, issuerWizard, 1e18
         );
         assertEq(totalBaseTokenUsed, 0);
@@ -105,7 +105,7 @@ contract TradeIssuerV2IntegrationmintChamberFromNativeTokenTest is ChamberTestUt
      */
     function testCannotMintWithUnderboughtAsset() public {
         ITradeIssuerV2.ContractCallInstruction[] memory instructions =
-            new ITradeIssuerV2.ContractCallInstruction[] (1);
+            new ITradeIssuerV2.ContractCallInstruction[](1);
         (, uint256[] memory requiredQuantities) =
             issuerWizard.getConstituentsQuantitiesForIssuance(addyToken, 500e18);
 
@@ -151,7 +151,7 @@ contract TradeIssuerV2IntegrationmintChamberFromNativeTokenTest is ChamberTestUt
      */
     function testFailMintWithBadQuoteData() public {
         ITradeIssuerV2.ContractCallInstruction[] memory instructions =
-            new ITradeIssuerV2.ContractCallInstruction[] (1);
+            new ITradeIssuerV2.ContractCallInstruction[](1);
         (, uint256[] memory requiredQuantities) =
             issuerWizard.getConstituentsQuantitiesForIssuance(addyToken, 500e18);
 
@@ -195,7 +195,7 @@ contract TradeIssuerV2IntegrationmintChamberFromNativeTokenTest is ChamberTestUt
         address payable invalidTarget = payable(address(0x123));
 
         ITradeIssuerV2.ContractCallInstruction[] memory instructions =
-            new ITradeIssuerV2.ContractCallInstruction[] (1);
+            new ITradeIssuerV2.ContractCallInstruction[](1);
         (, uint256[] memory requiredQuantities) =
             issuerWizard.getConstituentsQuantitiesForIssuance(addyToken, 500e18);
 
@@ -237,7 +237,7 @@ contract TradeIssuerV2IntegrationmintChamberFromNativeTokenTest is ChamberTestUt
      */
     function testCannotMintWithUnderboughtConstituent() public {
         ITradeIssuerV2.ContractCallInstruction[] memory instructions =
-            new ITradeIssuerV2.ContractCallInstruction[] (0);
+            new ITradeIssuerV2.ContractCallInstruction[](0);
 
         (address[] memory requiredConstituents, uint256[] memory requiredQuantities) =
             issuerWizard.getConstituentsQuantitiesForIssuance(addyToken, 1e18);
@@ -252,7 +252,7 @@ contract TradeIssuerV2IntegrationmintChamberFromNativeTokenTest is ChamberTestUt
                 requiredQuantities[0]
             )
         );
-        uint256 totalBaseTokenUsed = tradeIssuer.mintChamberFromNativeToken{value: 1e6}(
+        uint256 totalBaseTokenUsed = tradeIssuer.mintChamberFromNativeToken{ value: 1e6 }(
             instructions, addyToken, issuerWizard, 1e18
         );
         assertEq(totalBaseTokenUsed, 0);
@@ -263,7 +263,7 @@ contract TradeIssuerV2IntegrationmintChamberFromNativeTokenTest is ChamberTestUt
      */
     function testCannotMintAddyWithOverSpentWeth() public {
         ITradeIssuerV2.ContractCallInstruction[] memory instructions =
-            new ITradeIssuerV2.ContractCallInstruction[] (6);
+            new ITradeIssuerV2.ContractCallInstruction[](6);
         (, uint256[] memory requiredQuantities) =
             issuerWizard.getConstituentsQuantitiesForIssuance(addyToken, 500e18);
 
@@ -359,7 +359,7 @@ contract TradeIssuerV2IntegrationmintChamberFromNativeTokenTest is ChamberTestUt
 
         vm.prank(alice);
         vm.expectRevert(ITradeIssuerV2.OversoldBaseToken.selector);
-        uint256 totalBaseTokenUsed = tradeIssuer.mintChamberFromNativeToken{value: 1}(
+        uint256 totalBaseTokenUsed = tradeIssuer.mintChamberFromNativeToken{ value: 1 }(
             instructions,
             addyToken,
             issuerWizard,
@@ -374,7 +374,7 @@ contract TradeIssuerV2IntegrationmintChamberFromNativeTokenTest is ChamberTestUt
      */
     function testCannotMintIwthWrongOrderAtInstructionsArray() public {
         ITradeIssuerV2.ContractCallInstruction[] memory instructions =
-            new ITradeIssuerV2.ContractCallInstruction[] (6);
+            new ITradeIssuerV2.ContractCallInstruction[](6);
         (, uint256[] memory requiredQuantities) =
             issuerWizard.getConstituentsQuantitiesForIssuance(addyToken, 500e18);
 
@@ -431,7 +431,7 @@ contract TradeIssuerV2IntegrationmintChamberFromNativeTokenTest is ChamberTestUt
      */
     function testSuccessMintAddyWithWeth() public {
         ITradeIssuerV2.ContractCallInstruction[] memory instructions =
-            new ITradeIssuerV2.ContractCallInstruction[] (6);
+            new ITradeIssuerV2.ContractCallInstruction[](6);
         (, uint256[] memory requiredQuantities) =
             issuerWizard.getConstituentsQuantitiesForIssuance(addyToken, 500e18);
 
@@ -556,7 +556,7 @@ contract TradeIssuerV2IntegrationmintChamberFromNativeTokenTest is ChamberTestUt
      */
     function testSuccessMintAddyWithWethInDifferentOrder() public {
         ITradeIssuerV2.ContractCallInstruction[] memory instructions =
-            new ITradeIssuerV2.ContractCallInstruction[] (6);
+            new ITradeIssuerV2.ContractCallInstruction[](6);
         (, uint256[] memory requiredQuantities) =
             issuerWizard.getConstituentsQuantitiesForIssuance(addyToken, 500e18);
 
@@ -680,7 +680,7 @@ contract TradeIssuerV2IntegrationmintChamberFromNativeTokenTest is ChamberTestUt
      */
     function testSuccessMintAddyWithOverboughtUsdt() public {
         ITradeIssuerV2.ContractCallInstruction[] memory instructions =
-            new ITradeIssuerV2.ContractCallInstruction[] (6);
+            new ITradeIssuerV2.ContractCallInstruction[](6);
         (, uint256[] memory requiredQuantities) =
             issuerWizard.getConstituentsQuantitiesForIssuance(addyToken, 500e18);
 

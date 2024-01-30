@@ -2,19 +2,19 @@
 // SPDX-License-Identifier: Apache License 2.0
 pragma solidity ^0.8.17.0;
 
-import {ChamberTestUtils} from "test/utils/ChamberTestUtils.sol";
-import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
-import {ERC20} from "@openzeppelin/contracts/token/ERC20/ERC20.sol";
-import {ChamberGod} from "chambers/ChamberGod.sol";
-import {Chamber} from "chambers/Chamber.sol";
-import {IssuerWizard} from "chambers/IssuerWizard.sol";
-import {IChamber} from "chambers/interfaces/IChamber.sol";
-import {IIssuerWizard} from "chambers/interfaces/IIssuerWizard.sol";
-import {IVault} from "src/interfaces/IVault.sol";
-import {PreciseUnitMath} from "chambers/lib/PreciseUnitMath.sol";
-import {TradeIssuer} from "src/TradeIssuer.sol";
-import {ITradeIssuer} from "src/interfaces/ITradeIssuer.sol";
-import {stdError} from "forge-std/StdError.sol";
+import { ChamberTestUtils } from "test/utils/ChamberTestUtils.sol";
+import { IERC20 } from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
+import { ERC20 } from "@openzeppelin/contracts/token/ERC20/ERC20.sol";
+import { ChamberGod } from "chambers/ChamberGod.sol";
+import { Chamber } from "chambers/Chamber.sol";
+import { IssuerWizard } from "chambers/IssuerWizard.sol";
+import { IChamber } from "chambers/interfaces/IChamber.sol";
+import { IIssuerWizard } from "chambers/interfaces/IIssuerWizard.sol";
+import { IVault } from "src/interfaces/IVault.sol";
+import { PreciseUnitMath } from "chambers/lib/PreciseUnitMath.sol";
+import { TradeIssuer } from "src/TradeIssuer.sol";
+import { ITradeIssuer } from "src/interfaces/ITradeIssuer.sol";
+import { stdError } from "forge-std/StdError.sol";
 
 contract TradeIssuerIntegrationRedeemChamberToTokenTest is ChamberTestUtils {
     using PreciseUnitMath for uint256;
@@ -32,10 +32,10 @@ contract TradeIssuerIntegrationRedeemChamberToTokenTest is ChamberTestUtils {
     address payable public dexAgg = payable(address(0xDef1C0ded9bec7F1a1670819833240f027b25EfF));
     address public tradeIssuerAddress;
     address payable public alice = payable(address(0x12345e6));
-    uint256[] public componentQuantities = new uint256[] (2);
+    uint256[] public componentQuantities = new uint256[](2);
     uint256[] public vaultQuantities = new uint256[](2);
-    uint256[] public baseQuantities = new uint256[] (2);
-    address[] public components = new address[] (2);
+    uint256[] public baseQuantities = new uint256[](2);
+    address[] public components = new address[](2);
     address[] public baseConstituents = new address[](2);
     address[] public vaults = new address[](2);
     address[] public vaultAssets = new address[](2);
@@ -1012,9 +1012,9 @@ contract TradeIssuerIntegrationRedeemChamberToTokenTest is ChamberTestUtils {
 
         // Now redeem
         //Empty arrays created.
-        address[] memory emptyComponents = new address[] (0);
-        uint256[] memory emptyQuantities = new uint256[] (0);
-        bytes[] memory emptyQuotes = new bytes[] (0);
+        address[] memory emptyComponents = new address[](0);
+        uint256[] memory emptyQuantities = new uint256[](0);
+        bytes[] memory emptyQuotes = new bytes[](0);
 
         vaultQuantities[0] = PreciseUnitMath.preciseMulCeil(
             ERC20(address(baseChamber)).balanceOf(alice), baseQuantities[0], 18

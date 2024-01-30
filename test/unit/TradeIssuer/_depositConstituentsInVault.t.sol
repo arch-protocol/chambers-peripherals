@@ -3,11 +3,11 @@
 pragma solidity ^0.8.17.0;
 
 import "forge-std/Test.sol";
-import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
-import {ERC20} from "@openzeppelin/contracts/token/ERC20/ERC20.sol";
-import {IChamber} from "chambers/interfaces/IChamber.sol";
-import {IVault} from "src/interfaces/IVault.sol";
-import {ExposedTradeIssuer} from "test/utils/ExposedTradeIssuer.sol";
+import { IERC20 } from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
+import { ERC20 } from "@openzeppelin/contracts/token/ERC20/ERC20.sol";
+import { IChamber } from "chambers/interfaces/IChamber.sol";
+import { IVault } from "src/interfaces/IVault.sol";
+import { ExposedTradeIssuer } from "test/utils/ExposedTradeIssuer.sol";
 
 contract TradeIssuerUnitInternalDepositConstituentsInVaultTest is Test {
     /*//////////////////////////////////////////////////////////////
@@ -82,7 +82,7 @@ contract TradeIssuerUnitInternalDepositConstituentsInVaultTest is Test {
         vm.assume(mintAmount > 0);
         vm.assume(mintAmount < type(uint160).max);
 
-        uint256[] memory vaultQuantitiesOneElement = new uint256[] (0);
+        uint256[] memory vaultQuantitiesOneElement = new uint256[](0);
 
         vm.expectRevert(stdError.indexOOBError); //Index Out of bounds stdError
         tradeIssuer.depositConstituentsInVault(
@@ -103,7 +103,7 @@ contract TradeIssuerUnitInternalDepositConstituentsInVaultTest is Test {
 
         vaultQuantities[0] = depositAmount0;
 
-        address[] memory vaultAssetsEmptyArray = new address[] (0);
+        address[] memory vaultAssetsEmptyArray = new address[](0);
 
         vm.mockCall(
             chamberAddress,

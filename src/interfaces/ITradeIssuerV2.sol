@@ -39,12 +39,11 @@
  *    @@@@@(((((
  *      @@@((
  */
-
 pragma solidity ^0.8.17.0;
 
-import {IChamber} from "chambers/interfaces/IChamber.sol";
-import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
-import {IIssuerWizard} from "chambers/interfaces/IIssuerWizard.sol";
+import { IChamber } from "chambers/interfaces/IChamber.sol";
+import { IERC20 } from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
+import { IIssuerWizard } from "chambers/interfaces/IIssuerWizard.sol";
 
 interface ITradeIssuerV2 {
     /*//////////////////////////////////////////////////////////////

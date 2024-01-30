@@ -2,18 +2,18 @@
 // SPDX-License-Identifier: Apache License 2.0
 pragma solidity ^0.8.17.0;
 
-import {ChamberTestUtils} from "test/utils/ChamberTestUtils.sol";
-import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
-import {ERC20} from "@openzeppelin/contracts/token/ERC20/ERC20.sol";
-import {ChamberGod} from "chambers/ChamberGod.sol";
-import {Chamber} from "chambers/Chamber.sol";
-import {IssuerWizard} from "chambers/IssuerWizard.sol";
-import {IChamber} from "chambers/interfaces/IChamber.sol";
-import {IIssuerWizard} from "chambers/interfaces/IIssuerWizard.sol";
-import {IVault} from "src/interfaces/IVault.sol";
-import {PreciseUnitMath} from "chambers/lib/PreciseUnitMath.sol";
-import {ITradeIssuer} from "src/interfaces/ITradeIssuer.sol";
-import {TradeIssuer} from "src/TradeIssuer.sol";
+import { ChamberTestUtils } from "test/utils/ChamberTestUtils.sol";
+import { IERC20 } from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
+import { ERC20 } from "@openzeppelin/contracts/token/ERC20/ERC20.sol";
+import { ChamberGod } from "chambers/ChamberGod.sol";
+import { Chamber } from "chambers/Chamber.sol";
+import { IssuerWizard } from "chambers/IssuerWizard.sol";
+import { IChamber } from "chambers/interfaces/IChamber.sol";
+import { IIssuerWizard } from "chambers/interfaces/IIssuerWizard.sol";
+import { IVault } from "src/interfaces/IVault.sol";
+import { PreciseUnitMath } from "chambers/lib/PreciseUnitMath.sol";
+import { ITradeIssuer } from "src/interfaces/ITradeIssuer.sol";
+import { TradeIssuer } from "src/TradeIssuer.sol";
 
 contract TradeIssuerIntegrationlMintChamberFromNativeTokenTest is ChamberTestUtils {
     using PreciseUnitMath for uint256;
@@ -30,10 +30,10 @@ contract TradeIssuerIntegrationlMintChamberFromNativeTokenTest is ChamberTestUti
     mapping(string => address) public tokens;
     address payable public alice = payable(address(0x123456));
     address payable public dexAgg = payable(address(0xDef1C0ded9bec7F1a1670819833240f027b25EfF));
-    uint256[] public componentQuantities = new uint256[] (2);
+    uint256[] public componentQuantities = new uint256[](2);
     uint256[] public vaultQuantities = new uint256[](2);
-    uint256[] public baseQuantities = new uint256[] (2);
-    address[] public components = new address[] (2);
+    uint256[] public baseQuantities = new uint256[](2);
+    address[] public components = new address[](2);
     address[] public baseConstituents = new address[](2);
     address[] public vaults = new address[](2);
     address[] public vaultAssets = new address[](2);
@@ -129,7 +129,7 @@ contract TradeIssuerIntegrationlMintChamberFromNativeTokenTest is ChamberTestUti
 
         vm.prank(alice);
         vm.expectRevert(bytes("No Native Token sent"));
-        tradeIssuer.mintChamberFromNativeToken{value: 0}(
+        tradeIssuer.mintChamberFromNativeToken{ value: 0 }(
             ITradeIssuer.IssuanceParams(
                 quotes,
                 IERC20(tokens["weth"]),
@@ -199,7 +199,7 @@ contract TradeIssuerIntegrationlMintChamberFromNativeTokenTest is ChamberTestUti
 
         vm.prank(alice);
         vm.expectRevert(bytes("Underbought dex asset"));
-        tradeIssuer.mintChamberFromNativeToken{value: amountWithSlippage}(
+        tradeIssuer.mintChamberFromNativeToken{ value: amountWithSlippage }(
             ITradeIssuer.IssuanceParams(
                 quotes,
                 IERC20(tokens["weth"]),
@@ -266,7 +266,7 @@ contract TradeIssuerIntegrationlMintChamberFromNativeTokenTest is ChamberTestUti
 
         vm.prank(alice);
         vm.expectRevert(bytes("Overbought dex asset"));
-        tradeIssuer.mintChamberFromNativeToken{value: amountWithSlippage}(
+        tradeIssuer.mintChamberFromNativeToken{ value: amountWithSlippage }(
             ITradeIssuer.IssuanceParams(
                 quotes,
                 IERC20(tokens["weth"]),
@@ -327,7 +327,7 @@ contract TradeIssuerIntegrationlMintChamberFromNativeTokenTest is ChamberTestUti
         vm.deal(alice, amountWithSlippage);
 
         vm.prank(alice);
-        tradeIssuer.mintChamberFromNativeToken{value: amountWithSlippage}(
+        tradeIssuer.mintChamberFromNativeToken{ value: amountWithSlippage }(
             ITradeIssuer.IssuanceParams(
                 quotes,
                 IERC20(tokens["weth"]),
@@ -399,7 +399,7 @@ contract TradeIssuerIntegrationlMintChamberFromNativeTokenTest is ChamberTestUti
 
         vm.prank(alice);
         vm.expectRevert(bytes("Dai/insufficient-balance"));
-        tradeIssuer.mintChamberFromNativeToken{value: amountWithSlippage}(
+        tradeIssuer.mintChamberFromNativeToken{ value: amountWithSlippage }(
             ITradeIssuer.IssuanceParams(
                 quotes,
                 IERC20(tokens["weth"]),
@@ -466,7 +466,7 @@ contract TradeIssuerIntegrationlMintChamberFromNativeTokenTest is ChamberTestUti
 
         vm.prank(alice);
         vm.expectRevert(bytes("Deposit amount cannot be zero"));
-        tradeIssuer.mintChamberFromNativeToken{value: amountWithSlippage}(
+        tradeIssuer.mintChamberFromNativeToken{ value: amountWithSlippage }(
             ITradeIssuer.IssuanceParams(
                 quotes,
                 IERC20(tokens["weth"]),
@@ -536,7 +536,7 @@ contract TradeIssuerIntegrationlMintChamberFromNativeTokenTest is ChamberTestUti
 
         vm.prank(alice);
         vm.expectRevert(bytes("Underbought vault constituent"));
-        tradeIssuer.mintChamberFromNativeToken{value: amountWithSlippage}(
+        tradeIssuer.mintChamberFromNativeToken{ value: amountWithSlippage }(
             ITradeIssuer.IssuanceParams(
                 quotes,
                 IERC20(tokens["weth"]),
@@ -593,7 +593,7 @@ contract TradeIssuerIntegrationlMintChamberFromNativeTokenTest is ChamberTestUti
 
         vm.prank(alice);
         vm.expectRevert(bytes("Overspent input/native token"));
-        tradeIssuer.mintChamberFromNativeToken{value: amountWithSlippage}(
+        tradeIssuer.mintChamberFromNativeToken{ value: amountWithSlippage }(
             ITradeIssuer.IssuanceParams(
                 quotes,
                 IERC20(tokens["weth"]),

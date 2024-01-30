@@ -2,20 +2,20 @@
 // SPDX-License-Identifier: Apache License 2.0
 pragma solidity ^0.8.17.0;
 
-import {console} from "forge-std/console.sol";
-import {ChamberTestUtils} from "test/utils/ChamberTestUtils.sol";
-import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
-import {ERC20} from "@openzeppelin/contracts/token/ERC20/ERC20.sol";
-import {ChamberGod} from "chambers/ChamberGod.sol";
-import {Chamber} from "chambers/Chamber.sol";
-import {IssuerWizard} from "chambers/IssuerWizard.sol";
-import {IVault} from "src/interfaces/IVault.sol";
-import {IChamber} from "chambers/interfaces/IChamber.sol";
-import {IIssuerWizard} from "chambers/interfaces/IIssuerWizard.sol";
-import {PreciseUnitMath} from "chambers/lib/PreciseUnitMath.sol";
-import {TradeIssuerV2} from "src/TradeIssuerV2.sol";
-import {ITradeIssuerV2} from "src/interfaces/ITradeIssuerV2.sol";
-import {stdError} from "forge-std/StdError.sol";
+import { console } from "forge-std/console.sol";
+import { ChamberTestUtils } from "test/utils/ChamberTestUtils.sol";
+import { IERC20 } from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
+import { ERC20 } from "@openzeppelin/contracts/token/ERC20/ERC20.sol";
+import { ChamberGod } from "chambers/ChamberGod.sol";
+import { Chamber } from "chambers/Chamber.sol";
+import { IssuerWizard } from "chambers/IssuerWizard.sol";
+import { IVault } from "src/interfaces/IVault.sol";
+import { IChamber } from "chambers/interfaces/IChamber.sol";
+import { IIssuerWizard } from "chambers/interfaces/IIssuerWizard.sol";
+import { PreciseUnitMath } from "chambers/lib/PreciseUnitMath.sol";
+import { TradeIssuerV2 } from "src/TradeIssuerV2.sol";
+import { ITradeIssuerV2 } from "src/interfaces/ITradeIssuerV2.sol";
+import { stdError } from "forge-std/StdError.sol";
 
 contract TradeIssuerV2IntegrationRedeemChamberToTokenTest is ChamberTestUtils {
     using PreciseUnitMath for uint256;
@@ -33,7 +33,7 @@ contract TradeIssuerV2IntegrationRedeemChamberToTokenTest is ChamberTestUtils {
     address payable public alice = payable(address(0x123456));
     address payable public dexAgg = payable(address(0xDef1C0ded9bec7F1a1670819833240f027b25EfF));
     mapping(string => address) public tokens;
-    uint256[] public componentQuantities = new uint256[] (3);
+    uint256[] public componentQuantities = new uint256[](3);
 
     /*//////////////////////////////////////////////////////////////
                               SET UP
@@ -48,7 +48,7 @@ contract TradeIssuerV2IntegrationRedeemChamberToTokenTest is ChamberTestUtils {
         tokens["yusdc"] = 0xa354F35829Ae975e850e23e9615b11Da1B3dC4DE;
         tokens["yusdt"] = 0x3B27F92C0e212C671EA351827EDF93DB27cc0c65;
 
-        tradeIssuer = new TradeIssuerV2( tokens["weth"]);
+        tradeIssuer = new TradeIssuerV2(tokens["weth"]);
         tradeIssuer.addTarget(dexAgg);
         tradeIssuer.addTarget(tokens["yusdc"]);
         tradeIssuer.addTarget(tokens["ydai"]);
@@ -76,7 +76,7 @@ contract TradeIssuerV2IntegrationRedeemChamberToTokenTest is ChamberTestUtils {
      */
     function testCannotRedeemZeroChamberAmount() public {
         ITradeIssuerV2.ContractCallInstruction[] memory instructions =
-            new ITradeIssuerV2.ContractCallInstruction[] (1);
+            new ITradeIssuerV2.ContractCallInstruction[](1);
 
         vm.prank(alice);
         vm.expectRevert(ITradeIssuerV2.ZeroChamberAmount.selector);
@@ -91,7 +91,7 @@ contract TradeIssuerV2IntegrationRedeemChamberToTokenTest is ChamberTestUtils {
      */
     function testCannotRedeemWithoutChamberTokenApproval() public {
         ITradeIssuerV2.ContractCallInstruction[] memory instructions =
-            new ITradeIssuerV2.ContractCallInstruction[] (1);
+            new ITradeIssuerV2.ContractCallInstruction[](1);
 
         deal(address(addyToken), alice, 1e6);
 
@@ -108,7 +108,7 @@ contract TradeIssuerV2IntegrationRedeemChamberToTokenTest is ChamberTestUtils {
      */
     function testCannotRedeemWithoutChamberTokenBalance() public {
         ITradeIssuerV2.ContractCallInstruction[] memory instructions =
-            new ITradeIssuerV2.ContractCallInstruction[] (1);
+            new ITradeIssuerV2.ContractCallInstruction[](1);
 
         vm.prank(alice);
         addyToken.approve(address(tradeIssuer), 1e18);
@@ -126,7 +126,7 @@ contract TradeIssuerV2IntegrationRedeemChamberToTokenTest is ChamberTestUtils {
      */
     function testCannotRedeemWithUnderboughtAsset() public {
         ITradeIssuerV2.ContractCallInstruction[] memory instructions =
-            new ITradeIssuerV2.ContractCallInstruction[] (1);
+            new ITradeIssuerV2.ContractCallInstruction[](1);
         (, uint256[] memory requiredQuantities) =
             issuerWizard.getConstituentsQuantitiesForIssuance(addyToken, 500e18);
 
@@ -179,7 +179,7 @@ contract TradeIssuerV2IntegrationRedeemChamberToTokenTest is ChamberTestUtils {
      */
     function testCannotRedeemWithBadQuoteData() public {
         ITradeIssuerV2.ContractCallInstruction[] memory instructions =
-            new ITradeIssuerV2.ContractCallInstruction[] (1);
+            new ITradeIssuerV2.ContractCallInstruction[](1);
         (, uint256[] memory requiredQuantities) =
             issuerWizard.getConstituentsQuantitiesForIssuance(addyToken, 500e18);
 
@@ -230,7 +230,7 @@ contract TradeIssuerV2IntegrationRedeemChamberToTokenTest is ChamberTestUtils {
     function testCannoRedeemtWithInvalidTarget() public {
         address payable invalidTarget = payable(address(0x123));
         ITradeIssuerV2.ContractCallInstruction[] memory instructions =
-            new ITradeIssuerV2.ContractCallInstruction[] (1);
+            new ITradeIssuerV2.ContractCallInstruction[](1);
         (, uint256[] memory requiredQuantities) =
             issuerWizard.getConstituentsQuantitiesForIssuance(addyToken, 500e18);
 
@@ -279,7 +279,7 @@ contract TradeIssuerV2IntegrationRedeemChamberToTokenTest is ChamberTestUtils {
      */
     function testCannotRedeemAddyWithUnderBoughtBaseToken() public {
         ITradeIssuerV2.ContractCallInstruction[] memory instructions =
-            new ITradeIssuerV2.ContractCallInstruction[] (5);
+            new ITradeIssuerV2.ContractCallInstruction[](5);
         (, uint256[] memory requiredQuantities) =
             issuerWizard.getConstituentsQuantitiesForIssuance(addyToken, 500e18);
 
@@ -388,7 +388,7 @@ contract TradeIssuerV2IntegrationRedeemChamberToTokenTest is ChamberTestUtils {
      */
     function testCannotRedeemWithWrongOrderAtInstructionsArray() public {
         ITradeIssuerV2.ContractCallInstruction[] memory instructions =
-            new ITradeIssuerV2.ContractCallInstruction[] (6);
+            new ITradeIssuerV2.ContractCallInstruction[](6);
         (, uint256[] memory requiredQuantities) =
             issuerWizard.getConstituentsQuantitiesForIssuance(addyToken, 500e18);
 
@@ -417,7 +417,6 @@ contract TradeIssuerV2IntegrationRedeemChamberToTokenTest is ChamberTestUtils {
          * Will try to swap before making a withdraw from the yearn vault. Wont have the underlying
          * Asset for the swap.
          */
-
         instructions[0] = ITradeIssuerV2.ContractCallInstruction(
             dexAgg,
             dexAgg,
@@ -472,7 +471,7 @@ contract TradeIssuerV2IntegrationRedeemChamberToTokenTest is ChamberTestUtils {
      */
     function testSuccessRedeemAddyToUsdc() public {
         ITradeIssuerV2.ContractCallInstruction[] memory instructions =
-            new ITradeIssuerV2.ContractCallInstruction[] (5);
+            new ITradeIssuerV2.ContractCallInstruction[](5);
         (, uint256[] memory requiredQuantities) =
             issuerWizard.getConstituentsQuantitiesForIssuance(addyToken, 500e18);
 
@@ -596,7 +595,7 @@ contract TradeIssuerV2IntegrationRedeemChamberToTokenTest is ChamberTestUtils {
      */
     function testSuccessRedeemAddyToWeth() public {
         ITradeIssuerV2.ContractCallInstruction[] memory instructions =
-            new ITradeIssuerV2.ContractCallInstruction[] (6);
+            new ITradeIssuerV2.ContractCallInstruction[](6);
         (, uint256[] memory requiredQuantities) =
             issuerWizard.getConstituentsQuantitiesForIssuance(addyToken, 500e18);
 
@@ -732,7 +731,7 @@ contract TradeIssuerV2IntegrationRedeemChamberToTokenTest is ChamberTestUtils {
      */
     function testSuccessRedeemAddyToWethInDifferentOrder() public {
         ITradeIssuerV2.ContractCallInstruction[] memory instructions =
-            new ITradeIssuerV2.ContractCallInstruction[] (6);
+            new ITradeIssuerV2.ContractCallInstruction[](6);
         (, uint256[] memory requiredQuantities) =
             issuerWizard.getConstituentsQuantitiesForIssuance(addyToken, 500e18);
 

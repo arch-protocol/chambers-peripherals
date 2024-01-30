@@ -3,15 +3,15 @@
 pragma solidity ^0.8.17.0;
 
 import "forge-std/Test.sol";
-import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
-import {SafeERC20} from "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
-import {ExposedTradeIssuer} from "test/utils/ExposedTradeIssuer.sol";
-import {IChamber} from "chambers/interfaces/IChamber.sol";
-import {IIssuerWizard} from "chambers/interfaces/IIssuerWizard.sol";
-import {IssuerWizard} from "chambers/IssuerWizard.sol";
-import {ChamberGod} from "chambers/ChamberGod.sol";
-import {Chamber} from "chambers/Chamber.sol";
-import {PreciseUnitMath} from "chambers/lib/PreciseUnitMath.sol";
+import { IERC20 } from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
+import { SafeERC20 } from "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
+import { ExposedTradeIssuer } from "test/utils/ExposedTradeIssuer.sol";
+import { IChamber } from "chambers/interfaces/IChamber.sol";
+import { IIssuerWizard } from "chambers/interfaces/IIssuerWizard.sol";
+import { IssuerWizard } from "chambers/IssuerWizard.sol";
+import { ChamberGod } from "chambers/ChamberGod.sol";
+import { Chamber } from "chambers/Chamber.sol";
+import { PreciseUnitMath } from "chambers/lib/PreciseUnitMath.sol";
 
 contract TradeIssuerIntegrationIngernalCheckAndIncreaseAllowanceOfConstituentsTest is Test {
     using SafeERC20 for IERC20;
@@ -217,7 +217,6 @@ contract TradeIssuerIntegrationIngernalCheckAndIncreaseAllowanceOfConstituentsTe
     /**
      * [SUCCESS] Should NOT call increase allowance when having enough in one token
      */
-
     function testCheckAndIncreaseAllowanceShouldNotIncreaseWhenCurrentAllowanceIsEnough(
         uint256 constituent0Quantity,
         uint256 constituent1Quantity,

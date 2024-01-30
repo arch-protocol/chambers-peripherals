@@ -3,9 +3,9 @@
 pragma solidity ^0.8.17.0;
 
 import "forge-std/Test.sol";
-import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
-import {ERC20} from "@openzeppelin/contracts/token/ERC20/ERC20.sol";
-import {ExposedTradeIssuer} from "test/utils/ExposedTradeIssuer.sol";
+import { IERC20 } from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
+import { ERC20 } from "@openzeppelin/contracts/token/ERC20/ERC20.sol";
+import { ExposedTradeIssuer } from "test/utils/ExposedTradeIssuer.sol";
 
 contract TradeIssuerUnitInternalSellAssetsForTokenInDexTest is Test {
     /*//////////////////////////////////////////////////////////////
@@ -89,7 +89,7 @@ contract TradeIssuerUnitInternalSellAssetsForTokenInDexTest is Test {
      * external functions.
      */
     function testCannotSwapWithEmptyQuantitiesArray() public {
-        uint256[] memory emptyComponentsQuantities = new uint256[] (0);
+        uint256[] memory emptyComponentsQuantities = new uint256[](0);
 
         vm.expectRevert(stdError.indexOOBError); //Index Out of bounds stdError
         tradeIssuer.sellAssetsForTokenInDex(
@@ -120,8 +120,8 @@ contract TradeIssuerUnitInternalSellAssetsForTokenInDexTest is Test {
      * The condition is checked at parent functions.
      */
     function testBuyDexAssetsWithEmptyComponents() public {
-        address[] memory emptyComponents = new address[] (0);
-        uint256[] memory emptyComponentsQuantities = new uint256[] (0);
+        address[] memory emptyComponents = new address[](0);
+        uint256[] memory emptyComponentsQuantities = new uint256[](0);
 
         uint256 totalBaseTokensUsed = tradeIssuer.buyAssetsInDex(
             quotes, IERC20(baseToken), emptyComponents, emptyComponentsQuantities, 5
@@ -135,8 +135,8 @@ contract TradeIssuerUnitInternalSellAssetsForTokenInDexTest is Test {
      * In this scenario the contract has the required input token balance.
      */
     function testSwapOnlyBaseTokenAndBaseTokenBalance() public {
-        address[] memory baseTokenArray = new address[] (1);
-        uint256[] memory baseTokenQuantity = new uint256[] (1);
+        address[] memory baseTokenArray = new address[](1);
+        uint256[] memory baseTokenQuantity = new uint256[](1);
 
         deal(baseToken, tradeIssuerAddress, 1 ether);
 
@@ -162,8 +162,8 @@ contract TradeIssuerUnitInternalSellAssetsForTokenInDexTest is Test {
      * of the contract and it reverts with 'Overspent input token".
      */
     function testSwapOnlyBaseTokenAndZeroBaseTokenBalance() public {
-        address[] memory baseTokenArray = new address[] (1);
-        uint256[] memory baseTokenQuantity = new uint256[] (1);
+        address[] memory baseTokenArray = new address[](1);
+        uint256[] memory baseTokenQuantity = new uint256[](1);
 
         uint256 baseTokenBalanceBefore = IERC20(baseToken).balanceOf(tradeIssuerAddress);
         baseTokenArray[0] = baseToken;

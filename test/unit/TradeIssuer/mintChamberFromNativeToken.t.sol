@@ -3,12 +3,12 @@
 pragma solidity ^0.8.17.0;
 
 import "forge-std/Test.sol";
-import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
-import {WETH} from "solmate/tokens/WETH.sol";
-import {IChamber} from "chambers/interfaces/IChamber.sol";
-import {IIssuerWizard} from "chambers/interfaces/IIssuerWizard.sol";
-import {TradeIssuer} from "src/TradeIssuer.sol";
-import {ITradeIssuer} from "src/interfaces/ITradeIssuer.sol";
+import { IERC20 } from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
+import { WETH } from "solmate/tokens/WETH.sol";
+import { IChamber } from "chambers/interfaces/IChamber.sol";
+import { IIssuerWizard } from "chambers/interfaces/IIssuerWizard.sol";
+import { TradeIssuer } from "src/TradeIssuer.sol";
+import { ITradeIssuer } from "src/interfaces/ITradeIssuer.sol";
 
 contract TradeIssuerUnitInternalMintChamberFromNativeTokenTest is Test {
     /*//////////////////////////////////////////////////////////////
@@ -25,8 +25,8 @@ contract TradeIssuerUnitInternalMintChamberFromNativeTokenTest is Test {
     address public yUSDC = 0xa354F35829Ae975e850e23e9615b11Da1B3dC4DE;
     address public yDAI = 0xdA816459F1AB5631232FE5e97a05BBBb94970c95;
     bytes[] public quotes = new bytes[](2);
-    address[] public components = new address[] (2);
-    uint256[] public componentQuantities = new uint256[] (2);
+    address[] public components = new address[](2);
+    uint256[] public componentQuantities = new uint256[](2);
     address[] public vaults = new address[](2);
     address[] public vaultAssets = new address[](2);
     uint256[] public vaultQuantities = new uint256[](2);
@@ -88,7 +88,9 @@ contract TradeIssuerUnitInternalMintChamberFromNativeTokenTest is Test {
         vm.expectCall(wETH, abi.encodeCall(WETH(wETH).deposit, ()));
 
         vm.expectRevert(bytes("Chamber amount cannot be zero"));
-        uint256 totalInputTokenUsed = tradeIssuer.mintChamberFromNativeToken{value: baseTokenBounds}(
+        uint256 totalInputTokenUsed = tradeIssuer.mintChamberFromNativeToken{
+            value: baseTokenBounds
+        }(
             ITradeIssuer.IssuanceParams(
                 quotes,
                 IERC20(wETH),
@@ -116,7 +118,7 @@ contract TradeIssuerUnitInternalMintChamberFromNativeTokenTest is Test {
         vm.assume(chamberAmount > 0);
         vm.assume(baseTokenBounds > 0);
         vm.assume(baseTokenBounds < 1000000 ether);
-        components = new address[] (0);
+        components = new address[](0);
 
         vm.mockCall(
             wETH,
@@ -134,7 +136,9 @@ contract TradeIssuerUnitInternalMintChamberFromNativeTokenTest is Test {
         vm.expectCall(wETH, abi.encodeCall(WETH(wETH).deposit, ()));
 
         vm.expectRevert(bytes("Components array cannot be empty"));
-        uint256 totalInputTokenUsed = tradeIssuer.mintChamberFromNativeToken{value: baseTokenBounds}(
+        uint256 totalInputTokenUsed = tradeIssuer.mintChamberFromNativeToken{
+            value: baseTokenBounds
+        }(
             ITradeIssuer.IssuanceParams(
                 quotes,
                 IERC20(wETH),
@@ -190,7 +194,9 @@ contract TradeIssuerUnitInternalMintChamberFromNativeTokenTest is Test {
         vm.expectCall(wETH, abi.encodeCall(WETH(wETH).deposit, ()));
 
         vm.expectRevert(bytes("Components and quotes must match"));
-        uint256 totalInputTokenUsed = tradeIssuer.mintChamberFromNativeToken{value: baseTokenBounds}(
+        uint256 totalInputTokenUsed = tradeIssuer.mintChamberFromNativeToken{
+            value: baseTokenBounds
+        }(
             ITradeIssuer.IssuanceParams(
                 oneElementQuotes,
                 IERC20(wETH),
@@ -242,7 +248,9 @@ contract TradeIssuerUnitInternalMintChamberFromNativeTokenTest is Test {
         vm.expectCall(wETH, abi.encodeCall(WETH(wETH).deposit, ()));
 
         vm.expectRevert(bytes("Components and qtys. must match"));
-        uint256 totalInputTokenUsed = tradeIssuer.mintChamberFromNativeToken{value: baseTokenBounds}(
+        uint256 totalInputTokenUsed = tradeIssuer.mintChamberFromNativeToken{
+            value: baseTokenBounds
+        }(
             ITradeIssuer.IssuanceParams(
                 quotes,
                 IERC20(wETH),
@@ -298,7 +306,9 @@ contract TradeIssuerUnitInternalMintChamberFromNativeTokenTest is Test {
         vm.expectCall(wETH, abi.encodeCall(WETH(wETH).deposit, ()));
 
         vm.expectRevert(bytes("Vaults and Assets must match"));
-        uint256 totalInputTokenUsed = tradeIssuer.mintChamberFromNativeToken{value: baseTokenBounds}(
+        uint256 totalInputTokenUsed = tradeIssuer.mintChamberFromNativeToken{
+            value: baseTokenBounds
+        }(
             ITradeIssuer.IssuanceParams(
                 quotes,
                 IERC20(wETH),
@@ -351,7 +361,9 @@ contract TradeIssuerUnitInternalMintChamberFromNativeTokenTest is Test {
         vm.expectCall(wETH, abi.encodeCall(WETH(wETH).deposit, ()));
 
         vm.expectRevert(bytes("Vault and Deposits must match"));
-        uint256 totalInputTokenUsed = tradeIssuer.mintChamberFromNativeToken{value: baseTokenBounds}(
+        uint256 totalInputTokenUsed = tradeIssuer.mintChamberFromNativeToken{
+            value: baseTokenBounds
+        }(
             ITradeIssuer.IssuanceParams(
                 quotes,
                 IERC20(wETH),
@@ -376,13 +388,13 @@ contract TradeIssuerUnitInternalMintChamberFromNativeTokenTest is Test {
      * input token is used also for minting. [OBS] This test is a proposal since we can mock internal
      * calls for now.
      */
-    function testProposalCannotMintWithOverSpentInputToken() public {}
+    function testProposalCannotMintWithOverSpentInputToken() public { }
 
     /**
      * [REVERT] Cannot transfer less than required _mintAmount.
      * [OBS] This test is a proposal since we can mock internal calls for now.
      */
-    function testProposalCannotMintWithChamberTokenIssuedLessThanMinAmount() public {}
+    function testProposalCannotMintWithChamberTokenIssuedLessThanMinAmount() public { }
 
     /*//////////////////////////////////////////////////////////////
                               SUCCESS
@@ -392,7 +404,7 @@ contract TradeIssuerUnitInternalMintChamberFromNativeTokenTest is Test {
      * [SUCCESS] Should return the amount of input tokens used if all params are ok.
      * This test is proposed for now because we can mock internal calls for now.
      */
-    function testProposalSuccessWithCorrectInputs() public {}
+    function testProposalSuccessWithCorrectInputs() public { }
 
     /**
      * [SUCCESS] Should return the amount of input tokens used if all params are ok.
@@ -402,5 +414,5 @@ contract TradeIssuerUnitInternalMintChamberFromNativeTokenTest is Test {
      */
     function testProposalSuccessWithCorrectInputsAndOverBoughtDexComponentHavingBadInstructions()
         public
-    {}
+    { }
 }
