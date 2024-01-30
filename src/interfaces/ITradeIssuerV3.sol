@@ -176,4 +176,13 @@ interface ITradeIssuerV3 {
         uint256 _minReceiveAmount,
         uint256 _chamberAmount
     ) external returns (uint256 wrappedNativeTokenReturned);
+
+    function redeemAndMint(
+        IChamber _chamberToRedeem,
+        IChamber _chamberToMint,
+        IIssuerWizard _issuerWizard,
+        uint256 _redeemAmount,
+        uint256 _mintAmount,
+        ContractCallInstruction[] memory _contractCallInstructions
+    ) external;
 }
