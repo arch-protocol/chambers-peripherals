@@ -41,9 +41,9 @@
  */
 pragma solidity ^0.8.21;
 
-import {IChamber} from "chambers/interfaces/IChamber.sol";
-import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
-import {IIssuerWizard} from "chambers/interfaces/IIssuerWizard.sol";
+import { IChamber } from "chambers/interfaces/IChamber.sol";
+import { IERC20 } from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
+import { IIssuerWizard } from "chambers/interfaces/IIssuerWizard.sol";
 
 interface ITradeIssuerV3 {
     /*//////////////////////////////////////////////////////////////
@@ -179,10 +179,10 @@ interface ITradeIssuerV3 {
 
     function redeemAndMint(
         IChamber _chamberToRedeem,
-        IChamber _chamberToMint,
-        IIssuerWizard _issuerWizard,
         uint256 _redeemAmount,
+        IChamber _chamberToMint,
         uint256 _mintAmount,
+        IIssuerWizard _issuerWizard,
         ContractCallInstruction[] memory _contractCallInstructions
     ) external;
 }

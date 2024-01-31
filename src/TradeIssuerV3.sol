@@ -41,20 +41,20 @@
  */
 pragma solidity ^0.8.21;
 
-import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
-import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
-import {SafeERC20} from "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
-import {Address} from "@openzeppelin/contracts/utils/Address.sol";
-import {EnumerableSet} from "@openzeppelin/contracts/utils/structs/EnumerableSet.sol";
+import { Ownable } from "@openzeppelin/contracts/access/Ownable.sol";
+import { IERC20 } from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
+import { SafeERC20 } from "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
+import { Address } from "@openzeppelin/contracts/utils/Address.sol";
+import { EnumerableSet } from "@openzeppelin/contracts/utils/structs/EnumerableSet.sol";
 
-import {IChamber} from "chambers/interfaces/IChamber.sol";
-import {IChamberGod} from "chambers/interfaces/IChamberGod.sol";
-import {IIssuerWizard} from "chambers/interfaces/IIssuerWizard.sol";
+import { IChamber } from "chambers/interfaces/IChamber.sol";
+import { IChamberGod } from "chambers/interfaces/IChamberGod.sol";
+import { IIssuerWizard } from "chambers/interfaces/IIssuerWizard.sol";
 
-import {ReentrancyGuard} from "solmate/utils/ReentrancyGuard.sol";
-import {WETH} from "solmate/tokens/WETH.sol";
+import { ReentrancyGuard } from "solmate/utils/ReentrancyGuard.sol";
+import { WETH } from "solmate/tokens/WETH.sol";
 
-import {ITradeIssuerV3} from "./interfaces/ITradeIssuerV3.sol";
+import { ITradeIssuerV3 } from "./interfaces/ITradeIssuerV3.sol";
 
 contract TradeIssuerV3 is ITradeIssuerV3, Ownable, ReentrancyGuard {
     /*//////////////////////////////////////////////////////////////
@@ -86,7 +86,7 @@ contract TradeIssuerV3 is ITradeIssuerV3, Ownable, ReentrancyGuard {
         chamberGod = IChamberGod(_chamberGod);
     }
 
-    receive() external payable {}
+    receive() external payable { }
 
     /*//////////////////////////////////////////////////////////////
                             EXTERNAL FUNCTIONS
@@ -237,7 +237,7 @@ contract TradeIssuerV3 is ITradeIssuerV3, Ownable, ReentrancyGuard {
         if (!chamberGod.isWizard(address(_issuerWizard))) revert InvalidWizard();
         if (!chamberGod.isChamber(address(_chamber))) revert InvalidChamber();
 
-        WETH(payable(wrappedNativeToken)).deposit{value: msg.value}();
+        WETH(payable(wrappedNativeToken)).deposit{ value: msg.value }();
 
         wrappedNativeTokenUsed = _mint(
             _chamber,
@@ -378,10 +378,10 @@ contract TradeIssuerV3 is ITradeIssuerV3, Ownable, ReentrancyGuard {
      */
     function redeemAndMint(
         IChamber _chamberToRedeem,
-        IChamber _chamberToMint,
-        IIssuerWizard _issuerWizard,
         uint256 _redeemAmount,
+        IChamber _chamberToMint,
         uint256 _mintAmount,
+        IIssuerWizard _issuerWizard,
         ContractCallInstruction[] memory _contractCallInstructions
     ) external nonReentrant {
         if (_redeemAmount == 0) revert ZeroChamberAmount();
