@@ -39,20 +39,19 @@
  *    @@@@@(((((
  *      @@@((
  */
-
 pragma solidity ^0.8.17.0;
 
-import {Address} from "@openzeppelin/contracts/utils/Address.sol";
-import {EnumerableSet} from "@openzeppelin/contracts/utils/structs/EnumerableSet.sol";
-import {IChamber} from "chambers/interfaces/IChamber.sol";
-import {IChamberGod} from "chambers/interfaces/IChamberGod.sol";
-import {IIssuerWizard} from "chambers/interfaces/IIssuerWizard.sol";
-import {ITradeIssuerV2} from "./interfaces/ITradeIssuerV2.sol";
-import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
-import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
-import {ReentrancyGuard} from "solmate/utils/ReentrancyGuard.sol";
-import {SafeERC20} from "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
-import {WETH} from "solmate/tokens/WETH.sol";
+import { Address } from "@openzeppelin/contracts/utils/Address.sol";
+import { EnumerableSet } from "@openzeppelin/contracts/utils/structs/EnumerableSet.sol";
+import { IChamber } from "chambers/interfaces/IChamber.sol";
+import { IChamberGod } from "chambers/interfaces/IChamberGod.sol";
+import { IIssuerWizard } from "chambers/interfaces/IIssuerWizard.sol";
+import { ITradeIssuerV2 } from "./interfaces/ITradeIssuerV2.sol";
+import { IERC20 } from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
+import { Ownable } from "@openzeppelin/contracts/access/Ownable.sol";
+import { ReentrancyGuard } from "solmate/utils/ReentrancyGuard.sol";
+import { SafeERC20 } from "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
+import { WETH } from "solmate/tokens/WETH.sol";
 
 contract TradeIssuerV2 is ITradeIssuerV2, Ownable, ReentrancyGuard {
     /*//////////////////////////////////////////////////////////////
@@ -82,7 +81,7 @@ contract TradeIssuerV2 is ITradeIssuerV2, Ownable, ReentrancyGuard {
         wrappedNativeToken = _wrappedNativeToken;
     }
 
-    receive() external payable {}
+    receive() external payable { }
 
     /*//////////////////////////////////////////////////////////////
                             EXTERNAL FUNCTIONS
@@ -227,7 +226,7 @@ contract TradeIssuerV2 is ITradeIssuerV2, Ownable, ReentrancyGuard {
     ) external payable nonReentrant returns (uint256 wrappedNativeTokenUsed) {
         if (_mintAmount == 0) revert ZeroChamberAmount();
         if (msg.value == 0) revert ZeroNativeTokenSent();
-        WETH(payable(wrappedNativeToken)).deposit{value: msg.value}();
+        WETH(payable(wrappedNativeToken)).deposit{ value: msg.value }();
 
         wrappedNativeTokenUsed = _mintChamber(
             _chamber,

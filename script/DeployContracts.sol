@@ -3,11 +3,11 @@
 pragma solidity ^0.8.17.0;
 
 import "forge-std/Script.sol";
-import {ChamberGod} from "chambers/ChamberGod.sol";
-import {IssuerWizard} from "chambers/IssuerWizard.sol";
-import {TradeIssuer} from "src/TradeIssuer.sol";
-import {StreamingFeeWizard} from "chambers/StreamingFeeWizard.sol";
-import {RebalanceWizard} from "chambers/RebalanceWizard.sol";
+import { ChamberGod } from "chambers/ChamberGod.sol";
+import { IssuerWizard } from "chambers/IssuerWizard.sol";
+import { TradeIssuer } from "src/TradeIssuer.sol";
+import { StreamingFeeWizard } from "chambers/StreamingFeeWizard.sol";
+import { RebalanceWizard } from "chambers/RebalanceWizard.sol";
 
 contract DeployContracts is Script {
     /**

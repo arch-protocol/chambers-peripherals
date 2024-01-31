@@ -28,18 +28,18 @@
  */
 pragma solidity ^0.8.17.0;
 
-import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
-import {ERC20} from "@openzeppelin/contracts/token/ERC20/ERC20.sol";
-import {WETH} from "solmate/tokens/WETH.sol";
-import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
-import {ReentrancyGuard} from "solmate/utils/ReentrancyGuard.sol";
-import {SafeERC20} from "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
-import {Address} from "@openzeppelin/contracts/utils/Address.sol";
-import {PreciseUnitMath} from "chambers/lib/PreciseUnitMath.sol";
-import {IChamber} from "chambers/interfaces/IChamber.sol";
-import {IIssuerWizard} from "chambers/interfaces/IIssuerWizard.sol";
-import {ITradeIssuer} from "./interfaces/ITradeIssuer.sol";
-import {IVault} from "./interfaces/IVault.sol";
+import { IERC20 } from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
+import { ERC20 } from "@openzeppelin/contracts/token/ERC20/ERC20.sol";
+import { WETH } from "solmate/tokens/WETH.sol";
+import { Ownable } from "@openzeppelin/contracts/access/Ownable.sol";
+import { ReentrancyGuard } from "solmate/utils/ReentrancyGuard.sol";
+import { SafeERC20 } from "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
+import { Address } from "@openzeppelin/contracts/utils/Address.sol";
+import { PreciseUnitMath } from "chambers/lib/PreciseUnitMath.sol";
+import { IChamber } from "chambers/interfaces/IChamber.sol";
+import { IIssuerWizard } from "chambers/interfaces/IIssuerWizard.sol";
+import { ITradeIssuer } from "./interfaces/ITradeIssuer.sol";
+import { IVault } from "./interfaces/IVault.sol";
 
 contract TradeIssuer is ITradeIssuer, Ownable, ReentrancyGuard {
     /*//////////////////////////////////////////////////////////////
@@ -66,13 +66,12 @@ contract TradeIssuer is ITradeIssuer, Ownable, ReentrancyGuard {
      * @param _dexAggregator        Address of the dex aggregator that will be called to make the swaps.
      * @param _wrappedNativeToken   Native Token address of the chain where the contract will be deployed.
      */
-
     constructor(address payable _dexAggregator, address _wrappedNativeToken) {
         dexAggregator = _dexAggregator;
         wrappedNativeToken = _wrappedNativeToken;
     }
 
-    receive() external payable {}
+    receive() external payable { }
 
     /*//////////////////////////////////////////////////////////////
                             EXTERNAL FUNCTIONS
@@ -109,7 +108,6 @@ contract TradeIssuer is ITradeIssuer, Ownable, ReentrancyGuard {
      *
      * @return totalNativeTokenUsed      Total amount of Native Token spent on the whole operation.
      */
-
     function mintChamberFromNativeToken(IssuanceParams memory _mintParams)
         external
         payable
@@ -117,7 +115,7 @@ contract TradeIssuer is ITradeIssuer, Ownable, ReentrancyGuard {
         returns (uint256 totalNativeTokenUsed)
     {
         require(msg.value > 0, "No Native Token sent");
-        WETH(payable(wrappedNativeToken)).deposit{value: msg.value}();
+        WETH(payable(wrappedNativeToken)).deposit{ value: msg.value }();
 
         _mintParams.baseToken = IERC20(wrappedNativeToken);
         _mintParams.baseTokenBounds = msg.value;
