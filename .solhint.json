@@ -3,6 +3,7 @@
   "rules": {
     "avoid-low-level-calls": "off",
     "no-inline-assembly": "off",
-    "no-empty-blocks": "off"
+    "no-empty-blocks": "off",
+    "compiler-version": ["error","^0.8.0"]
   }
 }
