@@ -392,6 +392,9 @@ contract TradeIssuerV3 is ITradeIssuerV3, Ownable, ReentrancyGuard {
 
         IERC20(address(_chamberToRedeem)).safeTransferFrom(msg.sender, address(this), _redeemAmount);
 
+        (address[] memory redeemConstituents, uint256[] memory redeemConstituentsPreviousBalances) =
+            _getCurrentRedeemConstituentsBalances(_chamberToRedeem);
+
         _redeemAndMint(
             _chamberToRedeem,
             _chamberToMint,
@@ -399,6 +402,10 @@ contract TradeIssuerV3 is ITradeIssuerV3, Ownable, ReentrancyGuard {
             _redeemAmount,
             _mintAmount,
             _contractCallInstructions
+        );
+
+        _transferReminderConstituentsBalances(
+            redeemConstituents, redeemConstituentsPreviousBalances
         );
 
         IERC20(address(_chamberToMint)).safeTransfer(msg.sender, _mintAmount);
@@ -415,6 +422,40 @@ contract TradeIssuerV3 is ITradeIssuerV3, Ownable, ReentrancyGuard {
     /*//////////////////////////////////////////////////////////////
                             INTERNAL FUNCTIONS
     //////////////////////////////////////////////////////////////*/
+
+    /**
+     * Internal function in charge of getting the current balances of the chamber constituents,
+     * before a redeemAndMint operation.
+     */
+    function _getCurrentRedeemConstituentsBalances(IChamber _chamberToRedeem)
+        internal
+        returns (address[] memory constituents, uint256[] memory balances)
+    {
+        constituents = _chamberToRedeem.getConstituentsAddresses();
+        balances = new uint256[](constituents.length);
+
+        for (uint256 i = 0; i < constituents.length; i++) {
+            balances[i] = IERC20(constituents[i]).balanceOf(address(this));
+        }
+    }
+
+    /**
+     * Internal function in charge of transferring the reminder of the constituents balances,
+     * after a redeemAndMint operation.
+     */
+    function _transferReminderConstituentsBalances(
+        address[] memory _constituents,
+        uint256[] memory _previousBalances
+    ) internal {
+        for (uint256 i = 0; i < _constituents.length; i++) {
+            uint256 currentBalance = IERC20(_constituents[i]).balanceOf(address(this));
+            if (currentBalance > _previousBalances[i]) {
+                IERC20(_constituents[i]).safeTransfer(
+                    msg.sender, currentBalance - _previousBalances[i]
+                );
+            }
+        }
+    }
 
     /**
      * Internal function in charge of the generic mint. The main objective is to get the chamber tokens.
