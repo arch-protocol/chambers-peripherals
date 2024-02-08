@@ -207,7 +207,17 @@ contract ArchUtils is Test {
         address fromToken,
         uint256 fromTokenAmount,
         address toToken
-    ) public returns (address, uint256, address, uint256, address, ITradeIssuerV3.ContractCallInstruction[] memory) {
+    )
+        public
+        returns (
+            address,
+            uint256,
+            address,
+            uint256,
+            address,
+            ITradeIssuerV3.ContractCallInstruction[] memory
+        )
+    {
         string[] memory inputs = new string[](5);
         inputs[0] = "node";
         inputs[1] = "scripts/fetch-redeem-and-mint-quote.js";
@@ -222,25 +232,28 @@ contract ArchUtils is Test {
             uint256 _toTokenAmount,
             address _issuerWizard,
             ITradeIssuerV3.ContractCallInstruction[] memory _contractCallInstructions
-        ) = abi.decode(response, (address, uint256, address, uint256, address, ITradeIssuerV3.ContractCallInstruction[]));
+        ) = abi.decode(
+            response,
+            (address, uint256, address, uint256, address, ITradeIssuerV3.ContractCallInstruction[])
+        );
 
         logRedeemAndMintQuoteAsJson(
-          networkId,
-          fromToken,
-          fromTokenAmount,
-          toToken,
-          _toTokenAmount,
-          _issuerWizard,
-          _contractCallInstructions
+            networkId,
+            fromToken,
+            fromTokenAmount,
+            toToken,
+            _toTokenAmount,
+            _issuerWizard,
+            _contractCallInstructions
         );
 
         return (
-          _fromToken,
-          _fromTokenAmount,
-          _toToken,
-          _toTokenAmount,
-          _issuerWizard,
-          _contractCallInstructions
+            _fromToken,
+            _fromTokenAmount,
+            _toToken,
+            _toTokenAmount,
+            _issuerWizard,
+            _contractCallInstructions
         );
     }
 
