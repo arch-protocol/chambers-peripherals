@@ -4,7 +4,16 @@ out = "out"
 libs = ["lib"]
 auto_detect_solc = true
 via_ir = true
-fs_permissions = [{ access = "read", path = "./" }]
+auto_detect_remappings = false
+remappings = [
+  "ds-test/=lib/solmate/lib/ds-test/src/",
+  "openzeppelin-contracts/=lib/openzeppelin-contracts/",
+  "@openzeppelin/=lib/openzeppelin-contracts/",
+  "chambers/=lib/chambers/src/",
+  "forge-std/=lib/forge-std/src/",
+  "solmate/=lib/solmate/src/",
+]
+fs_permissions = [{ access = "read", path = "./data"}]
 
 [fmt]
 line_length = 100
