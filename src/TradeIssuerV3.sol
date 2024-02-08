@@ -392,10 +392,8 @@ contract TradeIssuerV3 is ITradeIssuerV3, Ownable, ReentrancyGuard {
 
         IERC20(address(_chamberToRedeem)).safeTransferFrom(msg.sender, address(this), _redeemAmount);
 
-        (
-          address[] memory redeemConstituents,
-          uint256[] memory redeemConstituentsPreviousBalances
-        ) = _getCurrentRedeemConstituentsBalances(_chamberToRedeem);
+        (address[] memory redeemConstituents, uint256[] memory redeemConstituentsPreviousBalances) =
+            _getCurrentRedeemConstituentsBalances(_chamberToRedeem);
 
         _redeemAndMint(
             _chamberToRedeem,
@@ -406,7 +404,9 @@ contract TradeIssuerV3 is ITradeIssuerV3, Ownable, ReentrancyGuard {
             _contractCallInstructions
         );
 
-        _transferReminderConstituentsBalances(redeemConstituents, redeemConstituentsPreviousBalances);
+        _transferReminderConstituentsBalances(
+            redeemConstituents, redeemConstituentsPreviousBalances
+        );
 
         IERC20(address(_chamberToMint)).safeTransfer(msg.sender, _mintAmount);
 
@@ -427,9 +427,10 @@ contract TradeIssuerV3 is ITradeIssuerV3, Ownable, ReentrancyGuard {
      * Internal function in charge of getting the current balances of the chamber constituents,
      * before a redeemAndMint operation.
      */
-    function _getCurrentRedeemConstituentsBalances(
-        IChamber _chamberToRedeem
-    ) internal returns (address[] memory constituents, uint256[] memory balances) {
+    function _getCurrentRedeemConstituentsBalances(IChamber _chamberToRedeem)
+        internal
+        returns (address[] memory constituents, uint256[] memory balances)
+    {
         constituents = _chamberToRedeem.getConstituentsAddresses();
         balances = new uint256[](constituents.length);
 
@@ -440,7 +441,7 @@ contract TradeIssuerV3 is ITradeIssuerV3, Ownable, ReentrancyGuard {
 
     /**
      * Internal function in charge of transferring the reminder of the constituents balances,
-     * after a redeemAndMint operation. 
+     * after a redeemAndMint operation.
      */
     function _transferReminderConstituentsBalances(
         address[] memory _constituents,

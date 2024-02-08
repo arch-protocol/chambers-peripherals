@@ -72,12 +72,12 @@ contract GaslessTest is Test, ArchUtils {
 
         vm.prank(ALICE);
         tradeIssuer.redeemAndMint(
-          IChamber(fromToken),
-          fromTokenAmount,
-          IChamber(toToken),
-          toTokenAmount,
-          IIssuerWizard(issuerWizard),
-          contractCallInstructions
+            IChamber(fromToken),
+            fromTokenAmount,
+            IChamber(toToken),
+            toTokenAmount,
+            IIssuerWizard(issuerWizard),
+            contractCallInstructions
         );
 
         uint256[] memory remanentConstituentsAmounts = new uint256[](constituents.length);
@@ -87,7 +87,7 @@ contract GaslessTest is Test, ArchUtils {
             console.log(constituents[i]);
             console.log(remanentConstituentsAmounts[i]);
         }
-        
+
         assertEq(previousFromTokenBalance - IERC20(fromToken).balanceOf(ALICE), fromTokenAmount);
         assertEq(IERC20(toToken).balanceOf(ALICE) - previousToTokenBalance, toTokenAmount);
     }
@@ -152,5 +152,4 @@ contract GaslessTest is Test, ArchUtils {
             "/data/redeemAndMint/testRedeemAndMintFromAaggToAbalOnPolygonHighAmount.json"
         );
     }
-
 }
