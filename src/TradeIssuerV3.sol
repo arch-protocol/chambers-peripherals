@@ -392,8 +392,8 @@ contract TradeIssuerV3 is ITradeIssuerV3, Ownable, ReentrancyGuard {
 
         IERC20(address(_chamberToRedeem)).safeTransferFrom(msg.sender, address(this), _redeemAmount);
 
-        (address[] memory redeemConstituents, uint256[] memory redeemConstituentsPreviousBalances) =
-            _getCurrentRedeemConstituentsBalances(_chamberToRedeem);
+        // (address[] memory redeemConstituents, uint256[] memory redeemConstituentsPreviousBalances) =
+        //     _getCurrentRedeemConstituentsBalances(_chamberToRedeem);
 
         _redeemAndMint(
             _chamberToRedeem,
@@ -404,9 +404,9 @@ contract TradeIssuerV3 is ITradeIssuerV3, Ownable, ReentrancyGuard {
             _contractCallInstructions
         );
 
-        _transferReminderConstituentsBalances(
-            redeemConstituents, redeemConstituentsPreviousBalances
-        );
+        // _transferReminderConstituentsBalances(
+        //     redeemConstituents, redeemConstituentsPreviousBalances
+        // );
 
         IERC20(address(_chamberToMint)).safeTransfer(msg.sender, _mintAmount);
 
