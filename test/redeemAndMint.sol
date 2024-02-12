@@ -49,16 +49,17 @@ contract GaslessTest is Test, ArchUtils {
         address issuerWizard,
         ITradeIssuerV3.ContractCallInstruction[] memory contractCallInstructions
     ) public {
-        TradeIssuerV3 tradeIssuer;
+        // TradeIssuerV3 tradeIssuer;
         if (chainId == POLYGON_CHAIN_ID) {
             vm.createSelectFork("polygon", blockNumber);
-            tradeIssuer = deployTradeIssuerV3(chainId);
-            console.log(address(tradeIssuer));
+            // tradeIssuer = deployTradeIssuerV3(chainId);
         }
         if (chainId == ETH_CHAIN_ID) {
             vm.createSelectFork("ethereum", blockNumber);
-            tradeIssuer = deployTradeIssuerV3(chainId);
+            // tradeIssuer = deployTradeIssuerV3(chainId);
         }
+
+        ITradeIssuerV3 tradeIssuer = ITradeIssuerV3(address(POLYGON_TRADE_ISSUER_V3));
 
         address[] memory constituents = IChamber(fromToken).getConstituentsAddresses();
 
@@ -128,7 +129,7 @@ contract GaslessTest is Test, ArchUtils {
      */
     function printQuoteToCreateATest() public {
         vm.createSelectFork("polygon");
-        fetchRedeemAndMintQuote(POLYGON_CHAIN_ID, POLYGON_AAGG, 70e18, POLYGON_ABAL);
+        fetchRedeemAndMintQuote(POLYGON_CHAIN_ID, POLYGON_AAGG, 50e18, POLYGON_AMOD);
     }
 
     /*//////////////////////////////////////////////////////////////
@@ -136,20 +137,56 @@ contract GaslessTest is Test, ArchUtils {
     //////////////////////////////////////////////////////////////*/
 
     /**
-     * [SUCCESS] Should redeem AAGG and mint AMOD
+     * [SUCCESS] Should redeem AAGG and mint ABAL
      */
-    function testRedeemAndMintFromAaggToAmodOnPolygon() public {
+    function testRedeemAndMintFromAaggToAbal() public {
         runLocalRedeemAndMintQuoteTest(
-            "/data/redeemAndMint/testRedeemAndMintFromAaggToAmodOnPolygon.json"
+            "/data/redeemAndMint/testRedeemAndMintFromAaggToAbal.json"
         );
     }
 
     /**
-     * [SUCCESS] Should redeem AAGG and mint AMOD
+     * [SUCCESS] Should redeem AAGG and mint ABAL
      */
-    function testRedeemAndMintFromAaggToAbalOnPolygonHighAmount() public {
+    function testRedeemAndMintFromAaggToAmod() public {
         runLocalRedeemAndMintQuoteTest(
-            "/data/redeemAndMint/testRedeemAndMintFromAaggToAbalOnPolygonHighAmount.json"
+            "/data/redeemAndMint/testRedeemAndMintFromAaggToAmod.json"
+        );
+    }
+
+    /**
+     * [SUCCESS] Should redeem ABAL and mint AAGG
+     */
+    function testRedeemAndMintFromAbalToAagg() public {
+        runLocalRedeemAndMintQuoteTest(
+            "/data/redeemAndMint/testRedeemAndMintFromAbalToAagg.json"
+        );
+    }
+
+    /**
+     * [SUCCESS] Should redeem ABAL and mint AMOD
+     */
+    function testRedeemAndMintFromAbalToAmod() public {
+        runLocalRedeemAndMintQuoteTest(
+            "/data/redeemAndMint/testRedeemAndMintFromAbalToAmod.json"
+        );
+    }
+
+    /**
+     * [SUCCESS] Should redeem AMOD and mint AAGG
+     */
+    function testRedeemAndMintFromAmodToAagg() public {
+        runLocalRedeemAndMintQuoteTest(
+            "/data/redeemAndMint/testRedeemAndMintFromAmodToAagg.json"
+        );
+    }
+
+    /**
+     * [SUCCESS] Should redeem AMOD and mint ABAL
+     */
+    function testRedeemAndMintFromAmodToAbal() public {
+        runLocalRedeemAndMintQuoteTest(
+            "/data/redeemAndMint/testRedeemAndMintFromAmodToAbal.json"
         );
     }
 }
