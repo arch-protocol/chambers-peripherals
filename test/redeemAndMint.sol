@@ -140,53 +140,41 @@ contract GaslessTest is Test, ArchUtils {
      * [SUCCESS] Should redeem AAGG and mint ABAL
      */
     function testRedeemAndMintFromAaggToAbal() public {
-        runLocalRedeemAndMintQuoteTest(
-            "/data/redeemAndMint/testRedeemAndMintFromAaggToAbal.json"
-        );
+        runLocalRedeemAndMintQuoteTest("/data/redeemAndMint/testRedeemAndMintFromAaggToAbal.json");
     }
 
     /**
      * [SUCCESS] Should redeem AAGG and mint ABAL
      */
     function testRedeemAndMintFromAaggToAmod() public {
-        runLocalRedeemAndMintQuoteTest(
-            "/data/redeemAndMint/testRedeemAndMintFromAaggToAmod.json"
-        );
+        runLocalRedeemAndMintQuoteTest("/data/redeemAndMint/testRedeemAndMintFromAaggToAmod.json");
     }
 
     /**
      * [SUCCESS] Should redeem ABAL and mint AAGG
      */
     function testRedeemAndMintFromAbalToAagg() public {
-        runLocalRedeemAndMintQuoteTest(
-            "/data/redeemAndMint/testRedeemAndMintFromAbalToAagg.json"
-        );
+        runLocalRedeemAndMintQuoteTest("/data/redeemAndMint/testRedeemAndMintFromAbalToAagg.json");
     }
 
     /**
      * [SUCCESS] Should redeem ABAL and mint AMOD
      */
     function testRedeemAndMintFromAbalToAmod() public {
-        runLocalRedeemAndMintQuoteTest(
-            "/data/redeemAndMint/testRedeemAndMintFromAbalToAmod.json"
-        );
+        runLocalRedeemAndMintQuoteTest("/data/redeemAndMint/testRedeemAndMintFromAbalToAmod.json");
     }
 
     /**
      * [SUCCESS] Should redeem AMOD and mint AAGG
      */
     function testRedeemAndMintFromAmodToAagg() public {
-        runLocalRedeemAndMintQuoteTest(
-            "/data/redeemAndMint/testRedeemAndMintFromAmodToAagg.json"
-        );
+        runLocalRedeemAndMintQuoteTest("/data/redeemAndMint/testRedeemAndMintFromAmodToAagg.json");
     }
 
     /**
      * [SUCCESS] Should redeem AMOD and mint ABAL
      */
     function testRedeemAndMintFromAmodToAbal() public {
-        runLocalRedeemAndMintQuoteTest(
-            "/data/redeemAndMint/testRedeemAndMintFromAmodToAbal.json"
-        );
+        runLocalRedeemAndMintQuoteTest("/data/redeemAndMint/testRedeemAndMintFromAmodToAbal.json");
     }
 }

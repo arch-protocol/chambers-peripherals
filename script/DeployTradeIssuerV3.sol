@@ -6,11 +6,10 @@ import "forge-std/Script.sol";
 import { TradeIssuerV3 } from "src/TradeIssuerV3.sol";
 
 contract DeployTradeIssuerV3 is Script {
-  address public constant POLYGON_WMATIC = 0x0d500B1d8E8eF31E21C99d1Db9A6444d3ADf1270;
-  address public constant POLYGON_CHAMBER_GOD = 0x0C9Aa1e4B4E39DA01b7459607995368E4C38cFEF;
-  address public constant POLYGON_UNISWAP_ROUTER = 0x68b3465833fb72A70ecDF485E0e4C7bD8665Fc45;
-  address public constant POLYGON_ZERO_EX = 0xDef1C0ded9bec7F1a1670819833240f027b25EfF;
-  
+    address public constant POLYGON_WMATIC = 0x0d500B1d8E8eF31E21C99d1Db9A6444d3ADf1270;
+    address public constant POLYGON_CHAMBER_GOD = 0x0C9Aa1e4B4E39DA01b7459607995368E4C38cFEF;
+    address public constant POLYGON_UNISWAP_ROUTER = 0x68b3465833fb72A70ecDF485E0e4C7bD8665Fc45;
+    address public constant POLYGON_ZERO_EX = 0xDef1C0ded9bec7F1a1670819833240f027b25EfF;
 
     /**
      * Deploy TradeIssuerV3
