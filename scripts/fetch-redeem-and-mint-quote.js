@@ -23,7 +23,7 @@ async function main(fromTokenAddress, fromTokenAmountInWei, toTokenAddress) {
     fromTokenAddress: from,
     fromTokenAmountInWei: fromAmount,
     toTokenAddress: toToken,
-    mintAmountMultiplier: 0.99, // The greater {fromAmount} the smaller this value gets, otherwise the quotes fails
+    mintAmountMultiplier: 0.995, // The greater {fromAmount} the smaller this value gets, otherwise the quotes fails
   }
 
   const jwt = await generateJwt(params)

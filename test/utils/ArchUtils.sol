@@ -50,7 +50,7 @@ contract ArchUtils is Test {
     address public constant POLYGON_AEDY = 0x027aF1E12a5869eD329bE4c05617AD528E997D5A;
     address public constant POLYGON_ADDY = 0xAb1B1680f6037006e337764547fb82d17606c187;
     address public constant POLYGON_AAGG = 0xAfb6E8331355faE99C8E8953bB4c6Dc5d11E9F3c;
-    address public constant POLYGON_AMOD = 0x8F0d5660929cA6ac394c5c41f59497629b1dbc23;
+    address public constant POLYGON_AMOD = 0xa5a979Aa7F55798e99f91Abe815c114A09164beb; // UPDATED
     address public constant POLYGON_ABAL = 0xF401E2c1ce8F252947b60BFB92578f84217A1545;
     address public constant POLYGON_AP60 = 0x6cA9C8914a14D63a6700556127D09e7721ff7D3b;
     address public constant POLYGON_USDC = 0x2791Bca1f2de4661ED88A30C99A7a9449Aa84174;
@@ -74,6 +74,7 @@ contract ArchUtils is Test {
     address public constant POLYGON_UNIV3_LP_WETH_AEDY = 0xefbA86413285584582cBEb556E1b89914b67eD02;
     address public constant POLYGON_UNISWAP_ROUTER = 0x68b3465833fb72A70ecDF485E0e4C7bD8665Fc45;
     address public constant POLYGON_CHAMBER_GOD = 0x0C9Aa1e4B4E39DA01b7459607995368E4C38cFEF;
+    address public constant POLYGON_TRADE_ISSUER_V3 = 0xdCB99117Ba207b996EE3c49eE6F8c0f1d371867A;
     // Utils
     uint256 public constant ALICE_PRIVATE_KEY = 0xa11ce000000b0b;
     address public ALICE = vm.addr(ALICE_PRIVATE_KEY);
