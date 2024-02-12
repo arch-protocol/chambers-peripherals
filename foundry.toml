@@ -21,7 +21,7 @@ tab_width = 4
 bracket_spacing = true
 
 [rpc_endpoints]
-ethereum = "${ETHEREUM_RPC_URL}"
+mainnet = "${ETHEREUM_RPC_URL}"
 polygon = "${POLYGON_RPC_URL}"
 anvil = "http://localhost:8545"
 
