@@ -77,7 +77,7 @@ contract TradeIssuerV2 is ITradeIssuerV2, Ownable, ReentrancyGuard {
     /**
      * @param _wrappedNativeToken        Wrapped network native token
      */
-    constructor(address _wrappedNativeToken) {
+    constructor(address _wrappedNativeToken) Ownable(msg.sender) {
         wrappedNativeToken = _wrappedNativeToken;
     }
 

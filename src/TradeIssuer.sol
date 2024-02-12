@@ -66,7 +66,7 @@ contract TradeIssuer is ITradeIssuer, Ownable, ReentrancyGuard {
      * @param _dexAggregator        Address of the dex aggregator that will be called to make the swaps.
      * @param _wrappedNativeToken   Native Token address of the chain where the contract will be deployed.
      */
-    constructor(address payable _dexAggregator, address _wrappedNativeToken) {
+    constructor(address payable _dexAggregator, address _wrappedNativeToken) Ownable(msg.sender) {
         dexAggregator = _dexAggregator;
         wrappedNativeToken = _wrappedNativeToken;
     }
