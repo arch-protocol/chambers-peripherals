@@ -32,7 +32,7 @@ contract ArchemistUnpause is Test {
     /**
      * [ERROR] Should revert when trying to unpause the contract as admin.
      */
-    function testCannotPauseNotAdmin(address randomCaller) public {
+    function testCannotUnpauseNotAdmin(address randomCaller) public {
         vm.assume(randomCaller != admin);
         vm.expectRevert(
             abi.encodeWithSelector(IAccessManager.CallerHasNoAccess.selector, randomCaller)
@@ -45,7 +45,7 @@ contract ArchemistUnpause is Test {
     /**
      * [ERROR] Should revert when trying to unpause the contract when not admin nor manager.
      */
-    function testCannotPauseotAdminNorManager(address randomCaller, address manager) public {
+    function testCannotUnpauseotAdminNorManager(address randomCaller, address manager) public {
         vm.assume(randomCaller != admin);
         vm.assume(randomCaller != manager);
 
@@ -64,7 +64,7 @@ contract ArchemistUnpause is Test {
     /**
      * [ERROR] Should revert when trying to unpause the contract when not admin, manager nor operator.
      */
-    function testCannotPauseNotAdminNorManagerNorOperator(
+    function testCannotUnpauseNotAdminNorManagerNorOperator(
         address randomCaller,
         address manager,
         address operator
@@ -107,7 +107,7 @@ contract ArchemistUnpause is Test {
     /**
      * [SUCCESS] Should unpause the contract when called by admin
      */
-    function testPauseAsAdmin(uint256 randomUint) public {
+    function testUnpauseAsAdmin(uint256 randomUint) public {
         vm.assume(randomUint != 0);
         vm.prank(admin);
         archemist.unpause();
@@ -118,7 +118,7 @@ contract ArchemistUnpause is Test {
     /**
      * [SUCCESS] Should unpause the contract when called by manager
      */
-    function testPauseAsManager(uint256 randomUint, address manager) public {
+    function testUnpauseAsManager(uint256 randomUint, address manager) public {
         vm.assume(randomUint != 0);
         vm.prank(admin);
         archemist.addManager(manager);
@@ -131,7 +131,7 @@ contract ArchemistUnpause is Test {
     /**
      * [SUCCESS] Should unpause the contract when called by operator
      */
-    function testPauseAsOperator(uint256 randomUint, address operator) public {
+    function testUnpauseAsOperator(uint256 randomUint, address operator) public {
         vm.assume(randomUint != 0);
         vm.prank(admin);
         archemist.addOperator(operator);
