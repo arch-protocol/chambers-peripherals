@@ -42,26 +42,15 @@
 pragma solidity ^0.8.24;
 
 interface IArchemist {
-   
-
     /*//////////////////////////////////////////////////////////////
                                  EVENTS
     //////////////////////////////////////////////////////////////*/
 
-    event Deposit(
-        address indexed sender,
-        uint256 amount
-    );
+    event Deposit(address indexed sender, uint256 amount);
 
-    event Withdraw(
-        address indexed sender,
-        uint256 amount
-    );
+    event Withdraw(address indexed sender, uint256 amount);
 
-    event PricePerShareUpdated(
-        uint256 pricePerShare
-    );
-
+    event PricePerShareUpdated(uint256 pricePerShare);
 
     /*//////////////////////////////////////////////////////////////
                                 ERRORS
@@ -96,5 +85,4 @@ interface IArchemist {
     function activateArchemist() external;
 
     function deactivateArchemist() external;
-
 }
