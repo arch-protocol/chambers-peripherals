@@ -6,7 +6,7 @@ import { IAccessManager } from "src/interfaces/IAccessManager.sol";
 import { IArchemist } from "src/interfaces/IArchemist.sol";
 import { Test } from "forge-std/Test.sol";
 
-contract AdminPricePerShareTest is Test {
+contract ArchemistsUpdatePricePerShareTest is Test {
     /*//////////////////////////////////////////////////////////////
                                VARIABLES
     //////////////////////////////////////////////////////////////*/
