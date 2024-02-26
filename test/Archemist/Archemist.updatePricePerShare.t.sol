@@ -48,7 +48,7 @@ contract AdminPricePerShareTest is Test {
     /**
      * [ERROR] Should revert when trying to update the price per share when not admin nor manager
      */
-    function testUpdatePricePerShareNotAdminNorManager(
+    function testCannotUpdatePricePerShareNotAdminNorManager(
         address randomCaller,
         uint256 randomUint,
         address manager
@@ -72,7 +72,7 @@ contract AdminPricePerShareTest is Test {
     /**
      * [ERROR] Should revert when trying to update the price per share when not admin, manager nor operator
      */
-    function testUpdatePricePerShareNotAdminNorManagerNorOperator(
+    function testCannotUpdatePricePerShareNotAdminNorManagerNorOperator(
         address randomCaller,
         uint256 randomUint,
         address manager,
@@ -100,7 +100,7 @@ contract AdminPricePerShareTest is Test {
     /**
      * [ERROR] Should revert when trying to update the price per share with a price of 0
      */
-    function testUpdatePricePerShareZeroPrice() public {
+    function testCannotUpdatePricePerShareZeroPrice() public {
         vm.prank(admin);
         vm.expectRevert(abi.encodeWithSelector(IArchemist.ZeroPricePerShare.selector));
         archemist.updatePricePerShare(0);
