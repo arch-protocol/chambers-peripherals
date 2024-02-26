@@ -24,12 +24,7 @@ contract AdminPricePerShareTest is Test {
 
     function setUp() public {
         vm.prank(admin);
-        archemist = new Archemist(
-            exchangeToken,
-            baseTokenAddress,
-            archemistGod,
-            exchangeFee
-        );
+        archemist = new Archemist(exchangeToken, baseTokenAddress, archemistGod, exchangeFee);
     }
 
     /*//////////////////////////////////////////////////////////////
@@ -38,8 +33,8 @@ contract AdminPricePerShareTest is Test {
 
     /**
      * [ERROR] Should revert when trying to update the price per share not as admin
-    */
-    function testUpdatePricePerShareNotAdmin(address randomCaller,uint256 randomUint) public {
+     */
+    function testUpdatePricePerShareNotAdmin(address randomCaller, uint256 randomUint) public {
         vm.assume(randomUint != 0);
         vm.assume(randomCaller != admin);
         vm.expectRevert(
@@ -53,7 +48,11 @@ contract AdminPricePerShareTest is Test {
     /**
      * [ERROR] Should revert when trying to update the price per share when not admin nor manager
      */
-    function testUpdatePricePerShareNotAdminNorManager(address randomCaller,uint256 randomUint, address manager) public {
+    function testUpdatePricePerShareNotAdminNorManager(
+        address randomCaller,
+        uint256 randomUint,
+        address manager
+    ) public {
         vm.assume(randomUint != 0);
         vm.assume(randomCaller != admin);
         vm.assume(randomCaller != manager);
@@ -70,10 +69,15 @@ contract AdminPricePerShareTest is Test {
         assertEq(archemist.paused(), true);
     }
 
-    /** 
+    /**
      * [ERROR] Should revert when trying to update the price per share when not admin, manager nor operator
      */
-    function testUpdatePricePerShareNotAdminNorManagerNorOperator(address randomCaller,uint256 randomUint, address manager, address operator) public {
+    function testUpdatePricePerShareNotAdminNorManagerNorOperator(
+        address randomCaller,
+        uint256 randomUint,
+        address manager,
+        address operator
+    ) public {
         vm.assume(randomUint != 0);
         vm.assume(randomCaller != admin);
         vm.assume(randomCaller != manager);
@@ -83,7 +87,6 @@ contract AdminPricePerShareTest is Test {
         archemist.addManager(manager);
         archemist.addOperator(operator);
         vm.stopPrank();
-
 
         vm.expectRevert(
             abi.encodeWithSelector(IAccessManager.CallerHasNoAccess.selector, randomCaller)
@@ -99,13 +102,10 @@ contract AdminPricePerShareTest is Test {
      */
     function testUpdatePricePerShareZeroPrice() public {
         vm.prank(admin);
-        vm.expectRevert(
-            abi.encodeWithSelector(IArchemist.ZeroPricePerShare.selector)
-        );
+        vm.expectRevert(abi.encodeWithSelector(IArchemist.ZeroPricePerShare.selector));
         archemist.updatePricePerShare(0);
         assertEq(archemist.paused(), true);
     }
-    
 
     /*//////////////////////////////////////////////////////////////
                               SUCCESS
@@ -118,7 +118,7 @@ contract AdminPricePerShareTest is Test {
         vm.assume(randomUint != 0);
         vm.prank(admin);
         archemist.updatePricePerShare(randomUint);
-        
+
         assertEq(archemist.pricePerShare(), randomUint);
         assertEq(archemist.paused(), true);
     }
@@ -150,5 +150,4 @@ contract AdminPricePerShareTest is Test {
         assertEq(archemist.pricePerShare(), randomUint);
         assertEq(archemist.paused(), true);
     }
-
 }
