@@ -34,7 +34,9 @@ contract AdminPricePerShareTest is Test {
     /**
      * [ERROR] Should revert when trying to update the price per share not as admin
      */
-    function testCannotUpdatePricePerShareNotAdmin(address randomCaller, uint256 randomUint) public {
+    function testCannotUpdatePricePerShareNotAdmin(address randomCaller, uint256 randomUint)
+        public
+    {
         vm.assume(randomUint != 0);
         vm.assume(randomCaller != admin);
         vm.expectRevert(
