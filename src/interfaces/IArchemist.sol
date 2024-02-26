@@ -68,56 +68,59 @@ interface IArchemist {
                                 FUNCTIONS
     //////////////////////////////////////////////////////////////*/
 
-    
-
     /**
-    * @notice Updates the price per share of the Archemist. Operation can only be performed
-    *         by an operator, manager or admin.
-    *     
-    * @param _pricePerShare Address of the token to be withdrawn
-    */
+     * @notice Updates the price per share of the Archemist. Operation can only be performed
+     *         by an operator, manager or admin.
+     *
+     * @param _pricePerShare Address of the token to be withdrawn
+     */
     function updatePricePerShare(uint256 _pricePerShare) external;
 
     /**
-    * @notice Preview the amount of exchange token to be received for a given amount of base token
-    *     
-    * @param _baseTokenAmount Amount of base token to be deposited
-    * @return exchangeTokenAmount Amount of exchange token to be received
-    */
-    function previewDeposit(uint256 _baseTokenAmount) external view returns (uint256 exchangeTokenAmount);
+     * @notice Preview the amount of exchange token to be received for a given amount of base token
+     *
+     * @param _baseTokenAmount Amount of base token to be deposited
+     * @return exchangeTokenAmount Amount of exchange token to be received
+     */
+    function previewDeposit(uint256 _baseTokenAmount)
+        external
+        view
+        returns (uint256 exchangeTokenAmount);
 
     /**
-    * @notice Deposit base token to receive exchange token. Operation can only be performed
-    *         when contract is not paused.
-    *     
-    * @param _baseTokenAmount Amount of base token to be deposited
-    * @return exchangeTokenAmount Amount of exchange token to be received
-    */
+     * @notice Deposit base token to receive exchange token. Operation can only be performed
+     *         when contract is not paused.
+     *
+     * @param _baseTokenAmount Amount of base token to be deposited
+     * @return exchangeTokenAmount Amount of exchange token to be received
+     */
     function deposit(uint256 _baseTokenAmount) external returns (uint256 exchangeTokenAmount);
 
     /**
-    * @notice Preview the amount of base token to be received for a given amount of exchange token
-    *     
-    * @param _exchangeTokenAmount Amount of exchange token to be withdrawn
-    * @return baseTokenAmount Amount of base token to be received
-    */
-    function previewWithdraw(uint256 _exchangeTokenAmount) external view returns (uint256 baseTokenAmount);       
+     * @notice Preview the amount of base token to be received for a given amount of exchange token
+     *
+     * @param _exchangeTokenAmount Amount of exchange token to be withdrawn
+     * @return baseTokenAmount Amount of base token to be received
+     */
+    function previewWithdraw(uint256 _exchangeTokenAmount)
+        external
+        view
+        returns (uint256 baseTokenAmount);
 
-    
     /**
-    * @notice Withdraw base token by providing exchange token. Operation can only be performed
-    *         when contract is not paused.
-    *     
-    * @param _exchangeTokenAmount Amount of exchange token to be withdrawn
-    * @return baseTokenAmount Amount of base token to be received
-    */
+     * @notice Withdraw base token by providing exchange token. Operation can only be performed
+     *         when contract is not paused.
+     *
+     * @param _exchangeTokenAmount Amount of exchange token to be withdrawn
+     * @return baseTokenAmount Amount of base token to be received
+     */
     function withdraw(uint256 _exchangeTokenAmount) external returns (uint256 baseTokenAmount);
 
     /**
-    * @notice Transfer ERC20 token to the owner. Operation can only be performed
-    *         by a manager or admin.
-    *     
-    * @param _tokenToWithdraw Address of the token to be withdrawn
-    */
+     * @notice Transfer ERC20 token to the owner. Operation can only be performed
+     *         by a manager or admin.
+     *
+     * @param _tokenToWithdraw Address of the token to be withdrawn
+     */
     function transferERC20ToOwner(address _tokenToWithdraw) external;
 }
