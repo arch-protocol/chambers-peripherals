@@ -1,7 +1,4 @@
-[![Lint](https://github.com/arch-protocol/chambers-peripherals/actions/workflows/CI.yml/badge.svg)](https://github.com/arch-protocol/chambers-peripherals/actions/workflows/CI.yml)
-[![Slither](https://github.com/arch-protocol/chambers-peripherals/actions/workflows/slither.yml/badge.svg)](https://github.com/arch-protocol/chambers-peripherals/actions/workflows/slither.yml)
-[![Unit Tests](https://github.com/arch-protocol/chambers-peripherals/actions/workflows/tests-unit.yml/badge.svg)](https://github.com/arch-protocol/chambers-peripherals/actions/workflows/tests-unit.yml)
-[![Trade Issuer Integration](https://github.com/arch-protocol/chambers-peripherals/actions/workflows/tests-int-trade-issuer.yml/badge.svg)](https://github.com/arch-protocol/chambers-peripherals/actions/workflows/tests-int-trade-issuer.yml)
+[![CI and Tests](https://github.com/arch-protocol/chambers-peripherals/actions/workflows/CI.yml/badge.svg)](https://github.com/arch-protocol/chambers-peripherals/actions/workflows/CI.yml)
 
 # Chambers Peripherals 
 
