@@ -6,7 +6,7 @@ import { IAccessManager } from "src/interfaces/IAccessManager.sol";
 import { Test } from "forge-std/Test.sol";
 import { Pausable } from "@openzeppelin/contracts/utils/Pausable.sol";
 
-contract ArchemistPause is Test {
+contract ArchemistUnpause is Test {
     /*//////////////////////////////////////////////////////////////
                                VARIABLES
     //////////////////////////////////////////////////////////////*/
@@ -21,10 +21,8 @@ contract ArchemistPause is Test {
     uint24 public exchangeFee = 1000;
 
     function setUp() public {
-        vm.startPrank(admin);
+        vm.prank(admin);
         archemist = new Archemist(exchangeToken, baseTokenAddress, archemistGod, exchangeFee);
-        archemist.unpause();
-        vm.stopPrank();
     }
 
     /*//////////////////////////////////////////////////////////////
@@ -32,7 +30,7 @@ contract ArchemistPause is Test {
     //////////////////////////////////////////////////////////////*/
 
     /**
-     * [ERROR] Should revert when trying to pause the contract as admin.
+     * [ERROR] Should revert when trying to unpause the contract as admin.
      */
     function testCannotPauseNotAdmin(address randomCaller) public {
         vm.assume(randomCaller != admin);
@@ -40,12 +38,12 @@ contract ArchemistPause is Test {
             abi.encodeWithSelector(IAccessManager.CallerHasNoAccess.selector, randomCaller)
         );
         vm.prank(randomCaller);
-        archemist.pause();
-        assertEq(archemist.paused(), false);
+        archemist.unpause();
+        assertEq(archemist.paused(), true);
     }
 
     /**
-     * [ERROR] Should revert when trying to pause the contract when not admin nor manager.
+     * [ERROR] Should revert when trying to unpause the contract when not admin nor manager.
      */
     function testCannotPauseotAdminNorManager(address randomCaller, address manager) public {
         vm.assume(randomCaller != admin);
@@ -59,12 +57,12 @@ contract ArchemistPause is Test {
         );
 
         vm.prank(randomCaller);
-        archemist.pause();
-        assertEq(archemist.paused(), false);
+        archemist.unpause();
+        assertEq(archemist.paused(), true);
     }
 
     /**
-     * [ERROR] Should revert when trying to pause the contract when not admin, manager nor operator.
+     * [ERROR] Should revert when trying to unpause the contract when not admin, manager nor operator.
      */
     function testCannotPauseNotAdminNorManagerNorOperator(
         address randomCaller,
@@ -85,22 +83,21 @@ contract ArchemistPause is Test {
         );
 
         vm.prank(randomCaller);
-        archemist.pause();
-        assertEq(archemist.paused(), false);
+        archemist.unpause();
+        assertEq(archemist.paused(), true);
     }
 
     /**
-     * [ERROR] Should revert when trying to pause the contract when already paused.
+     * [ERROR] Should revert when trying to unpause the contract when not paused.
      */
-    function testCannotPauseAlreadyPaused(uint256 randomUint) public {
-        vm.assume(randomUint != 0);
+    function testCannotUnpauseNotPaused() public {
         vm.prank(admin);
-        archemist.pause();
+        archemist.unpause();
 
-        vm.expectRevert(abi.encodeWithSelector(Pausable.EnforcedPause.selector));
+        vm.expectRevert(abi.encodeWithSelector(Pausable.ExpectedPause.selector));
 
         vm.prank(admin);
-        archemist.pause();
+        archemist.unpause();
     }
 
     /*//////////////////////////////////////////////////////////////
@@ -108,39 +105,39 @@ contract ArchemistPause is Test {
     //////////////////////////////////////////////////////////////*/
 
     /**
-     * [SUCCESS] Should pause the contract when called by admin
+     * [SUCCESS] Should unpause the contract when called by admin
      */
     function testPauseAsAdmin(uint256 randomUint) public {
         vm.assume(randomUint != 0);
         vm.prank(admin);
-        archemist.pause();
+        archemist.unpause();
 
-        assertEq(archemist.paused(), true);
+        assertEq(archemist.paused(), false);
     }
 
     /**
-     * [SUCCESS] Should pause the contract when called by manager
+     * [SUCCESS] Should unpause the contract when called by manager
      */
     function testPauseAsManager(uint256 randomUint, address manager) public {
         vm.assume(randomUint != 0);
         vm.prank(admin);
         archemist.addManager(manager);
         vm.prank(manager);
-        archemist.pause();
+        archemist.unpause();
 
-        assertEq(archemist.paused(), true);
+        assertEq(archemist.paused(), false);
     }
 
     /**
-     * [SUCCESS] Should pause the contract when called by operator
+     * [SUCCESS] Should unpause the contract when called by operator
      */
     function testPauseAsOperator(uint256 randomUint, address operator) public {
         vm.assume(randomUint != 0);
         vm.prank(admin);
         archemist.addOperator(operator);
         vm.prank(operator);
-        archemist.pause();
+        archemist.unpause();
 
-        assertEq(archemist.paused(), true);
+        assertEq(archemist.paused(), false);
     }
 }
