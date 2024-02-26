@@ -8,7 +8,7 @@ interface IAccessManager {
 
     error CallerIsNotManager(address caller);
 
-    error CallerHasNotAccess(address caller);
+    error CallerHasNoAccess(address caller);
 
     error ManagerAlreadyAdded(address manager);
 

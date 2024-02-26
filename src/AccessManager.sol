@@ -44,7 +44,7 @@ contract AccessManager is IAccessManager, AccessControl {
             !hasRole(DEFAULT_ADMIN_ROLE, msg.sender) && !hasRole(MANAGER, msg.sender)
                 && !hasRole(OPERATOR, msg.sender)
         ) {
-            revert CallerHasNotAccess(msg.sender);
+            revert CallerHasNoAccess(msg.sender);
         }
 
         _;
