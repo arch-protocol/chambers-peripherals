@@ -132,7 +132,9 @@ contract Archemist is IArchemist, AccessManager, ReentrancyGuard, Pausable {
         external
         nonReentrant
         onlyCallerWithAccess
-    {
+    {   
+        if(_pricePerShare == 0) revert ZeroPricePerShare();
+
         pricePerShare = _pricePerShare;
 
         emit PricePerShareUpdated(_pricePerShare);
