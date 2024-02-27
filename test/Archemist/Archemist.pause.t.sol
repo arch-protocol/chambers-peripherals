@@ -47,7 +47,7 @@ contract ArchemistPauseTest is Test {
     /**
      * [ERROR] Should revert when trying to pause the contract when not admin nor manager.
      */
-    function testCannotPauseotAdminNorManager(address randomCaller, address manager) public {
+    function testCannotPauseNotAdminNorManager(address randomCaller, address manager) public {
         vm.assume(randomCaller != admin);
         vm.assume(randomCaller != manager);
 
