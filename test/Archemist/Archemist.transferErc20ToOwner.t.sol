@@ -6,7 +6,7 @@ import { IArchemist } from "src/interfaces/IArchemist.sol";
 import { IAccessManager } from "src/interfaces/IAccessManager.sol";
 import { IERC20 } from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 
-contract ArchemistTransferErc20ToOwner is ArchemistTest {
+contract ArchemistTransferErc20ToManager is ArchemistTest {
     /*//////////////////////////////////////////////////////////////
                               REVERT
     //////////////////////////////////////////////////////////////*/
