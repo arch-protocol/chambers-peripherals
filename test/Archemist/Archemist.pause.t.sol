@@ -6,7 +6,7 @@ import { IAccessManager } from "src/interfaces/IAccessManager.sol";
 import { Test } from "forge-std/Test.sol";
 import { Pausable } from "@openzeppelin/contracts/utils/Pausable.sol";
 
-contract ArchemistPause is Test {
+contract ArchemistPauseTest is Test {
     /*//////////////////////////////////////////////////////////////
                                VARIABLES
     //////////////////////////////////////////////////////////////*/
@@ -32,9 +32,9 @@ contract ArchemistPause is Test {
     //////////////////////////////////////////////////////////////*/
 
     /**
-     * [ERROR] Should revert when trying to pause the contract as admin.
+     * [ERROR] Should revert when trying to pause the contract without access
      */
-    function testCannotPauseNotAdmin(address randomCaller) public {
+    function testCannotPauseNoAccess(address randomCaller) public {
         vm.assume(randomCaller != admin);
         vm.expectRevert(
             abi.encodeWithSelector(IAccessManager.CallerHasNoAccess.selector, randomCaller)
@@ -47,7 +47,7 @@ contract ArchemistPause is Test {
     /**
      * [ERROR] Should revert when trying to pause the contract when not admin nor manager.
      */
-    function testCannotPauseotAdminNorManager(address randomCaller, address manager) public {
+    function testCannotPauseNotAdminNorManager(address randomCaller, address manager) public {
         vm.assume(randomCaller != admin);
         vm.assume(randomCaller != manager);
 
