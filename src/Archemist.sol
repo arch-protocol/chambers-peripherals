@@ -28,7 +28,7 @@
  *    @@@@@(((((
  *      @@@((
  */
-pragma solidity ^0.8.21;
+pragma solidity ^0.8.24;
 
 import { IERC20 } from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import { SafeERC20 } from "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
@@ -221,12 +221,13 @@ contract Archemist is IArchemist, AccessManager, ReentrancyGuard, Pausable {
     }
 
     /**
-     * @notice Transfer ERC20 token to the owner. Operation can only be performed
-     *         by a manager or admin.
+     * @notice Transfer ERC20 token to the manager or higher level role.
+     *         Operation can only be performed by a manager or admin.
      *
      * @param _tokenToWithdraw Address of the token to be withdrawn
      */
-    function transferERC20ToOwner(address _tokenToWithdraw) external override onlyManager {
+    function transferErc20ToManager(address _tokenToWithdraw) external onlyManager {
+        // SHOULD WE USE ONLY MANAGER ? how are we going to rebalance this ?
         if (IERC20(_tokenToWithdraw).balanceOf(address(this)) == 0) {
             revert ZeroTokenBalance();
         }

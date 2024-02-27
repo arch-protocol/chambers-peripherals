@@ -25,6 +25,7 @@ contract GetAdminsTest is Test {
      * [SUCCESS] Should return the admins in the contract
      */
     function testGetAdmins(address randomAddress) public {
+        vm.assume(randomAddress != owner);
         vm.prank(owner);
         accessManager.addAdmin(randomAddress);
 
