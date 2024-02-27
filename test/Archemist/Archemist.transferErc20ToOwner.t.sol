@@ -52,15 +52,13 @@ contract ArchemistTransferErc20ToOwner is ArchemistTest {
     /**
      * [ERROR] Should revert when trying to transfer erc20 to manager if not admin nor manager nor operator.
      */
-    function testCannotTransferErc20ToManagerNotAdminNorManagerNorOperator(
-        address randomCaller,
+    function testCannotTransferErc20ToManagerAsOperator(
         address manager,
         address operator,
         address tokenToWithdraw
     ) public {
-        vm.assume(randomCaller != admin);
-        vm.assume(randomCaller != manager);
-        vm.assume(randomCaller != operator);
+        vm.assume(operator != admin);
+        vm.assume(operator != manager);
 
         vm.startPrank(admin);
         archemist.addManager(manager);
@@ -68,10 +66,10 @@ contract ArchemistTransferErc20ToOwner is ArchemistTest {
         vm.stopPrank();
 
         vm.expectRevert(
-            abi.encodeWithSelector(IAccessManager.CallerIsNotManager.selector, randomCaller)
+            abi.encodeWithSelector(IAccessManager.CallerIsNotManager.selector, operator)
         );
 
-        vm.prank(randomCaller);
+        vm.prank(operator);
         archemist.transferErc20ToManager(tokenToWithdraw);
         assertEq(archemist.paused(), true);
     }
