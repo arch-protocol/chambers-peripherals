@@ -121,7 +121,8 @@ contract ArchemistPreviewDepositTest is ArchemistTest {
      * [SUCCESS] Should calculate exchange token amount equals to 0.9 (fees considered) ether when previewing deposit with usdc as base token
      * and addy as exchange with equal deposit amount and price per share.
      */
-    function testPreviewDepositWithUsdcAsBaseTokenAndAddyAsExchangeTokenAndEqualDepositAmountAndPricePerShare() public {
+    function testPreviewDepositWithUsdcAsBaseTokenAndAddyAsExchangeTokenAndEqualDepositAmountAndPricePerShare(
+    ) public {
         vm.prank(admin);
 
         archemist.updatePricePerShare(1 ether);
@@ -138,7 +139,8 @@ contract ArchemistPreviewDepositTest is ArchemistTest {
      * [SUCCESS] Should calculate exchange token amount equals to 0.9 (fees considered) ether when previewing deposit with addy as base token
      * and aedy as exchange with equal deposit amount and price per share.
      */
-    function testPreviewDepositWithAddyAsBaseTokenAndAedyAsExchangeTokenAndEqualDepositAmountAndPricePerShare() public {
+    function testPreviewDepositWithAddyAsBaseTokenAndAedyAsExchangeTokenAndEqualDepositAmountAndPricePerShare(
+    ) public {
         vm.prank(admin);
 
         archemistAedyAddy.updatePricePerShare(1 ether);
@@ -155,14 +157,15 @@ contract ArchemistPreviewDepositTest is ArchemistTest {
      * [SUCCESS] Should calculate exchange token amount equals to 0.9 (fees considered) ether when previewing deposit with addy as base token
      * and usdc as exchange with equal deposit amount and price per share.
      */
-    function testPreviewDepositWithAddyAsBaseTokenAndUsdcAsExchangeTokenAndEqualDepositAmountAndPricePerShare() public {
+    function testPreviewDepositWithAddyAsBaseTokenAndUsdcAsExchangeTokenAndEqualDepositAmountAndPricePerShare(
+    ) public {
         vm.prank(admin);
 
         archemistAddyUsdc.updatePricePerShare(1 ether);
 
         uint256 exchangeTokenAmount = archemistAddyUsdc.previewDeposit(1 ether);
 
-        assertEq(exchangeTokenAmount, 9e5 ); // 0.9 USDC
+        assertEq(exchangeTokenAmount, 9e5); // 0.9 USDC
         assertGe(exchangeTokenAmount, 0);
         assertEq(archemistAddyUsdc.pricePerShare(), 1 ether);
         assertEq(archemistAddyUsdc.paused(), true);
