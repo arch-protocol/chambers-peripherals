@@ -107,10 +107,8 @@ contract Archemist is IArchemist, AccessManager, ReentrancyGuard, Pausable {
         EXCHANGE_FEE = _exchangeFee;
         _pause();
 
-        // Calculate the precision factor
-        uint256 baseTokenDecimals = ERC20(BASE_TOKEN_ADDRESS).decimals();
         uint256 exchangeTokenDecimals = ERC20(EXCHANGE_TOKEN).decimals();
-        PRECISSION_FACTOR = 10**(uint256(18) + uint256(baseTokenDecimals) - uint256(exchangeTokenDecimals));
+        PRECISSION_FACTOR = 10**(exchangeTokenDecimals);
     }
 
     /*//////////////////////////////////////////////////////////////
