@@ -32,7 +32,7 @@ contract ArchemistPauseTest is Test {
     //////////////////////////////////////////////////////////////*/
 
     /**
-     * [ERROR] Should revert when trying to pause the contract as admin.
+     * [ERROR] Should revert when trying to pause the contract without access
      */
     function testCannotPauseNotAdmin(address randomCaller) public {
         vm.assume(randomCaller != admin);
