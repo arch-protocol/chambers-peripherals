@@ -3,10 +3,10 @@ pragma solidity ^0.8.20;
 
 import { Archemist } from "src/Archemist.sol";
 import { IAccessManager } from "src/interfaces/IAccessManager.sol";
-import { IArchemist } from "src/interfaces/IArchemist.sol";
 import { Test } from "forge-std/Test.sol";
+import { Pausable } from "@openzeppelin/contracts/utils/Pausable.sol";
 
-contract ArchemistsUpdatePricePerShareTest is Test {
+contract ArchemistPauseTest is Test {
     /*//////////////////////////////////////////////////////////////
                                VARIABLES
     //////////////////////////////////////////////////////////////*/
@@ -21,8 +21,10 @@ contract ArchemistsUpdatePricePerShareTest is Test {
     uint24 public exchangeFee = 1000;
 
     function setUp() public {
-        vm.prank(admin);
+        vm.startPrank(admin);
         archemist = new Archemist(exchangeToken, baseTokenAddress, archemistGod, exchangeFee);
+        archemist.unpause();
+        vm.stopPrank();
     }
 
     /*//////////////////////////////////////////////////////////////
@@ -30,30 +32,22 @@ contract ArchemistsUpdatePricePerShareTest is Test {
     //////////////////////////////////////////////////////////////*/
 
     /**
-     * [ERROR] Should revert when trying to update the price per share not as admin
+     * [ERROR] Should revert when trying to pause the contract without access
      */
-    function testCannotUpdatePricePerShareNotAdmin(address randomCaller, uint256 randomUint)
-        public
-    {
-        vm.assume(randomUint != 0);
+    function testCannotPauseNoAccess(address randomCaller) public {
         vm.assume(randomCaller != admin);
         vm.expectRevert(
             abi.encodeWithSelector(IAccessManager.CallerHasNoAccess.selector, randomCaller)
         );
         vm.prank(randomCaller);
-        archemist.updatePricePerShare(randomUint);
-        assertEq(archemist.paused(), true);
+        archemist.pause();
+        assertEq(archemist.paused(), false);
     }
 
     /**
-     * [ERROR] Should revert when trying to update the price per share when not admin nor manager
+     * [ERROR] Should revert when trying to pause the contract when not admin nor manager.
      */
-    function testCannotUpdatePricePerShareNotAdminNorManager(
-        address randomCaller,
-        uint256 randomUint,
-        address manager
-    ) public {
-        vm.assume(randomUint != 0);
+    function testCannotPauseNotAdminNorManager(address randomCaller, address manager) public {
         vm.assume(randomCaller != admin);
         vm.assume(randomCaller != manager);
 
@@ -65,20 +59,18 @@ contract ArchemistsUpdatePricePerShareTest is Test {
         );
 
         vm.prank(randomCaller);
-        archemist.updatePricePerShare(randomUint);
-        assertEq(archemist.paused(), true);
+        archemist.pause();
+        assertEq(archemist.paused(), false);
     }
 
     /**
-     * [ERROR] Should revert when trying to update the price per share when not admin, manager nor operator
+     * [ERROR] Should revert when trying to pause the contract when not admin, manager nor operator.
      */
-    function testCannotUpdatePricePerShareNotAdminNorManagerNorOperator(
+    function testCannotPauseNotAdminNorManagerNorOperator(
         address randomCaller,
-        uint256 randomUint,
         address manager,
         address operator
     ) public {
-        vm.assume(randomUint != 0);
         vm.assume(randomCaller != admin);
         vm.assume(randomCaller != manager);
         vm.assume(randomCaller != operator);
@@ -93,18 +85,22 @@ contract ArchemistsUpdatePricePerShareTest is Test {
         );
 
         vm.prank(randomCaller);
-        archemist.updatePricePerShare(randomUint);
-        assertEq(archemist.paused(), true);
+        archemist.pause();
+        assertEq(archemist.paused(), false);
     }
 
     /**
-     * [ERROR] Should revert when trying to update the price per share with a price of 0
+     * [ERROR] Should revert when trying to pause the contract when already paused.
      */
-    function testCannotUpdatePricePerShareZeroPrice() public {
+    function testCannotPauseAlreadyPaused(uint256 randomUint) public {
+        vm.assume(randomUint != 0);
         vm.prank(admin);
-        vm.expectRevert(abi.encodeWithSelector(IArchemist.ZeroPricePerShare.selector));
-        archemist.updatePricePerShare(0);
-        assertEq(archemist.paused(), true);
+        archemist.pause();
+
+        vm.expectRevert(abi.encodeWithSelector(Pausable.EnforcedPause.selector));
+
+        vm.prank(admin);
+        archemist.pause();
     }
 
     /*//////////////////////////////////////////////////////////////
@@ -112,42 +108,39 @@ contract ArchemistsUpdatePricePerShareTest is Test {
     //////////////////////////////////////////////////////////////*/
 
     /**
-     * [SUCCESS] Should update the price per share when called by admin
+     * [SUCCESS] Should pause the contract when called by admin
      */
-    function testUpdatePricePerShareAsAdmin(uint256 randomUint) public {
+    function testPauseAsAdmin(uint256 randomUint) public {
         vm.assume(randomUint != 0);
         vm.prank(admin);
-        archemist.updatePricePerShare(randomUint);
+        archemist.pause();
 
-        assertEq(archemist.pricePerShare(), randomUint);
         assertEq(archemist.paused(), true);
     }
 
     /**
-     * [SUCCESS] Should update the price per share when called by manager
+     * [SUCCESS] Should pause the contract when called by manager
      */
-    function testUpdatePricePerShareAsManager(uint256 randomUint, address manager) public {
+    function testPauseAsManager(uint256 randomUint, address manager) public {
         vm.assume(randomUint != 0);
         vm.prank(admin);
         archemist.addManager(manager);
         vm.prank(manager);
-        archemist.updatePricePerShare(randomUint);
+        archemist.pause();
 
-        assertEq(archemist.pricePerShare(), randomUint);
         assertEq(archemist.paused(), true);
     }
 
     /**
-     * [SUCCESS] Should update the price per share when called by operator
+     * [SUCCESS] Should pause the contract when called by operator
      */
-    function testUpdatePricePerShareAsOperator(uint256 randomUint, address operator) public {
+    function testPauseAsOperator(uint256 randomUint, address operator) public {
         vm.assume(randomUint != 0);
         vm.prank(admin);
         archemist.addOperator(operator);
         vm.prank(operator);
-        archemist.updatePricePerShare(randomUint);
+        archemist.pause();
 
-        assertEq(archemist.pricePerShare(), randomUint);
         assertEq(archemist.paused(), true);
     }
 }
