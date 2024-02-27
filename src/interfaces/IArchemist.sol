@@ -46,9 +46,9 @@ interface IArchemist {
                                  EVENTS
     //////////////////////////////////////////////////////////////*/
 
-    event Deposit(address indexed sender, uint256 amount);
+    event Deposit(address indexed sender, uint256 amount, uint256 feeAmount);
 
-    event Withdraw(address indexed sender, uint256 amount);
+    event Withdraw(address indexed sender, uint256 amount, uint256 feeAmount);
 
     event PricePerShareUpdated(uint256 pricePerShare);
 

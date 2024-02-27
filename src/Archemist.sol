@@ -92,7 +92,7 @@ contract Archemist is IArchemist, AccessManager, ReentrancyGuard, Pausable {
      * @param _exchangeToken    Address of the exchange token to be given at every deposit or to receive at every withdrawal
      * @param _baseTokenAddress Address of the base token
      * @param _archemistGod     Address of the Archemist Factory
-     * @param _exchangeFee      Fee to be charge for every deposit or withdrawal
+     * @param _exchangeFee      Fee to be charged at every deposit or withdrawal (number is divided by 10.000 to get the percentage)
      */
     constructor(
         address _exchangeToken,
@@ -159,7 +159,10 @@ contract Archemist is IArchemist, AccessManager, ReentrancyGuard, Pausable {
         view
         returns (uint256 chamberAmount)
     {
-        chamberAmount = (_baseTokenAmount * PRECISION_FACTOR) / pricePerShare;
+        uint256 feeAmount = (_baseTokenAmount * EXCHANGE_FEE) / 10000;
+        uint256 depositedAmount = _baseTokenAmount - feeAmount;
+
+        chamberAmount = (depositedAmount * PRECISION_FACTOR) / pricePerShare;
     }
 
     /**
@@ -179,13 +182,14 @@ contract Archemist is IArchemist, AccessManager, ReentrancyGuard, Pausable {
 
         ERC20(BASE_TOKEN_ADDRESS).safeTransferFrom(msg.sender, address(this), _baseTokenAmount);
 
-        chamberAmount = (_baseTokenAmount * PRECISION_FACTOR) / pricePerShare;
+        uint256 feeAmount = (_baseTokenAmount * EXCHANGE_FEE) / 10000;
+        uint256 depositedAmount = _baseTokenAmount - feeAmount;
 
-        // TO-DO: Charge Fees
+        chamberAmount = (depositedAmount * PRECISION_FACTOR) / pricePerShare;
 
         ERC20(EXCHANGE_TOKEN).safeTransfer(msg.sender, chamberAmount);
 
-        emit Deposit(msg.sender, _baseTokenAmount);
+        emit Deposit(msg.sender, _baseTokenAmount, feeAmount);
     }
 
     /**
@@ -200,6 +204,10 @@ contract Archemist is IArchemist, AccessManager, ReentrancyGuard, Pausable {
         returns (uint256 baseTokenAmount)
     {
         baseTokenAmount = (_exchangeTokenAmount * pricePerShare) / PRECISION_FACTOR;
+
+        uint256 feeAmount = (baseTokenAmount * EXCHANGE_FEE) / 10000;
+
+        baseTokenAmount -= feeAmount;
     }
 
     /**
@@ -221,11 +229,13 @@ contract Archemist is IArchemist, AccessManager, ReentrancyGuard, Pausable {
 
         baseTokenAmount = (_exchangeTokenAmount * pricePerShare) / PRECISION_FACTOR;
 
-        // TO-DO: Charge Fees
+        uint256 feeAmount = (baseTokenAmount * EXCHANGE_FEE) / 10000;
+
+        baseTokenAmount -= feeAmount;
 
         ERC20(BASE_TOKEN_ADDRESS).safeTransfer(msg.sender, baseTokenAmount);
 
-        emit Withdraw(msg.sender, baseTokenAmount);
+        emit Withdraw(msg.sender, baseTokenAmount, feeAmount);
     }
 
     /**
