@@ -119,10 +119,10 @@ interface IArchemist {
     function withdraw(uint256 _exchangeTokenAmount) external returns (uint256 baseTokenAmount);
 
     /**
-     * @notice Transfer ERC20 token to the owner. Operation can only be performed
+     * @notice Transfer ERC20 token to the msg.sender . Operation can only be performed
      *         by a manager or admin.
      *
      * @param _tokenToWithdraw Address of the token to be withdrawn
      */
-    function transferERC20ToOwner(address _tokenToWithdraw) external;
+    function transferErc20ToManager(address _tokenToWithdraw) external;
 }
