@@ -221,16 +221,16 @@ contract Archemist is IArchemist, AccessManager, ReentrancyGuard, Pausable {
     }
 
     /**
-     * @notice Transfer ERC20 token to the manager or higher level role. 
+     * @notice Transfer ERC20 token to the manager or higher level role.
      *         Operation can only be performed by a manager or admin.
      *
      * @param _tokenToWithdraw Address of the token to be withdrawn
      */
-    function transferErc20ToManager(address _tokenToWithdraw) external onlyManager() {
-        // SHOULD WE USE ONLY MANAGER ? how are we going to rebalance this ? 
+    function transferErc20ToManager(address _tokenToWithdraw) external onlyManager {
+        // SHOULD WE USE ONLY MANAGER ? how are we going to rebalance this ?
         if (IERC20(_tokenToWithdraw).balanceOf(address(this)) == 0) {
             revert ZeroTokenBalance();
-        } 
+        }
 
         IERC20(_tokenToWithdraw).safeTransfer(
             msg.sender, IERC20(_tokenToWithdraw).balanceOf(address(this))

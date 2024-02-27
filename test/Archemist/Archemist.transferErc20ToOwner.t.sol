@@ -7,7 +7,6 @@ import { IAccessManager } from "src/interfaces/IAccessManager.sol";
 import { IERC20 } from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 
 contract ArchemistTransferErc20ToOwner is ArchemistTest {
-    
     /*//////////////////////////////////////////////////////////////
                               REVERT
     //////////////////////////////////////////////////////////////*/
@@ -15,7 +14,9 @@ contract ArchemistTransferErc20ToOwner is ArchemistTest {
     /**
      * [ERROR] Should revert when trying to transfer erc20 to manager if not admin.
      */
-    function testCannotTransferErc20ToManagerNotAdmin(address randomCaller, address tokenToWithdraw) public {
+    function testCannotTransferErc20ToManagerNotAdmin(address randomCaller, address tokenToWithdraw)
+        public
+    {
         vm.assume(randomCaller != admin);
         vm.expectRevert(
             abi.encodeWithSelector(IAccessManager.CallerIsNotManager.selector, randomCaller)
@@ -28,7 +29,11 @@ contract ArchemistTransferErc20ToOwner is ArchemistTest {
     /**
      * [ERROR] Should revert when trying to transfer erc20 to manager if not admin nor manager.
      */
-    function testCannotTransferErc20TomanagerNotAdminNorManager(address randomCaller, address manager, address tokenToWithdraw) public {
+    function testCannotTransferErc20TomanagerNotAdminNorManager(
+        address randomCaller,
+        address manager,
+        address tokenToWithdraw
+    ) public {
         vm.assume(randomCaller != admin);
         vm.assume(randomCaller != manager);
 
@@ -90,8 +95,8 @@ contract ArchemistTransferErc20ToOwner is ArchemistTest {
      */
     function testTransferErcToManager20AsAdmin(uint128 randomUint) public {
         vm.assume(randomUint != 0);
-        
-        deal(AEDY, address(archemist),randomUint);
+
+        deal(AEDY, address(archemist), randomUint);
 
         vm.prank(admin);
         archemist.transferErc20ToManager(AEDY);
@@ -107,7 +112,7 @@ contract ArchemistTransferErc20ToOwner is ArchemistTest {
     function testTransferErc20AsToManagerManager(uint128 randomUint, address manager) public {
         vm.assume(randomUint != 0);
 
-        deal(AEDY, address(archemist),randomUint);
+        deal(AEDY, address(archemist), randomUint);
 
         vm.prank(admin);
         archemist.addManager(manager);
@@ -119,5 +124,4 @@ contract ArchemistTransferErc20ToOwner is ArchemistTest {
         assertEq(IERC20(AEDY).balanceOf(manager), randomUint);
         assertEq(archemist.paused(), true);
     }
-
 }
