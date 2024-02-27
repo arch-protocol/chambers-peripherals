@@ -82,7 +82,6 @@ contract Archemist is IArchemist, AccessManager, ReentrancyGuard, Pausable {
      * @notice Precision factor for deposit and withdrawal operations
      */
     uint256 private immutable PRECISION_FACTOR;
-    
 
     /*//////////////////////////////////////////////////////////////
                                 CONSTRUCTOR
@@ -108,7 +107,7 @@ contract Archemist is IArchemist, AccessManager, ReentrancyGuard, Pausable {
         _pause();
 
         uint256 exchangeTokenDecimals = ERC20(EXCHANGE_TOKEN).decimals();
-        PRECISION_FACTOR = 10**(exchangeTokenDecimals);
+        PRECISION_FACTOR = 10 ** (exchangeTokenDecimals);
     }
 
     /*//////////////////////////////////////////////////////////////

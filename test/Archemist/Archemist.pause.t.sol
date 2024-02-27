@@ -8,7 +8,6 @@ import { Test } from "forge-std/Test.sol";
 import { Pausable } from "@openzeppelin/contracts/utils/Pausable.sol";
 
 contract ArchemistPauseTest is ArchemistTest {
-
     /*//////////////////////////////////////////////////////////////
                               REVERT
     //////////////////////////////////////////////////////////////*/
@@ -36,8 +35,6 @@ contract ArchemistPauseTest is ArchemistTest {
     function testCannotPauseNotAdminNorManager(address randomCaller, address manager) public {
         vm.assume(randomCaller != admin);
         vm.assume(randomCaller != manager);
-
-        
 
         vm.startPrank(admin);
         archemist.unpause();
