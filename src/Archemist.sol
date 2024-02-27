@@ -81,7 +81,7 @@ contract Archemist is IArchemist, AccessManager, ReentrancyGuard, Pausable {
     /**
      * @notice Precision factor for deposit and withdrawal operations
      */
-    uint256 private immutable PRECISSION_FACTOR;
+    uint256 private immutable PRECISION_FACTOR;
     
 
     /*//////////////////////////////////////////////////////////////
@@ -108,7 +108,7 @@ contract Archemist is IArchemist, AccessManager, ReentrancyGuard, Pausable {
         _pause();
 
         uint256 exchangeTokenDecimals = ERC20(EXCHANGE_TOKEN).decimals();
-        PRECISSION_FACTOR = 10**(exchangeTokenDecimals);
+        PRECISION_FACTOR = 10**(exchangeTokenDecimals);
     }
 
     /*//////////////////////////////////////////////////////////////
@@ -160,7 +160,7 @@ contract Archemist is IArchemist, AccessManager, ReentrancyGuard, Pausable {
         view
         returns (uint256 chamberAmount)
     {
-        chamberAmount = (_baseTokenAmount * PRECISSION_FACTOR) / pricePerShare;
+        chamberAmount = (_baseTokenAmount * PRECISION_FACTOR) / pricePerShare;
     }
 
     /**
@@ -180,7 +180,7 @@ contract Archemist is IArchemist, AccessManager, ReentrancyGuard, Pausable {
 
         ERC20(BASE_TOKEN_ADDRESS).safeTransferFrom(msg.sender, address(this), _baseTokenAmount);
 
-        chamberAmount = (_baseTokenAmount * PRECISSION_FACTOR) / pricePerShare;
+        chamberAmount = (_baseTokenAmount * PRECISION_FACTOR) / pricePerShare;
 
         // TO-DO: Charge Fees
 
@@ -200,7 +200,7 @@ contract Archemist is IArchemist, AccessManager, ReentrancyGuard, Pausable {
         view
         returns (uint256 baseTokenAmount)
     {
-        baseTokenAmount = (_exchangeTokenAmount * pricePerShare) / PRECISSION_FACTOR;
+        baseTokenAmount = (_exchangeTokenAmount * pricePerShare) / PRECISION_FACTOR;
     }
 
     /**
@@ -220,7 +220,7 @@ contract Archemist is IArchemist, AccessManager, ReentrancyGuard, Pausable {
 
         ERC20(EXCHANGE_TOKEN).safeTransferFrom(msg.sender, address(this), _exchangeTokenAmount);
 
-        baseTokenAmount = (_exchangeTokenAmount * pricePerShare) / PRECISSION_FACTOR;
+        baseTokenAmount = (_exchangeTokenAmount * pricePerShare) / PRECISION_FACTOR;
 
         // TO-DO: Charge Fees
 
