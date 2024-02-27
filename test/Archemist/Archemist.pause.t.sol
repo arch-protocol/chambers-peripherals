@@ -6,7 +6,7 @@ import { IAccessManager } from "src/interfaces/IAccessManager.sol";
 import { Test } from "forge-std/Test.sol";
 import { Pausable } from "@openzeppelin/contracts/utils/Pausable.sol";
 
-contract ArchemistPause is Test {
+contract ArchemistPauseTest is Test {
     /*//////////////////////////////////////////////////////////////
                                VARIABLES
     //////////////////////////////////////////////////////////////*/
