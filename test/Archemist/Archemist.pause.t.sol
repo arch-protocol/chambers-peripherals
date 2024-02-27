@@ -2,31 +2,12 @@
 pragma solidity ^0.8.24;
 
 import { Archemist } from "src/Archemist.sol";
+import { ArchemistTest } from "test/utils/ArchemistTest.sol";
 import { IAccessManager } from "src/interfaces/IAccessManager.sol";
 import { Test } from "forge-std/Test.sol";
 import { Pausable } from "@openzeppelin/contracts/utils/Pausable.sol";
 
-contract ArchemistPauseTest is Test {
-    /*//////////////////////////////////////////////////////////////
-                               VARIABLES
-    //////////////////////////////////////////////////////////////*/
-
-    Archemist public archemist;
-
-    address public admin = vm.addr(0x1);
-    address public exchangeToken = vm.addr(0x2);
-    address public baseTokenAddress = vm.addr(0x3);
-    address public archemistGod = vm.addr(0x4);
-
-    uint24 public exchangeFee = 1000;
-
-    function setUp() public {
-        vm.startPrank(admin);
-        archemist = new Archemist(exchangeToken, baseTokenAddress, archemistGod, exchangeFee);
-        archemist.unpause();
-        vm.stopPrank();
-    }
-
+contract ArchemistPauseTest is ArchemistTest {
     /*//////////////////////////////////////////////////////////////
                               REVERT
     //////////////////////////////////////////////////////////////*/
@@ -36,6 +17,10 @@ contract ArchemistPauseTest is Test {
      */
     function testCannotPauseNoAccess(address randomCaller) public {
         vm.assume(randomCaller != admin);
+
+        vm.prank(admin);
+        archemist.unpause();
+
         vm.expectRevert(
             abi.encodeWithSelector(IAccessManager.CallerHasNoAccess.selector, randomCaller)
         );
@@ -51,8 +36,10 @@ contract ArchemistPauseTest is Test {
         vm.assume(randomCaller != admin);
         vm.assume(randomCaller != manager);
 
-        vm.prank(admin);
+        vm.startPrank(admin);
+        archemist.unpause();
         archemist.addManager(manager);
+        vm.stopPrank();
 
         vm.expectRevert(
             abi.encodeWithSelector(IAccessManager.CallerHasNoAccess.selector, randomCaller)
@@ -76,6 +63,7 @@ contract ArchemistPauseTest is Test {
         vm.assume(randomCaller != operator);
 
         vm.startPrank(admin);
+        archemist.unpause();
         archemist.addManager(manager);
         archemist.addOperator(operator);
         vm.stopPrank();
@@ -94,8 +82,6 @@ contract ArchemistPauseTest is Test {
      */
     function testCannotPauseAlreadyPaused(uint256 randomUint) public {
         vm.assume(randomUint != 0);
-        vm.prank(admin);
-        archemist.pause();
 
         vm.expectRevert(abi.encodeWithSelector(Pausable.EnforcedPause.selector));
 
@@ -112,6 +98,10 @@ contract ArchemistPauseTest is Test {
      */
     function testPauseAsAdmin(uint256 randomUint) public {
         vm.assume(randomUint != 0);
+
+        vm.prank(admin);
+        archemist.unpause();
+
         vm.prank(admin);
         archemist.pause();
 
@@ -123,8 +113,12 @@ contract ArchemistPauseTest is Test {
      */
     function testPauseAsManager(uint256 randomUint, address manager) public {
         vm.assume(randomUint != 0);
-        vm.prank(admin);
+
+        vm.startPrank(admin);
+        archemist.unpause();
         archemist.addManager(manager);
+        vm.stopPrank();
+
         vm.prank(manager);
         archemist.pause();
 
@@ -136,8 +130,12 @@ contract ArchemistPauseTest is Test {
      */
     function testPauseAsOperator(uint256 randomUint, address operator) public {
         vm.assume(randomUint != 0);
-        vm.prank(admin);
+
+        vm.startPrank(admin);
+        archemist.unpause();
         archemist.addOperator(operator);
+        vm.stopPrank();
+
         vm.prank(operator);
         archemist.pause();
 

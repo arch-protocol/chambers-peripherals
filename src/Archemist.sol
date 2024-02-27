@@ -30,12 +30,12 @@
  */
 pragma solidity ^0.8.24;
 
-import { IERC20 } from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
+import { ERC20 } from "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import { SafeERC20 } from "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 import { Address } from "@openzeppelin/contracts/utils/Address.sol";
 import { Pausable } from "@openzeppelin/contracts/utils/Pausable.sol";
 
-import { ReentrancyGuard } from "solmate/utils/ReentrancyGuard.sol";
+import { ReentrancyGuard } from "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
 
 import { IArchemist } from "./interfaces/IArchemist.sol";
 import { AccessManager } from "./AccessManager.sol";
@@ -47,7 +47,7 @@ contract Archemist is IArchemist, AccessManager, ReentrancyGuard, Pausable {
 
     using Address for address;
     using Address for address payable;
-    using SafeERC20 for IERC20;
+    using SafeERC20 for ERC20;
 
     /*//////////////////////////////////////////////////////////////
                                 STORAGE
@@ -78,6 +78,11 @@ contract Archemist is IArchemist, AccessManager, ReentrancyGuard, Pausable {
      */
     address public immutable ARCHEMIST_GOD;
 
+    /**
+     * @notice Precision factor for deposit and withdrawal operations
+     */
+    uint256 private immutable PRECISION_FACTOR;
+
     /*//////////////////////////////////////////////////////////////
                                 CONSTRUCTOR
     //////////////////////////////////////////////////////////////*/
@@ -100,6 +105,9 @@ contract Archemist is IArchemist, AccessManager, ReentrancyGuard, Pausable {
         ARCHEMIST_GOD = _archemistGod;
         EXCHANGE_FEE = _exchangeFee;
         _pause();
+
+        uint256 exchangeTokenDecimals = ERC20(EXCHANGE_TOKEN).decimals();
+        PRECISION_FACTOR = 10 ** (exchangeTokenDecimals);
     }
 
     /*//////////////////////////////////////////////////////////////
@@ -151,7 +159,7 @@ contract Archemist is IArchemist, AccessManager, ReentrancyGuard, Pausable {
         view
         returns (uint256 chamberAmount)
     {
-        chamberAmount = _baseTokenAmount / pricePerShare;
+        chamberAmount = (_baseTokenAmount * PRECISION_FACTOR) / pricePerShare;
     }
 
     /**
@@ -169,13 +177,13 @@ contract Archemist is IArchemist, AccessManager, ReentrancyGuard, Pausable {
     {
         if (_baseTokenAmount == 0) revert ZeroDepositAmount();
 
-        IERC20(BASE_TOKEN_ADDRESS).safeTransferFrom(msg.sender, address(this), _baseTokenAmount);
+        ERC20(BASE_TOKEN_ADDRESS).safeTransferFrom(msg.sender, address(this), _baseTokenAmount);
 
-        chamberAmount = _baseTokenAmount / pricePerShare;
+        chamberAmount = (_baseTokenAmount * PRECISION_FACTOR) / pricePerShare;
 
         // TO-DO: Charge Fees
 
-        IERC20(EXCHANGE_TOKEN).safeTransfer(msg.sender, chamberAmount);
+        ERC20(EXCHANGE_TOKEN).safeTransfer(msg.sender, chamberAmount);
 
         emit Deposit(msg.sender, _baseTokenAmount);
     }
@@ -191,7 +199,7 @@ contract Archemist is IArchemist, AccessManager, ReentrancyGuard, Pausable {
         view
         returns (uint256 baseTokenAmount)
     {
-        baseTokenAmount = _exchangeTokenAmount * pricePerShare;
+        baseTokenAmount = (_exchangeTokenAmount * pricePerShare) / PRECISION_FACTOR;
     }
 
     /**
@@ -209,13 +217,13 @@ contract Archemist is IArchemist, AccessManager, ReentrancyGuard, Pausable {
     {
         if (_exchangeTokenAmount == 0) revert ZeroWithdrawAmount();
 
-        IERC20(EXCHANGE_TOKEN).safeTransferFrom(msg.sender, address(this), _exchangeTokenAmount);
+        ERC20(EXCHANGE_TOKEN).safeTransferFrom(msg.sender, address(this), _exchangeTokenAmount);
 
-        baseTokenAmount = _exchangeTokenAmount * pricePerShare;
+        baseTokenAmount = (_exchangeTokenAmount * pricePerShare) / PRECISION_FACTOR;
 
         // TO-DO: Charge Fees
 
-        IERC20(BASE_TOKEN_ADDRESS).safeTransfer(msg.sender, baseTokenAmount);
+        ERC20(BASE_TOKEN_ADDRESS).safeTransfer(msg.sender, baseTokenAmount);
 
         emit Withdraw(msg.sender, baseTokenAmount);
     }
@@ -228,12 +236,12 @@ contract Archemist is IArchemist, AccessManager, ReentrancyGuard, Pausable {
      */
     function transferErc20ToManager(address _tokenToWithdraw) external onlyManager {
         // SHOULD WE USE ONLY MANAGER ? how are we going to rebalance this ?
-        if (IERC20(_tokenToWithdraw).balanceOf(address(this)) == 0) {
+        if (ERC20(_tokenToWithdraw).balanceOf(address(this)) == 0) {
             revert ZeroTokenBalance();
         }
 
-        IERC20(_tokenToWithdraw).safeTransfer(
-            msg.sender, IERC20(_tokenToWithdraw).balanceOf(address(this))
+        ERC20(_tokenToWithdraw).safeTransfer(
+            msg.sender, ERC20(_tokenToWithdraw).balanceOf(address(this))
         );
     }
 }
