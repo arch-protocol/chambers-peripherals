@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: Apache License 2.0
-pragma solidity ^0.8.20;
+pragma solidity ^0.8.24;
 
 import { Archemist } from "src/Archemist.sol";
 import { IAccessManager } from "src/interfaces/IAccessManager.sol";
