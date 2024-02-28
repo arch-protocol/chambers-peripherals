@@ -46,13 +46,13 @@ import { IERC20 } from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import { SafeERC20 } from "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 import { Address } from "@openzeppelin/contracts/utils/Address.sol";
 import { EnumerableSet } from "@openzeppelin/contracts/utils/structs/EnumerableSet.sol";
+import { ReentrancyGuard } from "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
+
+import { WETH } from "solmate/tokens/WETH.sol";
 
 import { IChamber } from "chambers/interfaces/IChamber.sol";
 import { IChamberGod } from "chambers/interfaces/IChamberGod.sol";
 import { IIssuerWizard } from "chambers/interfaces/IIssuerWizard.sol";
-
-import { ReentrancyGuard } from "solmate/utils/ReentrancyGuard.sol";
-import { WETH } from "solmate/tokens/WETH.sol";
 
 import { IArchNexus } from "./interfaces/IArchNexus.sol";
 
@@ -71,7 +71,7 @@ contract ArchNexus is IArchNexus, Ownable, ReentrancyGuard {
     //////////////////////////////////////////////////////////////*/
 
     EnumerableSet.AddressSet private allowedTargets;
-    address public immutable wrappedNativeToken;
+    WETH public immutable wrappedNativeToken;
     IChamberGod public chamberGod;
 
     /*//////////////////////////////////////////////////////////////
@@ -82,11 +82,9 @@ contract ArchNexus is IArchNexus, Ownable, ReentrancyGuard {
      * @param _wrappedNativeToken        Wrapped network native token
      */
     constructor(address _wrappedNativeToken, address _chamberGod) Ownable(msg.sender) {
-        wrappedNativeToken = _wrappedNativeToken;
+        wrappedNativeToken = WETH(payable(_wrappedNativeToken));
         chamberGod = IChamberGod(_chamberGod);
     }
-
-    receive() external payable { }
 
     /*//////////////////////////////////////////////////////////////
                             EXTERNAL FUNCTIONS
@@ -157,9 +155,9 @@ contract ArchNexus is IArchNexus, Ownable, ReentrancyGuard {
     }
 
     /**
-     * Transfer all stucked Ether to the owner of the contract
+     * Transfer all stuck native token to the owner of the contract
      */
-    function transferEthToOwner() external onlyOwner nonReentrant {
+    function transferNativeTokenToOwner() external onlyOwner nonReentrant {
         if (address(this).balance < 1) revert ZeroBalanceAsset();
         payable(owner()).transfer(address(this).balance);
     }
@@ -173,33 +171,78 @@ contract ArchNexus is IArchNexus, Ownable, ReentrancyGuard {
      * @param _contractCallInstructions     Instruction array that will be executed in order to get
      *                                      the underlying assets.
      *
-     * @return baseTokenUsed                Total amount of the base token used for the mint.
+     * @return finalAmountBought            Total amount of the final token bought.
      *
      */
     function executeCalls(
         ContractCallInstruction[] memory _contractCallInstructions,
         address _baseToken,
         uint256 _baseAmount,
-        address _finalToken
-    ) external nonReentrant returns (uint256 baseTokenUsed) {
+        address _finalToken,
+        uint256 _minFinalAmount
+    ) external nonReentrant returns (uint256 finalAmountBought) {
         if (_baseAmount == 0) revert ZeroBaseTokenSent();
         if (_baseToken == _finalToken) revert NoSameAddressAllowed();
         if (_baseToken == address(0) || _finalToken == address(0)) revert ZeroAddressNotAllowed();
 
         IERC20 baseToken = IERC20(_baseToken);
+
         baseToken.safeTransferFrom(msg.sender, address(this), _baseAmount);
 
         _executeInstructions(_contractCallInstructions);
 
-        uint256 remainingBaseToken = _baseAmount - baseTokenUsed;
-
-        baseToken.safeTransfer(msg.sender, remainingBaseToken);
+        baseToken.safeTransfer(msg.sender, baseToken.balanceOf(address(this)));
 
         IERC20 finalToken = IERC20(_finalToken);
 
-        finalToken.safeTransfer(msg.sender, finalToken.balanceOf(address(this)));
+        finalAmountBought = finalToken.balanceOf(address(this));
 
-        return baseTokenUsed;
+        if (finalAmountBought < _minFinalAmount) {
+            revert UnderboughtAsset(finalToken, _minFinalAmount);
+        }
+
+        finalToken.safeTransfer(msg.sender, finalAmountBought);
+
+        emit ExecutionSuccess(_finalToken, finalAmountBought);
+    }
+
+    /**
+     * Receives an initial amount of native token, performs a series of low-level calls and returns the final token.
+     *
+     * @param _nativeAmount                 The amount of the native token to be used for the initial call.
+     * @param _finalToken                   The token that will be sent to the msg.sender at the end of all the calls.
+     * @param _contractCallInstructions     Instruction array that will be executed in order to get
+     *                                      the underlying assets.
+     *
+     * @return finalAmountBought            Total amount of the final token bought.
+     *
+     */
+    function executeCallsWithNativeToken(
+        ContractCallInstruction[] memory _contractCallInstructions,
+        uint256 _nativeAmount,
+        address _finalToken,
+        uint256 _minFinalAmount
+    ) external payable nonReentrant returns (uint256 finalAmountBought) {
+        if (_nativeAmount == 0) revert ZeroNativeTokenSent();
+        if (_finalToken == address(0)) revert ZeroAddressNotAllowed();
+
+        wrappedNativeToken.deposit{ value: msg.value }();
+
+        _executeInstructions(_contractCallInstructions);
+
+        wrappedNativeToken.transfer(msg.sender, wrappedNativeToken.balanceOf(address(this)));
+
+        IERC20 finalToken = IERC20(_finalToken);
+
+        finalAmountBought = finalToken.balanceOf(address(this));
+
+        if (finalAmountBought < _minFinalAmount) {
+            revert UnderboughtAsset(finalToken, _minFinalAmount);
+        }
+
+        finalToken.safeTransfer(msg.sender, finalAmountBought);
+
+        emit ExecutionSuccess(_finalToken, finalAmountBought);
     }
 
     /*//////////////////////////////////////////////////////////////

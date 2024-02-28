@@ -66,6 +66,8 @@ interface IArchNexus {
 
     event AllowedTargetRemoved(address indexed _targer);
 
+    event ExecutionSuccess(address _finalToken, uint256 _finalAmount);
+
     /*//////////////////////////////////////////////////////////////
                                 ERRORS
     //////////////////////////////////////////////////////////////*/
@@ -85,6 +87,8 @@ interface IArchNexus {
     error ZeroBalanceAsset();
 
     error ZeroBaseTokenSent();
+
+    error ZeroNativeTokenSent();
 
     error ZeroRequiredAmount();
 
@@ -106,12 +110,20 @@ interface IArchNexus {
 
     function transferERC20ToOwner(address _tokenToWithdraw) external;
 
-    function transferEthToOwner() external;
+    function transferNativeTokenToOwner() external;
 
     function executeCalls(
         ContractCallInstruction[] memory _contractCallInstructions,
         address _baseToken,
         uint256 _baseAmount,
-        address _finalToken
-    ) external returns (uint256 baseTokenUsed);
+        address _finalToken,
+        uint256 _minFinalAmount
+    ) external returns (uint256 finalAmountBought);
+
+    function executeCallsWithNativeToken(
+        ContractCallInstruction[] memory _contractCallInstructions,
+        uint256 _nativeAmount,
+        address _finalToken,
+        uint256 _minFinalAmount
+    ) external payable returns (uint256 finalAmountBought);
 }
