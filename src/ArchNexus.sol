@@ -182,6 +182,10 @@ contract ArchNexus is IArchNexus, Ownable, ReentrancyGuard {
         uint256 _baseAmount,
         address _finalToken
     ) external nonReentrant returns (uint256 baseTokenUsed) {
+        if (_baseAmount == 0) revert ZeroBaseTokenSent();
+        if (_baseToken == _finalToken) revert NoSameAddressAllowed();
+        if (_baseToken == address(0) || _finalToken == address(0)) revert ZeroAddressNotAllowed();
+
         IERC20 baseToken = IERC20(_baseToken);
         baseToken.safeTransferFrom(msg.sender, address(this), _baseAmount);
 
