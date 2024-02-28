@@ -1,11 +1,9 @@
 // SPDX-License-Identifier: Apache License 2.0
 pragma solidity ^0.8.24;
 
-import { Archemist } from "src/Archemist.sol";
 import { ArchemistTest } from "test/utils/ArchemistTest.sol";
 import { IAccessManager } from "src/interfaces/IAccessManager.sol";
 import { IArchemist } from "src/interfaces/IArchemist.sol";
-import { Test } from "forge-std/Test.sol";
 
 contract ArchemistsUpdatePricePerShareTest is ArchemistTest {
     /*//////////////////////////////////////////////////////////////

@@ -159,6 +159,10 @@ contract Archemist is IArchemist, AccessManager, ReentrancyGuard, Pausable {
         view
         returns (uint256 chamberAmount)
     {
+        if (_baseTokenAmount == 0) revert ZeroDepositAmount();
+
+        if (pricePerShare == 0) revert ZeroPricePerShare();
+
         uint256 feeAmount = (_baseTokenAmount * EXCHANGE_FEE) / 10000;
         uint256 depositedAmount = _baseTokenAmount - feeAmount;
 
@@ -179,6 +183,8 @@ contract Archemist is IArchemist, AccessManager, ReentrancyGuard, Pausable {
         returns (uint256 chamberAmount)
     {
         if (_baseTokenAmount == 0) revert ZeroDepositAmount();
+
+        if (pricePerShare == 0) revert ZeroPricePerShare();
 
         ERC20(BASE_TOKEN_ADDRESS).safeTransferFrom(msg.sender, address(this), _baseTokenAmount);
 
@@ -203,6 +209,10 @@ contract Archemist is IArchemist, AccessManager, ReentrancyGuard, Pausable {
         view
         returns (uint256 baseTokenAmount)
     {
+        if (_exchangeTokenAmount == 0) revert ZeroWithdrawAmount();
+
+        if (pricePerShare == 0) revert ZeroPricePerShare();
+
         baseTokenAmount = (_exchangeTokenAmount * pricePerShare) / PRECISION_FACTOR;
 
         uint256 feeAmount = (baseTokenAmount * EXCHANGE_FEE) / 10000;
@@ -224,6 +234,8 @@ contract Archemist is IArchemist, AccessManager, ReentrancyGuard, Pausable {
         returns (uint256 baseTokenAmount)
     {
         if (_exchangeTokenAmount == 0) revert ZeroWithdrawAmount();
+
+        if (pricePerShare == 0) revert ZeroPricePerShare();
 
         ERC20(EXCHANGE_TOKEN).safeTransferFrom(msg.sender, address(this), _exchangeTokenAmount);
 

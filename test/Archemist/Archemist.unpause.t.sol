@@ -1,10 +1,8 @@
 // SPDX-License-Identifier: Apache License 2.0
 pragma solidity ^0.8.24;
 
-import { Archemist } from "src/Archemist.sol";
 import { ArchemistTest } from "test/utils/ArchemistTest.sol";
 import { IAccessManager } from "src/interfaces/IAccessManager.sol";
-import { Test } from "forge-std/Test.sol";
 import { Pausable } from "@openzeppelin/contracts/utils/Pausable.sol";
 
 contract ArchemistUnpauseTest is ArchemistTest {
