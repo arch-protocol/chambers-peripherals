@@ -152,12 +152,12 @@ contract Archemist is IArchemist, AccessManager, ReentrancyGuard, Pausable {
      * @notice Preview the amount of exchange token to be received for a given amount of base token
      *
      * @param _baseTokenAmount Amount of base token to be deposited
-     * @return chamberAmount Amount of exchange token to be received
+     * @return exchangeTokenAmount Amount of exchange token to be received
      */
     function previewDeposit(uint256 _baseTokenAmount)
         external
         view
-        returns (uint256 chamberAmount)
+        returns (uint256 exchangeTokenAmount)
     {
         if (_baseTokenAmount == 0) revert ZeroDepositAmount();
 
@@ -166,7 +166,7 @@ contract Archemist is IArchemist, AccessManager, ReentrancyGuard, Pausable {
         uint256 feeAmount = (_baseTokenAmount * EXCHANGE_FEE) / 10000;
         uint256 depositedAmount = _baseTokenAmount - feeAmount;
 
-        chamberAmount = (depositedAmount * PRECISION_FACTOR) / pricePerShare;
+        exchangeTokenAmount = (depositedAmount * PRECISION_FACTOR) / pricePerShare;
     }
 
     /**
@@ -174,13 +174,13 @@ contract Archemist is IArchemist, AccessManager, ReentrancyGuard, Pausable {
      *         when contract is not paused.
      *
      * @param _baseTokenAmount Amount of base token to be deposited
-     * @return chamberAmount Amount of exchange token to be received
+     * @return exchangeTokenAmount Amount of exchange token to be received
      */
     function deposit(uint256 _baseTokenAmount)
         external
         nonReentrant
         whenNotPaused
-        returns (uint256 chamberAmount)
+        returns (uint256 exchangeTokenAmount)
     {
         if (_baseTokenAmount == 0) revert ZeroDepositAmount();
 
@@ -191,9 +191,9 @@ contract Archemist is IArchemist, AccessManager, ReentrancyGuard, Pausable {
         uint256 feeAmount = (_baseTokenAmount * EXCHANGE_FEE) / 10000;
         uint256 depositedAmount = _baseTokenAmount - feeAmount;
 
-        chamberAmount = (depositedAmount * PRECISION_FACTOR) / pricePerShare;
+        exchangeTokenAmount = (depositedAmount * PRECISION_FACTOR) / pricePerShare;
 
-        ERC20(EXCHANGE_TOKEN).safeTransfer(msg.sender, chamberAmount);
+        ERC20(EXCHANGE_TOKEN).safeTransfer(msg.sender, exchangeTokenAmount);
 
         emit Deposit(msg.sender, _baseTokenAmount, feeAmount);
     }
