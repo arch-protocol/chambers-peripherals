@@ -17,6 +17,7 @@ contract ArchemistTest is Test {
 
     address public admin = vm.addr(0x1);
     address public archemistGod = vm.addr(0x4);
+    address public immutable ALICE = vm.addr(0x2);
     address public immutable USDC = 0x2791Bca1f2de4661ED88A30C99A7a9449Aa84174;
     address public immutable AEDY = 0x027aF1E12a5869eD329bE4c05617AD528E997D5A;
     address public immutable ADDY = 0xAb1B1680f6037006e337764547fb82d17606c187;
