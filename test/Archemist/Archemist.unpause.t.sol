@@ -1,30 +1,11 @@
 // SPDX-License-Identifier: Apache License 2.0
 pragma solidity ^0.8.24;
 
-import { Archemist } from "src/Archemist.sol";
+import { ArchemistTest } from "test/utils/ArchemistTest.sol";
 import { IAccessManager } from "src/interfaces/IAccessManager.sol";
-import { Test } from "forge-std/Test.sol";
 import { Pausable } from "@openzeppelin/contracts/utils/Pausable.sol";
 
-contract ArchemistUnpauseTest is Test {
-    /*//////////////////////////////////////////////////////////////
-                               VARIABLES
-    //////////////////////////////////////////////////////////////*/
-
-    Archemist public archemist;
-
-    address public admin = vm.addr(0x1);
-    address public exchangeToken = vm.addr(0x2);
-    address public baseTokenAddress = vm.addr(0x3);
-    address public archemistGod = vm.addr(0x4);
-
-    uint24 public exchangeFee = 1000;
-
-    function setUp() public {
-        vm.prank(admin);
-        archemist = new Archemist(exchangeToken, baseTokenAddress, archemistGod, exchangeFee);
-    }
-
+contract ArchemistUnpauseTest is ArchemistTest {
     /*//////////////////////////////////////////////////////////////
                               REVERT
     //////////////////////////////////////////////////////////////*/

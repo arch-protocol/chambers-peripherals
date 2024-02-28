@@ -30,12 +30,12 @@
  */
 pragma solidity ^0.8.24;
 
-import { IERC20 } from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
+import { ERC20 } from "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import { SafeERC20 } from "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 import { Address } from "@openzeppelin/contracts/utils/Address.sol";
 import { Pausable } from "@openzeppelin/contracts/utils/Pausable.sol";
 
-import { ReentrancyGuard } from "solmate/utils/ReentrancyGuard.sol";
+import { ReentrancyGuard } from "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
 
 import { IArchemist } from "./interfaces/IArchemist.sol";
 import { AccessManager } from "./AccessManager.sol";
@@ -47,7 +47,7 @@ contract Archemist is IArchemist, AccessManager, ReentrancyGuard, Pausable {
 
     using Address for address;
     using Address for address payable;
-    using SafeERC20 for IERC20;
+    using SafeERC20 for ERC20;
 
     /*//////////////////////////////////////////////////////////////
                                 STORAGE
@@ -78,6 +78,11 @@ contract Archemist is IArchemist, AccessManager, ReentrancyGuard, Pausable {
      */
     address public immutable ARCHEMIST_GOD;
 
+    /**
+     * @notice Precision factor for deposit and withdrawal operations
+     */
+    uint256 private immutable PRECISION_FACTOR;
+
     /*//////////////////////////////////////////////////////////////
                                 CONSTRUCTOR
     //////////////////////////////////////////////////////////////*/
@@ -87,7 +92,7 @@ contract Archemist is IArchemist, AccessManager, ReentrancyGuard, Pausable {
      * @param _exchangeToken    Address of the exchange token to be given at every deposit or to receive at every withdrawal
      * @param _baseTokenAddress Address of the base token
      * @param _archemistGod     Address of the Archemist Factory
-     * @param _exchangeFee      Fee to be charge for every deposit or withdrawal
+     * @param _exchangeFee      Fee to be charged at every deposit or withdrawal (number is divided by 10.000 to get the percentage)
      */
     constructor(
         address _exchangeToken,
@@ -100,6 +105,9 @@ contract Archemist is IArchemist, AccessManager, ReentrancyGuard, Pausable {
         ARCHEMIST_GOD = _archemistGod;
         EXCHANGE_FEE = _exchangeFee;
         _pause();
+
+        uint256 exchangeTokenDecimals = ERC20(EXCHANGE_TOKEN).decimals();
+        PRECISION_FACTOR = 10 ** (exchangeTokenDecimals);
     }
 
     /*//////////////////////////////////////////////////////////////
@@ -151,7 +159,14 @@ contract Archemist is IArchemist, AccessManager, ReentrancyGuard, Pausable {
         view
         returns (uint256 chamberAmount)
     {
-        chamberAmount = _baseTokenAmount / pricePerShare;
+        if (_baseTokenAmount == 0) revert ZeroDepositAmount();
+
+        if (pricePerShare == 0) revert ZeroPricePerShare();
+
+        uint256 feeAmount = (_baseTokenAmount * EXCHANGE_FEE) / 10000;
+        uint256 depositedAmount = _baseTokenAmount - feeAmount;
+
+        chamberAmount = (depositedAmount * PRECISION_FACTOR) / pricePerShare;
     }
 
     /**
@@ -169,15 +184,18 @@ contract Archemist is IArchemist, AccessManager, ReentrancyGuard, Pausable {
     {
         if (_baseTokenAmount == 0) revert ZeroDepositAmount();
 
-        IERC20(BASE_TOKEN_ADDRESS).safeTransferFrom(msg.sender, address(this), _baseTokenAmount);
+        if (pricePerShare == 0) revert ZeroPricePerShare();
 
-        chamberAmount = _baseTokenAmount / pricePerShare;
+        ERC20(BASE_TOKEN_ADDRESS).safeTransferFrom(msg.sender, address(this), _baseTokenAmount);
 
-        // TO-DO: Charge Fees
+        uint256 feeAmount = (_baseTokenAmount * EXCHANGE_FEE) / 10000;
+        uint256 depositedAmount = _baseTokenAmount - feeAmount;
 
-        IERC20(EXCHANGE_TOKEN).safeTransfer(msg.sender, chamberAmount);
+        chamberAmount = (depositedAmount * PRECISION_FACTOR) / pricePerShare;
 
-        emit Deposit(msg.sender, _baseTokenAmount);
+        ERC20(EXCHANGE_TOKEN).safeTransfer(msg.sender, chamberAmount);
+
+        emit Deposit(msg.sender, _baseTokenAmount, feeAmount);
     }
 
     /**
@@ -191,7 +209,15 @@ contract Archemist is IArchemist, AccessManager, ReentrancyGuard, Pausable {
         view
         returns (uint256 baseTokenAmount)
     {
-        baseTokenAmount = _exchangeTokenAmount * pricePerShare;
+        if (_exchangeTokenAmount == 0) revert ZeroWithdrawAmount();
+
+        if (pricePerShare == 0) revert ZeroPricePerShare();
+
+        baseTokenAmount = (_exchangeTokenAmount * pricePerShare) / PRECISION_FACTOR;
+
+        uint256 feeAmount = (baseTokenAmount * EXCHANGE_FEE) / 10000;
+
+        baseTokenAmount -= feeAmount;
     }
 
     /**
@@ -209,15 +235,19 @@ contract Archemist is IArchemist, AccessManager, ReentrancyGuard, Pausable {
     {
         if (_exchangeTokenAmount == 0) revert ZeroWithdrawAmount();
 
-        IERC20(EXCHANGE_TOKEN).safeTransferFrom(msg.sender, address(this), _exchangeTokenAmount);
+        if (pricePerShare == 0) revert ZeroPricePerShare();
 
-        baseTokenAmount = _exchangeTokenAmount * pricePerShare;
+        ERC20(EXCHANGE_TOKEN).safeTransferFrom(msg.sender, address(this), _exchangeTokenAmount);
 
-        // TO-DO: Charge Fees
+        baseTokenAmount = (_exchangeTokenAmount * pricePerShare) / PRECISION_FACTOR;
 
-        IERC20(BASE_TOKEN_ADDRESS).safeTransfer(msg.sender, baseTokenAmount);
+        uint256 feeAmount = (baseTokenAmount * EXCHANGE_FEE) / 10000;
 
-        emit Withdraw(msg.sender, baseTokenAmount);
+        baseTokenAmount -= feeAmount;
+
+        ERC20(BASE_TOKEN_ADDRESS).safeTransfer(msg.sender, baseTokenAmount);
+
+        emit Withdraw(msg.sender, baseTokenAmount, feeAmount);
     }
 
     /**
@@ -228,12 +258,12 @@ contract Archemist is IArchemist, AccessManager, ReentrancyGuard, Pausable {
      */
     function transferErc20ToManager(address _tokenToWithdraw) external onlyManager {
         // SHOULD WE USE ONLY MANAGER ? how are we going to rebalance this ?
-        if (IERC20(_tokenToWithdraw).balanceOf(address(this)) == 0) {
+        if (ERC20(_tokenToWithdraw).balanceOf(address(this)) == 0) {
             revert ZeroTokenBalance();
         }
 
-        IERC20(_tokenToWithdraw).safeTransfer(
-            msg.sender, IERC20(_tokenToWithdraw).balanceOf(address(this))
+        ERC20(_tokenToWithdraw).safeTransfer(
+            msg.sender, ERC20(_tokenToWithdraw).balanceOf(address(this))
         );
     }
 }
