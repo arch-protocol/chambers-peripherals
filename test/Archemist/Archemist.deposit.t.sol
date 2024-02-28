@@ -126,9 +126,6 @@ contract ArchemistDepositTest is ArchemistTest {
 
         deal(USDC, ALICE, randomDepositAmount);
 
-        console.log("ALICE: ", address(ALICE));
-        console.log(ERC20(USDC).balanceOf(address(ALICE)));
-
         vm.startPrank(admin);
         archemist.updatePricePerShare(randomPricePerShare);
         archemist.unpause();
@@ -141,9 +138,6 @@ contract ArchemistDepositTest is ArchemistTest {
         uint256 expectedExchangeAmount = (depositAmount * 10 ** 18) / randomPricePerShare;
 
         deal(AEDY, address(archemist), expectedExchangeAmount);
-
-        console.log("archemist: ", address(archemist));
-        console.log(ERC20(AEDY).balanceOf(address(archemist)));
 
         vm.startPrank(ALICE);
         ERC20(USDC).approve(address(archemist), randomDepositAmount);
