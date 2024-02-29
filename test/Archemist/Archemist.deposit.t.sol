@@ -77,10 +77,8 @@ contract ArchemistDepositTest is ArchemistTest {
         archemist.unpause();
         vm.stopPrank();
 
-        vm.expectRevert("ERC20: transfer amount exceeds allowance");
-
+        vm.expectRevert("ERC20: transfer amount exceeds balance");
         vm.prank(ALICE);
-        ERC20(USDC).approve(address(archemist), 0);
         archemist.deposit(randomDepositAmount);
     }
 
@@ -93,6 +91,7 @@ contract ArchemistDepositTest is ArchemistTest {
     ) public {
         vm.assume(randomPricePerShare != 0);
         vm.assume(randomDepositAmount != 0);
+        vm.assume(randomDepositAmount >= randomPricePerShare);
         vm.assume(randomDepositAmount <= type(uint64).max);
 
         vm.startPrank(admin);
@@ -100,11 +99,16 @@ contract ArchemistDepositTest is ArchemistTest {
         archemist.unpause();
         vm.stopPrank();
 
-        vm.expectRevert("ERC20: transfer amount exceeds balance");
-
         deal(USDC, ALICE, randomDepositAmount);
-        vm.prank(ALICE);
+
+
+        vm.startPrank(ALICE);
+        ERC20(USDC).approve(address(archemist), randomDepositAmount);
+        
+        vm.expectRevert("ERC20: transfer amount exceeds balance");
+        
         archemist.deposit(randomDepositAmount);
+        vm.stopPrank();
     }
 
     /*//////////////////////////////////////////////////////////////
