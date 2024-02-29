@@ -108,6 +108,7 @@ contract ArchemistTransferErc20ToManager is ArchemistTest {
      * [SUCCESS] Should transfer erc20 tokens to the manager when called by manager.
      */
     function testTransferErc20AsToManagerManager(uint128 randomUint, address manager) public {
+        vm.assume(manager != address(0x0));
         vm.assume(randomUint != 0);
 
         deal(AEDY, address(archemist), randomUint);
