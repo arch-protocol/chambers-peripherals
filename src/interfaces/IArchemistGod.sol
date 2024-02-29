@@ -41,7 +41,7 @@ interface IArchemistGod {
                                  EVENTS
     //////////////////////////////////////////////////////////////*/
 
-    event ArchemistCreated(address indexed _chamber, address _owner, string _name, string _symbol);
+    event ArchemistCreated(address indexed archemist);
 
     /*//////////////////////////////////////////////////////////////
                             ARCHEMIST LOGIC
