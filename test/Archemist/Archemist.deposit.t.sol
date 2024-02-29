@@ -42,7 +42,6 @@ contract ArchemistDepositTest is ArchemistTest {
     /**
      * [ERROR] Should revert if there's no balance at the user
      */
-
     function testCannotDepositIfUserHasNoBalance(
         uint128 randomPricePerShare,
         uint128 randomDepositAmount
@@ -77,7 +76,9 @@ contract ArchemistDepositTest is ArchemistTest {
         archemist.unpause();
         vm.stopPrank();
 
-        vm.expectRevert("ERC20: transfer amount exceeds balance");
+        deal(USDC, ALICE, randomDepositAmount);
+
+        vm.expectRevert("ERC20: transfer amount exceeds allowance");
         vm.prank(ALICE);
         archemist.deposit(randomDepositAmount);
     }
