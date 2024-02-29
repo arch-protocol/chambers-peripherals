@@ -101,12 +101,11 @@ contract ArchemistDepositTest is ArchemistTest {
 
         deal(USDC, ALICE, randomDepositAmount);
 
-
         vm.startPrank(ALICE);
         ERC20(USDC).approve(address(archemist), randomDepositAmount);
-        
+
         vm.expectRevert("ERC20: transfer amount exceeds balance");
-        
+
         archemist.deposit(randomDepositAmount);
         vm.stopPrank();
     }
