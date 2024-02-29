@@ -77,7 +77,9 @@ contract ArchemistDepositTest is ArchemistTest {
         archemist.unpause();
         vm.stopPrank();
 
-        vm.expectRevert("ERC20: transfer amount exceeds balance");
+        deal(USDC, ALICE, randomDepositAmount);
+
+        vm.expectRevert("ERC20: transfer amount exceeds allowance");
         vm.prank(ALICE);
         archemist.deposit(randomDepositAmount);
     }
