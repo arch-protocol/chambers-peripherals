@@ -157,7 +157,7 @@ contract ArchemistPreviewWithdrawTest is ArchemistTest {
      * [SUCCESS] Should calculate base token amount when previewing withdraw with aedy as base token
      * and usdc as exchange token and fixed amounts.
      */
-    function testPreviewWithdrawWithAedyAsBaseTokenAndUsdcAsExchangeTokenAndFixedAmounts() public {
+    function testPreviewWithdrawWithAddyAsBaseTokenAndUsdcAsExchangeTokenAndFixedAmounts() public {
         vm.prank(admin);
         archemistAddyUsdc.updatePricePerShare(1 ether);
 
