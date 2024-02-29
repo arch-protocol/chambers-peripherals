@@ -16,7 +16,7 @@ contract AddAdminTest is Test {
 
     function setUp() public {
         vm.prank(owner);
-        accessManager = new AccessManager();
+        accessManager = new AccessManager(owner);
     }
 
     /*//////////////////////////////////////////////////////////////

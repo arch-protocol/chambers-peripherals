@@ -41,8 +41,9 @@ import { ReentrancyGuard } from "@openzeppelin/contracts/utils/ReentrancyGuard.s
 import { EnumerableSet } from "@openzeppelin/contracts/utils/structs/EnumerableSet.sol";
 import { IArchemistGod } from "./interfaces/IArchemistGod.sol";
 import { Archemist } from "./Archemist.sol";
+import { AccessManager } from "./AccessManager.sol";
 
-contract ArchemistGod is IArchemistGod, Ownable, ReentrancyGuard {
+contract ArchemistGod is IArchemistGod, AccessManager, ReentrancyGuard {
     /*//////////////////////////////////////////////////////////////
                               LIBRARIES
     //////////////////////////////////////////////////////////////*/
@@ -59,7 +60,7 @@ contract ArchemistGod is IArchemistGod, Ownable, ReentrancyGuard {
                                CONSTRUCTOR
     //////////////////////////////////////////////////////////////*/
 
-    constructor() Ownable(msg.sender) { }
+    constructor() AccessManager(msg.sender) { }
 
     /*//////////////////////////////////////////////////////////////
                             ARCHEMIST GOD LOGIC
@@ -77,9 +78,10 @@ contract ArchemistGod is IArchemistGod, Ownable, ReentrancyGuard {
         address _exchangeTokenAddress,
         address _baseTokenAddress,
         uint24 _exchangeFee
-    ) external onlyOwner nonReentrant returns (address) {
-        Archemist archemist =
-            new Archemist(_exchangeTokenAddress, _baseTokenAddress, address(this), _exchangeFee);
+    ) external onlyCallerWithAccess nonReentrant returns (address) {
+        Archemist archemist = new Archemist(
+            msg.sender, _exchangeTokenAddress, _baseTokenAddress, address(this), _exchangeFee
+        );
 
         if (!archemists.add(address(archemist))) {
             revert ArchemistAlreadyExists();
