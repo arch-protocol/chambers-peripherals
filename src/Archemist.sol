@@ -89,17 +89,20 @@ contract Archemist is IArchemist, AccessManager, ReentrancyGuard, Pausable {
 
     /**
      * @notice Constructor for the Archemist contract. By default it is paused. Remind to set the pricePerShare before unpausing
+     *
+     * @param _admin_address           Address of the admin of the contract
      * @param _exchangeTokenAddress    Address of the exchange token to be given at every deposit or to receive at every withdrawal
      * @param _baseTokenAddress        Address of the base token
      * @param _archemistGod            Address of the Archemist Factory
      * @param _exchangeFee             Fee to be charged at every deposit or withdrawal (number is divided by 10.000 to get the percentage)
      */
     constructor(
+        address _admin_address,
         address _exchangeTokenAddress,
         address _baseTokenAddress,
         address _archemistGod,
         uint24 _exchangeFee
-    ) AccessManager() {
+    ) AccessManager(_admin_address) {
         EXCHANGE_TOKEN_ADDRESS = _exchangeTokenAddress;
         BASE_TOKEN_ADDRESS = _baseTokenAddress;
         ARCHEMIST_GOD = _archemistGod;
@@ -259,7 +262,6 @@ contract Archemist is IArchemist, AccessManager, ReentrancyGuard, Pausable {
      * @param _tokenToWithdraw Address of the token to be withdrawn
      */
     function transferErc20ToManager(address _tokenToWithdraw) external onlyManager {
-        // SHOULD WE USE ONLY MANAGER ? how are we going to rebalance this ?
         if (ERC20(_tokenToWithdraw).balanceOf(address(this)) == 0) {
             revert ZeroTokenBalance();
         }

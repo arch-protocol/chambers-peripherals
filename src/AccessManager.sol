@@ -22,9 +22,9 @@ contract AccessManager is IAccessManager, AccessControl {
                                CONSTRUCTOR
     //////////////////////////////////////////////////////////////*/
 
-    constructor() AccessControl() {
-        _grantRole(DEFAULT_ADMIN_ROLE, msg.sender);
-        admins.add(msg.sender);
+    constructor(address _admin_address) AccessControl() {
+        _grantRole(DEFAULT_ADMIN_ROLE, _admin_address);
+        admins.add(_admin_address);
     }
 
     /*//////////////////////////////////////////////////////////////
