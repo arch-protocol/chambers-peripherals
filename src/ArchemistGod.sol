@@ -36,11 +36,11 @@
  */
 pragma solidity ^0.8.17.0;
 
-import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
+import { Ownable } from "@openzeppelin/contracts/access/Ownable.sol";
 import { ReentrancyGuard } from "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
-import {EnumerableSet} from "@openzeppelin/contracts/utils/structs/EnumerableSet.sol";
-import {IArchemistGod} from "./interfaces/IArchemistGod.sol";
-import {Archemist} from "./Archemist.sol";
+import { EnumerableSet } from "@openzeppelin/contracts/utils/structs/EnumerableSet.sol";
+import { IArchemistGod } from "./interfaces/IArchemistGod.sol";
+import { Archemist } from "./Archemist.sol";
 
 contract ArchemistGod is IArchemistGod, Ownable, ReentrancyGuard {
     /*//////////////////////////////////////////////////////////////
@@ -59,7 +59,7 @@ contract ArchemistGod is IArchemistGod, Ownable, ReentrancyGuard {
                                CONSTRUCTOR
     //////////////////////////////////////////////////////////////*/
 
-    constructor() Ownable(msg.sender) {}
+    constructor() Ownable(msg.sender) { }
 
     /*//////////////////////////////////////////////////////////////
                             ARCHEMIST GOD LOGIC
@@ -78,13 +78,8 @@ contract ArchemistGod is IArchemistGod, Ownable, ReentrancyGuard {
         address _baseTokenAddress,
         uint24 _exchangeFee
     ) external onlyOwner nonReentrant returns (address) {
-
-        Archemist archemist = new Archemist(
-            _exchangeTokenAddress,
-            _baseTokenAddress,
-            address(this),
-            _exchangeFee
-        );
+        Archemist archemist =
+            new Archemist(_exchangeTokenAddress, _baseTokenAddress, address(this), _exchangeFee);
 
         require(archemists.add(address(archemist)), "Cannot add archemist");
 

@@ -237,7 +237,9 @@ contract Archemist is IArchemist, AccessManager, ReentrancyGuard, Pausable {
 
         if (pricePerShare == 0) revert ZeroPricePerShare();
 
-        ERC20(EXCHANGE_TOKEN_ADDRESS).safeTransferFrom(msg.sender, address(this), _exchangeTokenAmount);
+        ERC20(EXCHANGE_TOKEN_ADDRESS).safeTransferFrom(
+            msg.sender, address(this), _exchangeTokenAmount
+        );
 
         baseTokenAmount = (_exchangeTokenAmount * pricePerShare) / PRECISION_FACTOR;
 
