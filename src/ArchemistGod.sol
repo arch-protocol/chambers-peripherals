@@ -81,7 +81,9 @@ contract ArchemistGod is IArchemistGod, Ownable, ReentrancyGuard {
         Archemist archemist =
             new Archemist(_exchangeTokenAddress, _baseTokenAddress, address(this), _exchangeFee);
 
-        require(archemists.add(address(archemist)), "Cannot add archemist");
+        if (!archemists.add(address(archemist))) {
+            revert ArchemistAlreadyExists();
+        }
 
         emit ArchemistCreated(address(archemist));
 

@@ -43,6 +43,8 @@ interface IArchemistGod {
 
     event ArchemistCreated(address indexed archemist);
 
+    error ArchemistAlreadyExists();
+
     /*//////////////////////////////////////////////////////////////
                             ARCHEMIST LOGIC
     //////////////////////////////////////////////////////////////*/
