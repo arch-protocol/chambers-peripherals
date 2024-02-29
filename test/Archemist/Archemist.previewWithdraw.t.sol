@@ -47,11 +47,11 @@ contract ArchemistPreviewWithdrawTest is ArchemistTest {
         archemist.updatePricePerShare(randomPricePerShare);
 
         uint256 baseTokenAmount = archemist.previewWithdraw(randomWithdrawAmount);
-        
 
-        uint256 baseTokenAmountWithoutChargingFees = (randomWithdrawAmount * randomPricePerShare) /  10 ** 18;
+        uint256 baseTokenAmountWithoutChargingFees =
+            (randomWithdrawAmount * randomPricePerShare) / 10 ** 18;
 
-       uint256 feeAmount = (baseTokenAmountWithoutChargingFees * exchangeFee) / 10000;
+        uint256 feeAmount = (baseTokenAmountWithoutChargingFees * exchangeFee) / 10000;
 
         uint256 expectedWithdrawAmount = baseTokenAmountWithoutChargingFees - feeAmount;
 
@@ -79,9 +79,10 @@ contract ArchemistPreviewWithdrawTest is ArchemistTest {
 
         uint256 baseTokenAmount = archemistAedyAddy.previewWithdraw(randomWithdrawAmount);
 
-        uint256 baseTokenAmountWithoutChargingFees = (randomWithdrawAmount * randomPricePerShare) /  10 ** 18;
+        uint256 baseTokenAmountWithoutChargingFees =
+            (randomWithdrawAmount * randomPricePerShare) / 10 ** 18;
 
-       uint256 feeAmount = (baseTokenAmountWithoutChargingFees * exchangeFee) / 10000;
+        uint256 feeAmount = (baseTokenAmountWithoutChargingFees * exchangeFee) / 10000;
 
         uint256 expectedWithdrawAmount = baseTokenAmountWithoutChargingFees - feeAmount;
 
@@ -109,9 +110,10 @@ contract ArchemistPreviewWithdrawTest is ArchemistTest {
 
         uint256 baseTokenAmount = archemistAddyUsdc.previewWithdraw(randomWithdrawAmount);
 
-        uint256 baseTokenAmountWithoutChargingFees = (randomWithdrawAmount * randomPricePerShare) /  10 ** 6;
+        uint256 baseTokenAmountWithoutChargingFees =
+            (randomWithdrawAmount * randomPricePerShare) / 10 ** 6;
 
-       uint256 feeAmount = (baseTokenAmountWithoutChargingFees * exchangeFee) / 10000;
+        uint256 feeAmount = (baseTokenAmountWithoutChargingFees * exchangeFee) / 10000;
 
         uint256 expectedWithdrawAmount = baseTokenAmountWithoutChargingFees - feeAmount;
 
@@ -165,5 +167,4 @@ contract ArchemistPreviewWithdrawTest is ArchemistTest {
         assertEq(archemistAddyUsdc.pricePerShare(), 1 ether);
         assertEq(archemistAddyUsdc.paused(), true);
     }
-
 }
