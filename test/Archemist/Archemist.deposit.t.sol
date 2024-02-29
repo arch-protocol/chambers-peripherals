@@ -42,6 +42,7 @@ contract ArchemistDepositTest is ArchemistTest {
     /**
      * [ERROR] Should revert if there's no balance at the user
      */
+
     function testCannotDepositIfUserHasNoBalance(
         uint128 randomPricePerShare,
         uint128 randomDepositAmount

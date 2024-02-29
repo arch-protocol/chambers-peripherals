@@ -15,7 +15,7 @@ contract ArchemistWithdrawTest is ArchemistTest {
      * [ERROR] Should revert when withdraw with zero amount.
      */
     function testCannotWithdrawWithZeroAmount() public {
-         vm.prank(admin);
+        vm.prank(admin);
         archemist.unpause();
         vm.expectRevert(abi.encodeWithSelector(IArchemist.ZeroWithdrawAmount.selector));
         archemist.withdraw(0);
@@ -25,14 +25,14 @@ contract ArchemistWithdrawTest is ArchemistTest {
      * [ERROR] Should revert when withdraw with zero price per share.
      */
     function testCannotWithdrawWithZeroPricePerShare(uint128 randomWithdrawAmount) public {
-         vm.prank(admin);
+        vm.prank(admin);
         archemist.unpause();
         vm.assume(randomWithdrawAmount != 0);
         vm.expectRevert(abi.encodeWithSelector(IArchemist.ZeroPricePerShare.selector));
         archemist.withdraw(randomWithdrawAmount);
     }
 
-     /**
+    /**
      * [ERROR] Should revert when withdraw is called and contract is paused.
      */
     function testCannotWithdrawWhenContractIsPaused(uint128 randomWithdrawAmount) public {
@@ -106,12 +106,11 @@ contract ArchemistWithdrawTest is ArchemistTest {
         ERC20(AEDY).approve(address(archemist), randomWithdrawAmount);
 
         vm.expectRevert("ERC20: transfer amount exceeds balance");
-        
+
         archemist.withdraw(randomWithdrawAmount);
 
         vm.stopPrank();
     }
-    
 
     /*//////////////////////////////////////////////////////////////
                               SUCCESS
@@ -119,7 +118,7 @@ contract ArchemistWithdrawTest is ArchemistTest {
 
     /**
      * [SUCCESS] Should transfer the correct amount of base token when withdraw with usdc as base token
-    * and aedy as exchange token and random price and withdraw amounts.
+     * and aedy as exchange token and random price and withdraw amounts.
      */
     function testWithdrawWithUsdcAsBaseTokenAndAedyAsExchangeTokenAndRandomPriceAndWithdrawAmounts(
         uint256 randomPricePerShare,
@@ -162,7 +161,7 @@ contract ArchemistWithdrawTest is ArchemistTest {
 
     /**
      * [SUCCESS] Should transfer the correct amount of base token when withdraw with addy as base token
-    * and aedy as exchange token and random price and withdraw amounts.
+     * and aedy as exchange token and random price and withdraw amounts.
      */
     function testWithdrawWithAddyAsBaseTokenAndAedyAsExchangeTokenAndRandomPriceAndWithdrawAmounts(
         uint256 randomPricePerShare,
@@ -205,7 +204,7 @@ contract ArchemistWithdrawTest is ArchemistTest {
 
     /**
      * [SUCCESS] Should transfer the correct amount of base token when withdraw with addy as base token
-    * and usdc as exchange token and random price and withdraw amounts.
+     * and usdc as exchange token and random price and withdraw amounts.
      */
     function testWithdrawWithAddyAsBaseTokenAndUsdcAsExchangeTokenAndRandomPriceAndWithdrawAmounts(
         uint256 randomPricePerShare,
@@ -248,7 +247,7 @@ contract ArchemistWithdrawTest is ArchemistTest {
 
     /**
      * [SUCCESS] Should transfer the correct amount of base token when withdraw with usdc as base token
-    * and aedy as exchange token and fixed amounts.
+     * and aedy as exchange token and fixed amounts.
      */
     function testWithdrawWithUsdcAsBaseTokenAndAedyAsExchangeTokenAndFixedAmounts() public {
         vm.startPrank(admin);
@@ -275,7 +274,7 @@ contract ArchemistWithdrawTest is ArchemistTest {
 
     /**
      * [SUCCESS] Should transfer the correct amount of base token when withdraw with addy as base token
-    * and aedy as exchange token and fixed amounts.
+     * and aedy as exchange token and fixed amounts.
      */
     function testWithdrawWithAddyAsBaseTokenAndAedyAsExchangeTokenAndFixedAmounts() public {
         vm.startPrank(admin);
@@ -302,7 +301,7 @@ contract ArchemistWithdrawTest is ArchemistTest {
 
     /**
      * [SUCCESS] Should transfer the correct amount of base token when withdraw with addy as base token
-    * and usdc as exchange token and fixed amounts.
+     * and usdc as exchange token and fixed amounts.
      */
     function testWithdrawWithAddyAsBaseTokenAndUsdcAsExchangeTokenAndFixedAmounts() public {
         vm.startPrank(admin);
