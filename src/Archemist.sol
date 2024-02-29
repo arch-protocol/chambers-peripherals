@@ -66,7 +66,7 @@ contract Archemist is IArchemist, AccessManager, ReentrancyGuard, Pausable {
     /**
      * @notice Address of the token to be given to the sender at every deposit or to be received by the sender at every withdrawal.
      */
-    address public immutable EXCHANGE_TOKEN;
+    address public immutable EXCHANGE_TOKEN_ADDRESS;
 
     /**
      * @notice Address of the token to be given by the sender at every deposit or to be sent to the sender at every withdrawal.
@@ -89,24 +89,27 @@ contract Archemist is IArchemist, AccessManager, ReentrancyGuard, Pausable {
 
     /**
      * @notice Constructor for the Archemist contract. By default it is paused. Remind to set the pricePerShare before unpausing
-     * @param _exchangeToken    Address of the exchange token to be given at every deposit or to receive at every withdrawal
-     * @param _baseTokenAddress Address of the base token
-     * @param _archemistGod     Address of the Archemist Factory
-     * @param _exchangeFee      Fee to be charged at every deposit or withdrawal (number is divided by 10.000 to get the percentage)
+     *
+     * @param _admin_address           Address of the admin of the contract
+     * @param _exchangeTokenAddress    Address of the exchange token to be given at every deposit or to receive at every withdrawal
+     * @param _baseTokenAddress        Address of the base token
+     * @param _archemistGod            Address of the Archemist Factory
+     * @param _exchangeFee             Fee to be charged at every deposit or withdrawal (number is divided by 10.000 to get the percentage)
      */
     constructor(
-        address _exchangeToken,
+        address _admin_address,
+        address _exchangeTokenAddress,
         address _baseTokenAddress,
         address _archemistGod,
         uint24 _exchangeFee
-    ) AccessManager() {
-        EXCHANGE_TOKEN = _exchangeToken;
+    ) AccessManager(_admin_address) {
+        EXCHANGE_TOKEN_ADDRESS = _exchangeTokenAddress;
         BASE_TOKEN_ADDRESS = _baseTokenAddress;
         ARCHEMIST_GOD = _archemistGod;
         EXCHANGE_FEE = _exchangeFee;
         _pause();
 
-        uint256 exchangeTokenDecimals = ERC20(EXCHANGE_TOKEN).decimals();
+        uint256 exchangeTokenDecimals = ERC20(EXCHANGE_TOKEN_ADDRESS).decimals();
         PRECISION_FACTOR = 10 ** (exchangeTokenDecimals);
     }
 
@@ -193,7 +196,7 @@ contract Archemist is IArchemist, AccessManager, ReentrancyGuard, Pausable {
 
         exchangeTokenAmount = (depositedAmount * PRECISION_FACTOR) / pricePerShare;
 
-        ERC20(EXCHANGE_TOKEN).safeTransfer(msg.sender, exchangeTokenAmount);
+        ERC20(EXCHANGE_TOKEN_ADDRESS).safeTransfer(msg.sender, exchangeTokenAmount);
 
         emit Deposit(msg.sender, _baseTokenAmount, feeAmount);
     }
@@ -237,7 +240,9 @@ contract Archemist is IArchemist, AccessManager, ReentrancyGuard, Pausable {
 
         if (pricePerShare == 0) revert ZeroPricePerShare();
 
-        ERC20(EXCHANGE_TOKEN).safeTransferFrom(msg.sender, address(this), _exchangeTokenAmount);
+        ERC20(EXCHANGE_TOKEN_ADDRESS).safeTransferFrom(
+            msg.sender, address(this), _exchangeTokenAmount
+        );
 
         baseTokenAmount = (_exchangeTokenAmount * pricePerShare) / PRECISION_FACTOR;
 
@@ -257,7 +262,6 @@ contract Archemist is IArchemist, AccessManager, ReentrancyGuard, Pausable {
      * @param _tokenToWithdraw Address of the token to be withdrawn
      */
     function transferErc20ToManager(address _tokenToWithdraw) external onlyManager {
-        // SHOULD WE USE ONLY MANAGER ? how are we going to rebalance this ?
         if (ERC20(_tokenToWithdraw).balanceOf(address(this)) == 0) {
             revert ZeroTokenBalance();
         }
