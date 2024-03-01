@@ -40,6 +40,47 @@ contract ArchemistWithdrawTest is ArchemistTest {
         archemist.withdraw(randomWithdrawAmount);
     }
 
+     /**
+     * [ERROR] Should revert if the Archemist is invalid (I.E not created by ArchemistGod) but with correct God address
+     */
+    function testCannotWithdrawIfArchemistIsInvalidButWithCorrectGodAddress(
+        uint128 randomWithdrawAmount,
+        uint128 randomPricePerShare
+    ) public {
+        vm.assume(randomPricePerShare != 0);
+        vm.assume(randomWithdrawAmount != 0);
+        vm.assume(randomWithdrawAmount <= type(uint64).max);
+
+        vm.startPrank(admin);
+        invalidArchemistWithCorrectGodAddress.updatePricePerShare(randomPricePerShare);
+        invalidArchemistWithCorrectGodAddress.unpause();
+        vm.stopPrank();
+
+        vm.expectRevert(abi.encodeWithSelector(IArchemist.InvalidArchemist.selector));
+        invalidArchemistWithCorrectGodAddress.withdraw(randomWithdrawAmount);
+    }
+
+    /**
+     * [ERROR] Should revert if the Archemist is invalid (I.E not created by ArchemistGod) and with incorrect God address
+     */
+    function testCannotWithdrawIfArchemistIsInvalidAndWithIncorrectGodAddress(
+        uint128 randomWithdrawAmount,
+        uint128 randomPricePerShare
+    ) public {
+        vm.assume(randomPricePerShare != 0);
+        vm.assume(randomWithdrawAmount != 0);
+        vm.assume(randomWithdrawAmount <= type(uint64).max);
+
+        vm.startPrank(admin);
+        invalidArchemistWithRandomGodAddress.updatePricePerShare(randomPricePerShare);
+        invalidArchemistWithRandomGodAddress.unpause();
+        vm.stopPrank();
+        
+        // Will revert but not with the expected message because it may be a random contract address
+        vm.expectRevert();
+        invalidArchemistWithRandomGodAddress.withdraw(randomWithdrawAmount);
+    }
+
     /**
      * [ERROR] Should revert whe user has no balance at withdraw.
      */

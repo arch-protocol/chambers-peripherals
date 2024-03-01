@@ -34,10 +34,10 @@ import { ERC20 } from "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import { SafeERC20 } from "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 import { Address } from "@openzeppelin/contracts/utils/Address.sol";
 import { Pausable } from "@openzeppelin/contracts/utils/Pausable.sol";
-
 import { ReentrancyGuard } from "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
 
 import { IArchemist } from "./interfaces/IArchemist.sol";
+import { IArchemistGod } from "./interfaces/IArchemistGod.sol";
 import { AccessManager } from "./AccessManager.sol";
 
 contract Archemist is IArchemist, AccessManager, ReentrancyGuard, Pausable {
@@ -76,7 +76,7 @@ contract Archemist is IArchemist, AccessManager, ReentrancyGuard, Pausable {
     /**
      * @notice Address of the Archemist Factory
      */
-    address public immutable ARCHEMIST_GOD;
+    IArchemistGod public immutable ARCHEMIST_GOD;
 
     /**
      * @notice Precision factor for deposit and withdrawal operations
@@ -90,22 +90,28 @@ contract Archemist is IArchemist, AccessManager, ReentrancyGuard, Pausable {
     /**
      * @notice Constructor for the Archemist contract. By default it is paused. Remind to set the pricePerShare before unpausing
      *
-     * @param _admin_address           Address of the admin of the contract
+     * @param _adminAddress           Address of the admin of the contract
      * @param _exchangeTokenAddress    Address of the exchange token to be given at every deposit or to receive at every withdrawal
      * @param _baseTokenAddress        Address of the base token
      * @param _archemistGod            Address of the Archemist Factory
      * @param _exchangeFee             Fee to be charged at every deposit or withdrawal (number is divided by 10.000 to get the percentage)
      */
     constructor(
-        address _admin_address,
+        address _adminAddress,
         address _exchangeTokenAddress,
         address _baseTokenAddress,
         address _archemistGod,
         uint24 _exchangeFee
-    ) AccessManager(_admin_address) {
+    ) AccessManager(_adminAddress) {
+        uint32 size;
+        assembly {
+            size := extcodesize(_archemistGod)
+        }
+        if (size == 0) revert ArchemistGodIsNotAContract();
+
         EXCHANGE_TOKEN_ADDRESS = _exchangeTokenAddress;
         BASE_TOKEN_ADDRESS = _baseTokenAddress;
-        ARCHEMIST_GOD = _archemistGod;
+        ARCHEMIST_GOD = IArchemistGod(_archemistGod);
         EXCHANGE_FEE = _exchangeFee;
         _pause();
 
@@ -189,6 +195,8 @@ contract Archemist is IArchemist, AccessManager, ReentrancyGuard, Pausable {
 
         if (pricePerShare == 0) revert ZeroPricePerShare();
 
+        if (!ARCHEMIST_GOD.isValidArchemist(address(this))) revert InvalidArchemist();
+
         ERC20(BASE_TOKEN_ADDRESS).safeTransferFrom(msg.sender, address(this), _baseTokenAmount);
 
         uint256 feeAmount = (_baseTokenAmount * EXCHANGE_FEE) / 10000;
@@ -239,6 +247,9 @@ contract Archemist is IArchemist, AccessManager, ReentrancyGuard, Pausable {
         if (_exchangeTokenAmount == 0) revert ZeroWithdrawAmount();
 
         if (pricePerShare == 0) revert ZeroPricePerShare();
+
+        bool isValidArchemist = ARCHEMIST_GOD.isValidArchemist(address(this));
+        if (!isValidArchemist) revert InvalidArchemist();
 
         ERC20(EXCHANGE_TOKEN_ADDRESS).safeTransferFrom(
             msg.sender, address(this), _exchangeTokenAmount

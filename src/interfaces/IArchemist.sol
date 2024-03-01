@@ -64,6 +64,8 @@ interface IArchemist {
 
     error InvalidArchemist();
 
+    error ArchemistGodIsNotAContract();
+
     error ZeroPricePerShare();
 
     /*//////////////////////////////////////////////////////////////
