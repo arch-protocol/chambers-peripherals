@@ -66,20 +66,20 @@ contract ArchemistGod is IArchemistGod, AccessManager, ReentrancyGuard {
                             ARCHEMIST GOD LOGIC
     //////////////////////////////////////////////////////////////*/
     /**
-     * Creates a new Archemist and adds it to the list of Archemists
+     * Creates a new Archemist and adds it to the list of Archemists.
      *
-     * @param _exchangeTokenAddress  Address of the exchange token to be given at every deposit or to receive at every withdrawal
-     * @param _baseTokenAddress      Address of the base token
-     * @param _exchangeFee           Fee to be charged at every deposit or withdrawal (number is divided by 10.000 to get the percentage)
+     * @param _exchangeTokenAddress  Address of the exchange token to be given at every deposit or to receive at every withdrawal.
+     * @param _baseTokenAddress      Address of the base token.
+     * @param _exchangeFee           Fee to be charged at every deposit or withdrawal (number is divided by 10.000 to get the percentage).
      *
-     * @return address               Address of the new Archemist
+     * @return archemist             The new archemist contract.
      */
     function createArchemist(
         address _exchangeTokenAddress,
         address _baseTokenAddress,
         uint24 _exchangeFee
-    ) external onlyCallerWithAccess nonReentrant returns (address) {
-        Archemist archemist = new Archemist(
+    ) external onlyCallerWithAccess nonReentrant returns (Archemist archemist) {
+        archemist = new Archemist(
             msg.sender, _exchangeTokenAddress, _baseTokenAddress, address(this), _exchangeFee
         );
 
@@ -88,25 +88,23 @@ contract ArchemistGod is IArchemistGod, AccessManager, ReentrancyGuard {
         }
 
         emit ArchemistCreated(address(archemist));
-
-        return address(archemist);
     }
 
     /**
-     * Returns the Archemists created by ArchemistGod
+     * Returns the Archemists created by ArchemistGod.
      *
-     * @return address[]      An address array containing the Archemists
+     * @return address[]      An address array containing the Archemists.
      */
     function getArchemists() external view returns (address[] memory) {
         return archemists.values();
     }
 
     /**
-     * Checks if the address is a Archemist validated in ArchemistGod
+     * Checks if the address is a Archemist validated in ArchemistGod.
      *
-     * @param _archemist    The address to check
+     * @param _archemist    The address to check.
      *
-     * @return bool         True if the address is a validated Archemist
+     * @return bool         True if the address is a validated Archemist.
      */
     function isValidArchemist(address _archemist) public view returns (bool) {
         return archemists.contains(_archemist);

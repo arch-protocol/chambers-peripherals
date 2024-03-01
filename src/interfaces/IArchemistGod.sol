@@ -36,6 +36,8 @@
  */
 pragma solidity ^0.8.24;
 
+import { Archemist } from "../Archemist.sol";
+
 interface IArchemistGod {
     /*//////////////////////////////////////////////////////////////
                                  EVENTS
@@ -53,7 +55,7 @@ interface IArchemistGod {
         address _exchangeTokenAddress,
         address _baseTokenAddress,
         uint24 _exchangeFee
-    ) external returns (address);
+    ) external returns (Archemist);
 
     function getArchemists() external view returns (address[] memory);
 
