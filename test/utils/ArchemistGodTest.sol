@@ -11,7 +11,7 @@ contract ArchemistGodTest is Test {
     //////////////////////////////////////////////////////////////*/
 
     ArchemistGod public archemistGod;
-    address public validArchemist;
+    Archemist public validArchemist;
 
     address public admin = vm.addr(0x1);
     address public immutable USDC = 0x2791Bca1f2de4661ED88A30C99A7a9449Aa84174;

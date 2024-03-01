@@ -2,7 +2,6 @@
 pragma solidity ^0.8.24;
 
 import { ArchemistGodTest } from "test/utils/ArchemistGodTest.sol";
-import { IAccessManager } from "src/interfaces/IAccessManager.sol";
 import { Archemist } from "src/Archemist.sol";
 
 contract TestGetArchemists is ArchemistGodTest {
@@ -15,7 +14,7 @@ contract TestGetArchemists is ArchemistGodTest {
      */
     function testGetCurrentArchemistsArray() public {
         address[] memory archemistsArray = new address[](1);
-        archemistsArray[0] = validArchemist;
+        archemistsArray[0] = address(validArchemist);
         address[] memory archemists = archemistGod.getArchemists();
         assertEq(archemists, archemistsArray);
     }
@@ -25,10 +24,10 @@ contract TestGetArchemists is ArchemistGodTest {
      */
     function testGetCurrentArchemistsArrayAfterCreatingOneWithoutFactory() public {
         address[] memory archemistsArray = new address[](2);
-        archemistsArray[0] = validArchemist;
+        archemistsArray[0] = address(validArchemist);
         vm.prank(admin);
-        address newArchemist = archemistGod.createArchemist(ADDY, AEDY, 1000);
-        archemistsArray[1] = newArchemist;
+        Archemist newArchemist = archemistGod.createArchemist(ADDY, AEDY, 1000);
+        archemistsArray[1] = address(newArchemist);
         address[] memory archemists = archemistGod.getArchemists();
         assertEq(archemists, archemistsArray);
     }
@@ -38,7 +37,7 @@ contract TestGetArchemists is ArchemistGodTest {
      */
     function testIsNotValidArchemistAfterCreatingOne() public {
         address[] memory archemistsArray = new address[](1);
-        archemistsArray[0] = validArchemist;
+        archemistsArray[0] = address(validArchemist);
         vm.prank(admin);
         new Archemist(admin, ADDY, AEDY, admin, 1000);
         address[] memory archemists = archemistGod.getArchemists();

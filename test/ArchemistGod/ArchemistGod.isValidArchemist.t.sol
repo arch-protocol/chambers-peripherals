@@ -2,7 +2,6 @@
 pragma solidity ^0.8.24;
 
 import { ArchemistGodTest } from "test/utils/ArchemistGodTest.sol";
-import { IAccessManager } from "src/interfaces/IAccessManager.sol";
 import { Archemist } from "src/Archemist.sol";
 
 contract IsValidArchemistTest is ArchemistGodTest {
@@ -14,7 +13,7 @@ contract IsValidArchemistTest is ArchemistGodTest {
      * [SUCCESS] Return True if the Archemist is valid.
      */
     function testIsValidArchemist() public {
-        bool isValid = archemistGod.isValidArchemist(validArchemist);
+        bool isValid = archemistGod.isValidArchemist(address(validArchemist));
         assertEq(isValid, true);
     }
 
@@ -22,7 +21,7 @@ contract IsValidArchemistTest is ArchemistGodTest {
      * [SUCCESS] Should return False if is not a valid Archemist.
      */
     function testIsNotValidArchemist(address randomAddress) public {
-        vm.assume(randomAddress != validArchemist);
+        vm.assume(randomAddress != address(validArchemist));
         bool isValid = archemistGod.isValidArchemist(randomAddress);
         assertEq(isValid, false);
     }
@@ -42,8 +41,8 @@ contract IsValidArchemistTest is ArchemistGodTest {
      */
     function testIsValidArchemistAfterCreatingOne() public {
         vm.prank(admin);
-        address newArchemist = archemistGod.createArchemist(ADDY, AEDY, 1000);
-        bool isValid = archemistGod.isValidArchemist(newArchemist);
+        Archemist newArchemist = archemistGod.createArchemist(ADDY, AEDY, 1000);
+        bool isValid = archemistGod.isValidArchemist(address(newArchemist));
         assertEq(isValid, true);
     }
 }
