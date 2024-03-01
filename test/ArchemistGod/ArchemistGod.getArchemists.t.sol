@@ -35,7 +35,7 @@ contract TestGetArchemists is ArchemistGodTest {
     /**
      * [SUCCESS] Should return Return the array of archemists with one element when creating an archemist without the factory.
      */
-    function testIsNotValidArchemistAfterCreatingOne() public {
+    function testGetCurrentArchemistsArrayAfterCreatingOneWithoutFactory() public {
         address[] memory archemistsArray = new address[](1);
         archemistsArray[0] = address(validArchemist);
         vm.prank(admin);
