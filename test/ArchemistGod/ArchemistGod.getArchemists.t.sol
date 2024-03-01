@@ -22,7 +22,7 @@ contract TestGetArchemists is ArchemistGodTest {
     /**
      * [SUCCESS] Should return Return the array of archemists after creating a new one.
      */
-    function testGetCurrentArchemistsArrayAfterCreatingOneWithoutFactory() public {
+    function testGetCurrentArchemistsArrayAfterCreatingOneWithFactory() public {
         address[] memory archemistsArray = new address[](2);
         archemistsArray[0] = address(validArchemist);
         vm.prank(admin);
