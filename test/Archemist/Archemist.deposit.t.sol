@@ -6,8 +6,6 @@ import { IArchemist } from "src/interfaces/IArchemist.sol";
 import { Pausable } from "@openzeppelin/contracts/utils/Pausable.sol";
 import { ERC20 } from "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 
-import { console } from "forge-std/Console.sol";
-
 contract ArchemistDepositTest is ArchemistTest {
     /*//////////////////////////////////////////////////////////////
                               REVERT
@@ -77,7 +75,7 @@ contract ArchemistDepositTest is ArchemistTest {
         invalidArchemistWithRandomGodAddress.updatePricePerShare(randomPricePerShare);
         invalidArchemistWithRandomGodAddress.unpause();
         vm.stopPrank();
-        
+
         // Will revert but not with the expected message because it may be a random contract address
         vm.expectRevert();
         invalidArchemistWithRandomGodAddress.deposit(randomDepositAmount);

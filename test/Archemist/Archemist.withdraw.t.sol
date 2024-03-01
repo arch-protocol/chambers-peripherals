@@ -40,7 +40,7 @@ contract ArchemistWithdrawTest is ArchemistTest {
         archemist.withdraw(randomWithdrawAmount);
     }
 
-     /**
+    /**
      * [ERROR] Should revert if the Archemist is invalid (I.E not created by ArchemistGod) but with correct God address
      */
     function testCannotWithdrawIfArchemistIsInvalidButWithCorrectGodAddress(
@@ -75,7 +75,7 @@ contract ArchemistWithdrawTest is ArchemistTest {
         invalidArchemistWithRandomGodAddress.updatePricePerShare(randomPricePerShare);
         invalidArchemistWithRandomGodAddress.unpause();
         vm.stopPrank();
-        
+
         // Will revert but not with the expected message because it may be a random contract address
         vm.expectRevert();
         invalidArchemistWithRandomGodAddress.withdraw(randomWithdrawAmount);
