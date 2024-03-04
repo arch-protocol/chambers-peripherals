@@ -39,10 +39,51 @@ contract ArchemistDepositTest is ArchemistTest {
         vm.expectRevert(abi.encodeWithSelector(Pausable.EnforcedPause.selector));
         archemist.deposit(randomDepositAmount);
     }
+
+    /**
+     * [ERROR] Should revert if the Archemist is invalid (I.E not created by ArchemistGod) but with correct God address
+     */
+    function testCannotDepositIfArchemistIsInvalidButWithCorrectGodAddress(
+        uint128 randomDepositAmount,
+        uint128 randomPricePerShare
+    ) public {
+        vm.assume(randomPricePerShare != 0);
+        vm.assume(randomDepositAmount != 0);
+        vm.assume(randomDepositAmount <= type(uint64).max);
+
+        vm.startPrank(admin);
+        invalidArchemistWithCorrectGodAddress.updatePricePerShare(randomPricePerShare);
+        invalidArchemistWithCorrectGodAddress.unpause();
+        vm.stopPrank();
+
+        vm.expectRevert(abi.encodeWithSelector(IArchemist.InvalidArchemist.selector));
+        invalidArchemistWithCorrectGodAddress.deposit(randomDepositAmount);
+    }
+
+    /**
+     * [ERROR] Should revert if the Archemist is invalid (I.E not created by ArchemistGod) and with incorrect God address
+     */
+    function testCannotDepositIfArchemistIsInvalidAndWithIncorrectGodAddress(
+        uint128 randomDepositAmount,
+        uint128 randomPricePerShare
+    ) public {
+        vm.assume(randomPricePerShare != 0);
+        vm.assume(randomDepositAmount != 0);
+        vm.assume(randomDepositAmount <= type(uint64).max);
+
+        vm.startPrank(admin);
+        invalidArchemistWithRandomGodAddress.updatePricePerShare(randomPricePerShare);
+        invalidArchemistWithRandomGodAddress.unpause();
+        vm.stopPrank();
+
+        // Will revert but not with the expected message because it may be a random contract address
+        vm.expectRevert();
+        invalidArchemistWithRandomGodAddress.deposit(randomDepositAmount);
+    }
+
     /**
      * [ERROR] Should revert if there's no balance at the user
      */
-
     function testCannotDepositIfUserHasNoBalance(
         uint128 randomPricePerShare,
         uint128 randomDepositAmount
