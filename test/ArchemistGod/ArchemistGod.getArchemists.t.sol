@@ -39,7 +39,7 @@ contract TestGetArchemists is ArchemistGodTest {
         address[] memory archemistsArray = new address[](1);
         archemistsArray[0] = address(validArchemist);
         vm.prank(admin);
-        new Archemist(admin, ADDY, AEDY, admin, 1000);
+        new Archemist(admin, ADDY, AEDY, AEDY, 1000);
         address[] memory archemists = archemistGod.getArchemists();
         assertEq(archemistsArray, archemists);
     }

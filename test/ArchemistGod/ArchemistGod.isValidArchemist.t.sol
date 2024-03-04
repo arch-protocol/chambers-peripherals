@@ -31,7 +31,7 @@ contract IsValidArchemistTest is ArchemistGodTest {
      */
     function testIsNotValidArchemistAfterCreatingOne() public {
         vm.prank(admin);
-        Archemist newArchemist = new Archemist(admin, ADDY, AEDY, admin, 1000);
+        Archemist newArchemist = new Archemist(admin, ADDY, AEDY, ADDY, 1000);
         bool isValid = archemistGod.isValidArchemist(address(newArchemist));
         assertEq(isValid, false);
     }
