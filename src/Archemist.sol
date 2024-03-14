@@ -35,7 +35,6 @@ import { SafeERC20 } from "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.s
 import { Address } from "@openzeppelin/contracts/utils/Address.sol";
 import { Pausable } from "@openzeppelin/contracts/utils/Pausable.sol";
 import { ReentrancyGuard } from "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
-
 import { IArchemist } from "./interfaces/IArchemist.sol";
 import { IArchemistGod } from "./interfaces/IArchemistGod.sol";
 import { AccessManager } from "./AccessManager.sol";
@@ -158,6 +157,28 @@ contract Archemist is IArchemist, AccessManager, ReentrancyGuard, Pausable {
     }
 
     /**
+     * @notice Preview the amount of base token needed to deposit to receive a given amount of exchange token
+     *
+     * @param _exchangeTokenAmount Amount of exchange token to be received
+     * @return baseTokenAmount Amount of base token to be deposited
+     */
+    function previewMint(uint256 _exchangeTokenAmount)
+        external
+        view
+        returns (uint256 baseTokenAmount)
+    {
+        if (_exchangeTokenAmount == 0) revert ZeroMintAmount();
+
+        if (pricePerShare == 0) revert ZeroPricePerShare();
+
+        baseTokenAmount = (_exchangeTokenAmount * pricePerShare) / PRECISION_FACTOR;
+
+        uint256 feePercentage = EXCHANGE_FEE / 10000;
+
+        baseTokenAmount = baseTokenAmount / (1 - feePercentage);
+    }
+
+    /**
      * @notice Preview the amount of exchange token to be received for a given amount of base token
      *
      * @param _baseTokenAmount Amount of base token to be deposited
@@ -207,6 +228,28 @@ contract Archemist is IArchemist, AccessManager, ReentrancyGuard, Pausable {
         ERC20(EXCHANGE_TOKEN_ADDRESS).safeTransfer(msg.sender, exchangeTokenAmount);
 
         emit Deposit(msg.sender, _baseTokenAmount, feeAmount);
+    }
+
+    /**
+     * @notice Preview the amount of exchange token needed to withdraw to receive a given amount of base token
+     *
+     * @param _baseTokenAmount Amount of base token to be received
+     * @return exchangeTokenAmount Amount of exchange token to be withdrawn
+     */
+    function previewRedeem(uint256 _baseTokenAmount)
+        external
+        view
+        returns (uint256 exchangeTokenAmount)
+    {
+        if (_baseTokenAmount == 0) revert ZeroRedeemAmount();
+
+        if (pricePerShare == 0) revert ZeroPricePerShare();
+
+        uint256 withdrawAmount = (_baseTokenAmount * PRECISION_FACTOR) / pricePerShare;
+
+        uint256 feePercentage = EXCHANGE_FEE / 10000;
+
+        exchangeTokenAmount = withdrawAmount / (1 - feePercentage);
     }
 
     /**

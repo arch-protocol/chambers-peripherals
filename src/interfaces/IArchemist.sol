@@ -43,7 +43,7 @@ pragma solidity ^0.8.24;
 
 interface IArchemist {
     /*//////////////////////////////////////////////////////////////
-                                 EVENTS
+                                EVENTS
     //////////////////////////////////////////////////////////////*/
 
     event Deposit(address indexed sender, uint256 amount, uint256 feeAmount);
@@ -56,7 +56,11 @@ interface IArchemist {
                                 ERRORS
     //////////////////////////////////////////////////////////////*/
 
+    error ZeroRedeemAmount();
+
     error ZeroWithdrawAmount();
+
+    error ZeroMintAmount();
 
     error ZeroDepositAmount();
 
@@ -81,6 +85,17 @@ interface IArchemist {
     function updatePricePerShare(uint256 _pricePerShare) external;
 
     /**
+     * @notice  Preview the amount of base token needed to deposit to receive a given amount of exchange token
+     *
+     * @param _exchangeTokenAmount Amount of exchange token to be received
+     * @return baseTokenAmount Amount of base token to be deposited
+     */
+    function previewMint(uint256 _exchangeTokenAmount)
+        external
+        view
+        returns (uint256 baseTokenAmount);
+
+    /**
      * @notice Preview the amount of exchange token to be received for a given amount of base token
      *
      * @param _baseTokenAmount Amount of base token to be deposited
@@ -99,6 +114,17 @@ interface IArchemist {
      * @return exchangeTokenAmount Amount of exchange token to be received
      */
     function deposit(uint256 _baseTokenAmount) external returns (uint256 exchangeTokenAmount);
+
+    /**
+     * @notice Preview the amount of exchange token needed to withdraw to receive a given amount of base token
+     *
+     * @param _baseTokenAmount Amount of base token to be received
+     * @return exchangeTokenAmount Amount of exchange token to be withdrawn
+     */
+    function previewRedeem(uint256 _baseTokenAmount)
+        external
+        view
+        returns (uint256 exchangeTokenAmount);
 
     /**
      * @notice Preview the amount of base token to be received for a given amount of exchange token
