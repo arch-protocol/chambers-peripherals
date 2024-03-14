@@ -38,6 +38,7 @@ import { ReentrancyGuard } from "@openzeppelin/contracts/utils/ReentrancyGuard.s
 import { IArchemist } from "./interfaces/IArchemist.sol";
 import { IArchemistGod } from "./interfaces/IArchemistGod.sol";
 import { AccessManager } from "./AccessManager.sol";
+import "forge-std/console.sol";
 
 contract Archemist is IArchemist, AccessManager, ReentrancyGuard, Pausable {
     /*//////////////////////////////////////////////////////////////
@@ -171,11 +172,15 @@ contract Archemist is IArchemist, AccessManager, ReentrancyGuard, Pausable {
 
         if (pricePerShare == 0) revert ZeroPricePerShare();
 
+        if (_exchangeTokenAmount > ERC20(EXCHANGE_TOKEN_ADDRESS).balanceOf(address(this))) {
+            revert InsufficientExchangeTokenBalance();
+        }
+
         baseTokenAmount = (_exchangeTokenAmount * pricePerShare) / PRECISION_FACTOR;
 
-        uint256 feePercentage = EXCHANGE_FEE / 10000;
+        uint256 feePercentage = (EXCHANGE_FEE * PRECISION_FACTOR) / 10000;
 
-        baseTokenAmount = baseTokenAmount / (1 - feePercentage);
+        baseTokenAmount = (baseTokenAmount * PRECISION_FACTOR) / (PRECISION_FACTOR - feePercentage);
     }
 
     /**
@@ -197,6 +202,10 @@ contract Archemist is IArchemist, AccessManager, ReentrancyGuard, Pausable {
         uint256 depositedAmount = _baseTokenAmount - feeAmount;
 
         exchangeTokenAmount = (depositedAmount * PRECISION_FACTOR) / pricePerShare;
+
+        if (exchangeTokenAmount > ERC20(EXCHANGE_TOKEN_ADDRESS).balanceOf(address(this))) {
+            revert InsufficientExchangeTokenBalance();
+        }
     }
 
     /**
@@ -245,11 +254,16 @@ contract Archemist is IArchemist, AccessManager, ReentrancyGuard, Pausable {
 
         if (pricePerShare == 0) revert ZeroPricePerShare();
 
+        if (_baseTokenAmount > ERC20(BASE_TOKEN_ADDRESS).balanceOf(address(this))) {
+            revert InsufficientBaseTokenBalance();
+        }
+
         uint256 withdrawAmount = (_baseTokenAmount * PRECISION_FACTOR) / pricePerShare;
 
-        uint256 feePercentage = EXCHANGE_FEE / 10000;
+        uint256 feePercentage = (EXCHANGE_FEE * PRECISION_FACTOR) / 10000;
 
-        exchangeTokenAmount = withdrawAmount / (1 - feePercentage);
+        exchangeTokenAmount =
+            (withdrawAmount * PRECISION_FACTOR) / (PRECISION_FACTOR - feePercentage);
     }
 
     /**
@@ -272,6 +286,10 @@ contract Archemist is IArchemist, AccessManager, ReentrancyGuard, Pausable {
         uint256 feeAmount = (baseTokenAmount * EXCHANGE_FEE) / 10000;
 
         baseTokenAmount -= feeAmount;
+
+        if (baseTokenAmount > ERC20(BASE_TOKEN_ADDRESS).balanceOf(address(this))) {
+            revert InsufficientBaseTokenBalance();
+        }
     }
 
     /**

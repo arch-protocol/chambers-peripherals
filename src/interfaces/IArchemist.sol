@@ -72,6 +72,10 @@ interface IArchemist {
 
     error ZeroPricePerShare();
 
+    error InsufficientExchangeTokenBalance();
+
+    error InsufficientBaseTokenBalance();
+
     /*//////////////////////////////////////////////////////////////
                                 FUNCTIONS
     //////////////////////////////////////////////////////////////*/
