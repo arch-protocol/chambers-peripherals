@@ -26,6 +26,17 @@ contract ArchemistPreviewWithdrawTest is ArchemistTest {
         archemist.previewWithdraw(randomWithdrawAmount);
     }
 
+    /**
+     * [ERROR] Should revert when previewing withdraw with insufficient base token balance.
+     */
+    function testCannotPreviewWithdrawWithInsufficientBaseTokenBalance() public {
+        vm.prank(admin);
+        archemist.updatePricePerShare(1 ether);
+
+        vm.expectRevert(abi.encodeWithSelector(IArchemist.InsufficientBaseTokenBalance.selector));
+        archemist.previewWithdraw(2 ether);
+    }
+
     /*//////////////////////////////////////////////////////////////
                               SUCCESS
     //////////////////////////////////////////////////////////////*/
@@ -46,16 +57,18 @@ contract ArchemistPreviewWithdrawTest is ArchemistTest {
         vm.prank(admin);
         archemist.updatePricePerShare(randomPricePerShare);
 
-        uint256 baseTokenAmount = archemist.previewWithdraw(randomWithdrawAmount);
-
         uint256 baseTokenAmountWithoutChargingFees =
             (randomWithdrawAmount * randomPricePerShare) / 10 ** 18;
 
         uint256 feeAmount = (baseTokenAmountWithoutChargingFees * exchangeFee) / 10000;
 
-        uint256 expectedWithdrawAmount = baseTokenAmountWithoutChargingFees - feeAmount;
+        uint256 expectedBaseTokenAmount = baseTokenAmountWithoutChargingFees - feeAmount;
 
-        assertEq(baseTokenAmount, expectedWithdrawAmount);
+        deal(USDC, address(archemist), expectedBaseTokenAmount);
+
+        uint256 baseTokenAmount = archemist.previewWithdraw(randomWithdrawAmount);
+
+        assertEq(baseTokenAmount, expectedBaseTokenAmount);
         assertGe(baseTokenAmount, 0);
         assertEq(archemist.pricePerShare(), randomPricePerShare);
         assertEq(archemist.paused(), true);
@@ -77,16 +90,18 @@ contract ArchemistPreviewWithdrawTest is ArchemistTest {
         vm.prank(admin);
         archemistAedyAddy.updatePricePerShare(randomPricePerShare);
 
-        uint256 baseTokenAmount = archemistAedyAddy.previewWithdraw(randomWithdrawAmount);
-
         uint256 baseTokenAmountWithoutChargingFees =
             (randomWithdrawAmount * randomPricePerShare) / 10 ** 18;
 
         uint256 feeAmount = (baseTokenAmountWithoutChargingFees * exchangeFee) / 10000;
 
-        uint256 expectedWithdrawAmount = baseTokenAmountWithoutChargingFees - feeAmount;
+        uint256 expectedBaseTokenAmount = baseTokenAmountWithoutChargingFees - feeAmount;
 
-        assertEq(baseTokenAmount, expectedWithdrawAmount);
+        deal(ADDY, address(archemistAedyAddy), expectedBaseTokenAmount);
+
+        uint256 baseTokenAmount = archemistAedyAddy.previewWithdraw(randomWithdrawAmount);
+
+        assertEq(baseTokenAmount, expectedBaseTokenAmount);
         assertGe(baseTokenAmount, 0);
         assertEq(archemistAedyAddy.pricePerShare(), randomPricePerShare);
         assertEq(archemistAedyAddy.paused(), true);
@@ -108,16 +123,18 @@ contract ArchemistPreviewWithdrawTest is ArchemistTest {
         vm.prank(admin);
         archemistAddyUsdc.updatePricePerShare(randomPricePerShare);
 
-        uint256 baseTokenAmount = archemistAddyUsdc.previewWithdraw(randomWithdrawAmount);
-
         uint256 baseTokenAmountWithoutChargingFees =
             (randomWithdrawAmount * randomPricePerShare) / 10 ** 6;
 
         uint256 feeAmount = (baseTokenAmountWithoutChargingFees * exchangeFee) / 10000;
 
-        uint256 expectedWithdrawAmount = baseTokenAmountWithoutChargingFees - feeAmount;
+        uint256 expectedBaseTokenAmount = baseTokenAmountWithoutChargingFees - feeAmount;
 
-        assertEq(baseTokenAmount, expectedWithdrawAmount);
+        deal(ADDY, address(archemistAddyUsdc), expectedBaseTokenAmount);
+
+        uint256 baseTokenAmount = archemistAddyUsdc.previewWithdraw(randomWithdrawAmount);
+
+        assertEq(baseTokenAmount, expectedBaseTokenAmount);
         assertGe(baseTokenAmount, 0);
         assertEq(archemistAddyUsdc.pricePerShare(), randomPricePerShare);
         assertEq(archemistAddyUsdc.paused(), true);
@@ -127,9 +144,11 @@ contract ArchemistPreviewWithdrawTest is ArchemistTest {
      * [SUCCESS] Should calculate base token amount when previewing withdraw with usdc as base token
      * and addy as exchange token and fixed amounts.
      */
-    function testPreviewWithdrawWithUsdcAsBaseTokenAndAddyAsExchangeTokenAndFixedAmounts() public {
+    function testPreviewWithdrawWithUsdcAsBaseTokenAndAedyAsExchangeTokenAndFixedAmounts() public {
         vm.prank(admin);
         archemist.updatePricePerShare(1e6);
+
+        deal(USDC, address(archemist), 9e5);
 
         uint256 baseTokenAmount = archemist.previewWithdraw(1 ether);
 
@@ -146,6 +165,8 @@ contract ArchemistPreviewWithdrawTest is ArchemistTest {
         vm.prank(admin);
         archemistAedyAddy.updatePricePerShare(1 ether);
 
+        deal(ADDY, address(archemistAedyAddy), 0.9 ether);
+
         uint256 baseTokenAmount = archemistAedyAddy.previewWithdraw(1 ether);
 
         assertEq(baseTokenAmount, 0.9 ether);
@@ -160,6 +181,8 @@ contract ArchemistPreviewWithdrawTest is ArchemistTest {
     function testPreviewWithdrawWithAddyAsBaseTokenAndUsdcAsExchangeTokenAndFixedAmounts() public {
         vm.prank(admin);
         archemistAddyUsdc.updatePricePerShare(1 ether);
+
+        deal(ADDY, address(archemistAddyUsdc), 0.9 ether);
 
         uint256 baseTokenAmount = archemistAddyUsdc.previewWithdraw(1e6);
 

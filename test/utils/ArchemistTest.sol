@@ -29,6 +29,8 @@ contract ArchemistTest is Test {
     address public immutable ADDY = 0xAb1B1680f6037006e337764547fb82d17606c187;
 
     uint24 public exchangeFee = 1000;
+    uint256 public EIGHTEEN_DECIMALS = 10 ** 18;
+    uint256 public SIX_DECIMALS = 10 ** 6;
 
     /*//////////////////////////////////////////////////////////////
                               SET UP

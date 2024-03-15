@@ -26,6 +26,19 @@ contract ArchemistPreviewDepositTest is ArchemistTest {
         archemist.previewDeposit(randomDepositAmount);
     }
 
+    /**
+     * [ERROR] Should revert when previewing deposit with insufficient exchange token balance.
+     */
+    function testCannotPreviewDepositWithInsufficientExchangeTokenBalance() public {
+        vm.prank(admin);
+        archemist.updatePricePerShare(1 ether);
+
+        vm.expectRevert(
+            abi.encodeWithSelector(IArchemist.InsufficientExchangeTokenBalance.selector)
+        );
+        archemist.previewDeposit(2 ether);
+    }
+
     /*//////////////////////////////////////////////////////////////
                               SUCCESS
     //////////////////////////////////////////////////////////////*/
@@ -45,15 +58,17 @@ contract ArchemistPreviewDepositTest is ArchemistTest {
         vm.prank(admin);
         archemist.updatePricePerShare(randomPricePerShare);
 
-        uint256 exchangeTokenAmount = archemist.previewDeposit(randomDepositAmount);
-
         uint256 feeAmount = (randomDepositAmount * exchangeFee) / 10000;
 
         uint256 depositAmount = randomDepositAmount - feeAmount;
 
-        uint256 expectedExchangeAmount = (depositAmount * 10 ** 18) / randomPricePerShare;
+        uint256 expectedExchangeTokenAmount = (depositAmount * 10 ** 18) / randomPricePerShare;
 
-        assertEq(exchangeTokenAmount, expectedExchangeAmount);
+        deal(AEDY, address(archemist), expectedExchangeTokenAmount);
+
+        uint256 exchangeTokenAmount = archemist.previewDeposit(randomDepositAmount);
+
+        assertEq(exchangeTokenAmount, expectedExchangeTokenAmount);
         assertGe(exchangeTokenAmount, 0);
         assertEq(archemist.pricePerShare(), randomPricePerShare);
         assertEq(archemist.paused(), true);
@@ -74,15 +89,17 @@ contract ArchemistPreviewDepositTest is ArchemistTest {
         vm.prank(admin);
         archemistAedyAddy.updatePricePerShare(randomPricePerShare);
 
-        uint256 exchangeTokenAmount = archemistAedyAddy.previewDeposit(randomDepositAmount);
-
         uint256 feeAmount = (randomDepositAmount * exchangeFee) / 10000;
 
         uint256 depositAmount = randomDepositAmount - feeAmount;
 
-        uint256 expectedExchangeAmount = (depositAmount * 10 ** 18) / randomPricePerShare;
+        uint256 expectedExchangeTokenAmount = (depositAmount * 10 ** 18) / randomPricePerShare;
 
-        assertEq(exchangeTokenAmount, expectedExchangeAmount);
+        deal(AEDY, address(archemistAedyAddy), expectedExchangeTokenAmount);
+
+        uint256 exchangeTokenAmount = archemistAedyAddy.previewDeposit(randomDepositAmount);
+
+        assertEq(exchangeTokenAmount, expectedExchangeTokenAmount);
         assertGe(exchangeTokenAmount, 0);
         assertEq(archemistAedyAddy.pricePerShare(), randomPricePerShare);
         assertEq(archemistAedyAddy.paused(), true);
@@ -103,15 +120,17 @@ contract ArchemistPreviewDepositTest is ArchemistTest {
         vm.prank(admin);
         archemistAddyUsdc.updatePricePerShare(randomPricePerShare);
 
-        uint256 exchangeTokenAmount = archemistAddyUsdc.previewDeposit(randomDepositAmount);
-
         uint256 feeAmount = (randomDepositAmount * exchangeFee) / 10000;
 
         uint256 depositAmount = randomDepositAmount - feeAmount;
 
-        uint256 expectedExchangeAmount = (depositAmount * 10 ** 6) / randomPricePerShare;
+        uint256 expectedExchangeTokenAmount = (depositAmount * 10 ** 6) / randomPricePerShare;
 
-        assertEq(exchangeTokenAmount, expectedExchangeAmount);
+        deal(USDC, address(archemistAddyUsdc), expectedExchangeTokenAmount);
+
+        uint256 exchangeTokenAmount = archemistAddyUsdc.previewDeposit(randomDepositAmount);
+
+        assertEq(exchangeTokenAmount, expectedExchangeTokenAmount);
         assertGe(exchangeTokenAmount, 0);
         assertEq(archemistAddyUsdc.pricePerShare(), randomPricePerShare);
         assertEq(archemistAddyUsdc.paused(), true);
@@ -121,11 +140,12 @@ contract ArchemistPreviewDepositTest is ArchemistTest {
      * [SUCCESS] Should calculate exchange token amount equals to 0.9 (fees considered) ether when previewing deposit with usdc as base token
      * and addy as exchange with equal deposit amount and price per share.
      */
-    function testPreviewDepositWithUsdcAsBaseTokenAndAddyAsExchangeTokenAndEqualDepositAmountAndPricePerShare(
+    function testPreviewDepositWithUsdcAsBaseTokenAndAedyAsExchangeTokenAndEqualDepositAmountAndPricePerShare(
     ) public {
         vm.prank(admin);
-
         archemist.updatePricePerShare(1 ether);
+
+        deal(AEDY, address(archemist), 0.9 ether);
 
         uint256 exchangeTokenAmount = archemist.previewDeposit(1 ether);
 
@@ -142,8 +162,9 @@ contract ArchemistPreviewDepositTest is ArchemistTest {
     function testPreviewDepositWithAddyAsBaseTokenAndAedyAsExchangeTokenAndEqualDepositAmountAndPricePerShare(
     ) public {
         vm.prank(admin);
-
         archemistAedyAddy.updatePricePerShare(1 ether);
+
+        deal(AEDY, address(archemistAedyAddy), 0.9 ether);
 
         uint256 exchangeTokenAmount = archemistAedyAddy.previewDeposit(1 ether);
 
@@ -160,8 +181,9 @@ contract ArchemistPreviewDepositTest is ArchemistTest {
     function testPreviewDepositWithAddyAsBaseTokenAndUsdcAsExchangeTokenAndEqualDepositAmountAndPricePerShare(
     ) public {
         vm.prank(admin);
-
         archemistAddyUsdc.updatePricePerShare(1 ether);
+
+        deal(USDC, address(archemistAddyUsdc), 9e5);
 
         uint256 exchangeTokenAmount = archemistAddyUsdc.previewDeposit(1 ether);
 
