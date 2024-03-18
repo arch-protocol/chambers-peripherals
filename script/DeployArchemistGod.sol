@@ -11,7 +11,7 @@ contract DeployArchemistGod is Script {
      * Deploy ArchemistGod
     */
 
-    address SKELLI = 0x38133FAfB7CAaEf2aC7e8BEa0CbDf01723b657A3;
+    address public skelli = 0x38133FAfB7CAaEf2aC7e8BEa0CbDf01723b657A3;
 
     function run() external {
         vm.createSelectFork("polygon");
@@ -22,7 +22,7 @@ contract DeployArchemistGod is Script {
 
 
         address archSafe = vm.envAddress("ARCH_SAFE");
-        archemistGod.grantRole(archemistGod.MANAGER(), SKELLI);
+        archemistGod.grantRole(archemistGod.MANAGER(), skelli);
         archemistGod.grantRole(archemistGod.DEFAULT_ADMIN_ROLE(), archSafe);
         vm.stopBroadcast();
     }
