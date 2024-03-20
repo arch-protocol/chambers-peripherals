@@ -15,8 +15,8 @@ contract ArchemistTransferErc20PartialBalance is ArchemistTest {
      * [ERROR] Should revert when trying to transfer erc20 if not admin.
      */
     function testCannotTransferErc20PartialBalanceNotAdmin(
-        address randomCaller, 
-        address tokenToWithdraw, 
+        address randomCaller,
+        address tokenToWithdraw,
         uint256 amount
     ) public {
         vm.assume(amount != 0);
@@ -98,16 +98,12 @@ contract ArchemistTransferErc20PartialBalance is ArchemistTest {
         archemist.addOperator(operator);
         vm.stopPrank();
 
-        vm.expectRevert(
-            abi.encodeWithSelector(IArchemist.InsufficientTokenBalance.selector)
-        );
+        vm.expectRevert(abi.encodeWithSelector(IArchemist.InsufficientTokenBalance.selector));
 
         vm.prank(manager);
         archemist.transferErc20PartialBalance(AEDY, amount);
         assertEq(archemist.paused(), true);
     }
-
- 
 
     /*//////////////////////////////////////////////////////////////
                               SUCCESS

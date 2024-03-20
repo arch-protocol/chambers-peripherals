@@ -39,7 +39,6 @@ import { IArchemist } from "./interfaces/IArchemist.sol";
 import { IArchemistGod } from "./interfaces/IArchemistGod.sol";
 import { AccessManager } from "./AccessManager.sol";
 
-
 contract Archemist is IArchemist, AccessManager, ReentrancyGuard, Pausable {
     /*//////////////////////////////////////////////////////////////
                                 LIBRARIES
@@ -344,18 +343,20 @@ contract Archemist is IArchemist, AccessManager, ReentrancyGuard, Pausable {
     }
 
     /**
-     * @notice Transfer specific ERC20 token amount to the manager or higher 
+     * @notice Transfer specific ERC20 token amount to the manager or higher
      *         level role. Operation can only be performed by a manager or admin.
      *
      * @param _tokenToWithdraw Address of the token to be withdrawn
      * @param _amount Amount of the token to be withdrawn
-     */ 
-    function transferErc20PartialBalance(address _tokenToWithdraw, uint256 _amount) external onlyManager {
+     */
+    function transferErc20PartialBalance(address _tokenToWithdraw, uint256 _amount)
+        external
+        onlyManager
+    {
         if (ERC20(_tokenToWithdraw).balanceOf(address(this)) < _amount) {
             revert InsufficientTokenBalance();
         }
 
         ERC20(_tokenToWithdraw).safeTransfer(msg.sender, _amount);
     }
-
 }

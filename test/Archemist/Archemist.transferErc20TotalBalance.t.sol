@@ -14,9 +14,10 @@ contract ArchemistTransferErc20 is ArchemistTest {
     /**
      * [ERROR] Should revert when trying to transfer all erc20 token balance if not admin.
      */
-    function testCannotTransferErc20TotalBalanceNotAdmin(address randomCaller, address tokenToWithdraw)
-        public
-    {
+    function testCannotTransferErc20TotalBalanceNotAdmin(
+        address randomCaller,
+        address tokenToWithdraw
+    ) public {
         vm.assume(randomCaller != admin);
         vm.expectRevert(
             abi.encodeWithSelector(IAccessManager.CallerIsNotManager.selector, randomCaller)
