@@ -6,15 +6,15 @@ import { IArchemist } from "src/interfaces/IArchemist.sol";
 import { IAccessManager } from "src/interfaces/IAccessManager.sol";
 import { IERC20 } from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 
-contract ArchemistTransferErc20ToManager is ArchemistTest {
+contract ArchemistTransferErc20 is ArchemistTest {
     /*//////////////////////////////////////////////////////////////
                               REVERT
     //////////////////////////////////////////////////////////////*/
 
     /**
-     * [ERROR] Should revert when trying to transfer erc20 to manager if not admin.
+     * [ERROR] Should revert when trying to transfer all erc20 token balance if not admin.
      */
-    function testCannotTransferErc20ToManagerNotAdmin(address randomCaller, address tokenToWithdraw)
+    function testCannotTransferErc20TotalBalanceNotAdmin(address randomCaller, address tokenToWithdraw)
         public
     {
         vm.assume(randomCaller != admin);
@@ -22,14 +22,14 @@ contract ArchemistTransferErc20ToManager is ArchemistTest {
             abi.encodeWithSelector(IAccessManager.CallerIsNotManager.selector, randomCaller)
         );
         vm.prank(randomCaller);
-        archemist.transferErc20ToManager(tokenToWithdraw);
+        archemist.transferErc20TotalBalance(tokenToWithdraw);
         assertEq(archemist.paused(), true);
     }
 
     /**
-     * [ERROR] Should revert when trying to transfer erc20 to manager if not admin nor manager.
+     * [ERROR] Should revert when trying to transfer all erc20 token balance if not admin nor manager.
      */
-    function testCannotTransferErc20TomanagerNotAdminNorManager(
+    function testCannotTransferErc20TotalBalanceNotAdminNorManager(
         address randomCaller,
         address manager,
         address tokenToWithdraw
@@ -45,14 +45,14 @@ contract ArchemistTransferErc20ToManager is ArchemistTest {
         );
 
         vm.prank(randomCaller);
-        archemist.transferErc20ToManager(tokenToWithdraw);
+        archemist.transferErc20TotalBalance(tokenToWithdraw);
         assertEq(archemist.paused(), true);
     }
 
     /**
-     * [ERROR] Should revert when trying to transfer erc20 to manager if not admin nor manager nor operator.
+     * [ERROR] Should revert when trying to transfer erc20  if not admin nor manager nor operator.
      */
-    function testCannotTransferErc20ToManagerAsOperator(
+    function testCannotTransferErc20TotalBalanceAsOperator(
         address manager,
         address operator,
         address tokenToWithdraw
@@ -70,18 +70,18 @@ contract ArchemistTransferErc20ToManager is ArchemistTest {
         );
 
         vm.prank(operator);
-        archemist.transferErc20ToManager(tokenToWithdraw);
+        archemist.transferErc20TotalBalance(tokenToWithdraw);
         assertEq(archemist.paused(), true);
     }
 
     /**
      * [ERROR] Should revert when trying to transfer if there are no assets to transfer.
      */
-    function testCannotTransferErc20ToManagerNoBalance() public {
+    function testCannotTransferErc20TotalBalanceNoBalance() public {
         vm.expectRevert(abi.encodeWithSelector(IArchemist.ZeroTokenBalance.selector));
 
         vm.prank(admin);
-        archemist.transferErc20ToManager(address(AEDY));
+        archemist.transferErc20TotalBalance(address(AEDY));
     }
 
     /*//////////////////////////////////////////////////////////////
@@ -89,15 +89,15 @@ contract ArchemistTransferErc20ToManager is ArchemistTest {
     //////////////////////////////////////////////////////////////*/
 
     /**
-     * [SUCCESS] Should transfer erc20 tokens to the manager when called by admin.
+     * [SUCCESS] Should transfer all erc20 token balance to the manager when called by admin.
      */
-    function testTransferErcToManager20AsAdmin(uint128 randomUint) public {
+    function testTransferErc20TotalBalanceAsAdmin(uint128 randomUint) public {
         vm.assume(randomUint != 0);
 
         deal(AEDY, address(archemist), randomUint);
 
         vm.prank(admin);
-        archemist.transferErc20ToManager(AEDY);
+        archemist.transferErc20TotalBalance(AEDY);
 
         assertEq(IERC20(AEDY).balanceOf(address(archemist)), 0);
         assertEq(IERC20(AEDY).balanceOf(admin), randomUint);
@@ -105,9 +105,9 @@ contract ArchemistTransferErc20ToManager is ArchemistTest {
     }
 
     /**
-     * [SUCCESS] Should transfer erc20 tokens to the manager when called by manager.
+     * [SUCCESS] Should transfer all erc20 token balance to the manager when called by manager.
      */
-    function testTransferErc20AsToManagerManager(uint128 randomUint, address manager) public {
+    function testTransferErc20TotalBalanceAsManager(uint128 randomUint, address manager) public {
         vm.assume(manager != address(0x0));
         vm.assume(randomUint != 0);
 
@@ -117,7 +117,7 @@ contract ArchemistTransferErc20ToManager is ArchemistTest {
         archemist.addManager(manager);
 
         vm.prank(manager);
-        archemist.transferErc20ToManager(AEDY);
+        archemist.transferErc20TotalBalance(AEDY);
 
         assertEq(IERC20(AEDY).balanceOf(address(archemist)), 0);
         assertEq(IERC20(AEDY).balanceOf(manager), randomUint);
