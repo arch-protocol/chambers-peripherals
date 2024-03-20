@@ -76,6 +76,8 @@ interface IArchemist {
 
     error InsufficientBaseTokenBalance();
 
+    error InsufficientTokenBalance();
+
     /*//////////////////////////////////////////////////////////////
                                 FUNCTIONS
     //////////////////////////////////////////////////////////////*/
@@ -151,10 +153,19 @@ interface IArchemist {
     function withdraw(uint256 _exchangeTokenAmount) external returns (uint256 baseTokenAmount);
 
     /**
-     * @notice Transfer ERC20 token to the msg.sender . Operation can only be performed
+     * @notice Transfer all ERC20 token balance to the msg.sender . Operation can only be performed
      *         by a manager or admin.
      *
      * @param _tokenToWithdraw Address of the token to be withdrawn
      */
-    function transferErc20ToManager(address _tokenToWithdraw) external;
+    function transferErc20TotalBalance(address _tokenToWithdraw) external;
+
+    /**
+     * @notice Transfer specific ERC20 token amount to the msg.sender . Operation can only be performed
+     *         by a manager or admin.
+     *
+     * @param _tokenToWithdraw Address of the token to be withdrawn
+     * @param _amount Amount of token to be withdrawn
+     */
+    function transferErc20PartialBalance(address _tokenToWithdraw, uint256 _amount) external;
 }
