@@ -26,7 +26,6 @@ contract DeployArchemistWithGod is Script {
 
         address archSafe = vm.envAddress("ARCH_SAFE");
 
-        archemist.grantRole(archemist.DEFAULT_ADMIN_ROLE(), archSafe);
         archemist.addOperator(backendOperator);
         archemist.addAdmin(archSafe);
         vm.stopBroadcast();
