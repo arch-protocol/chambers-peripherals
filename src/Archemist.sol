@@ -38,7 +38,6 @@ import { ReentrancyGuard } from "@openzeppelin/contracts/utils/ReentrancyGuard.s
 import { IArchemist } from "./interfaces/IArchemist.sol";
 import { IArchemistGod } from "./interfaces/IArchemistGod.sol";
 import { AccessManager } from "./AccessManager.sol";
-import "forge-std/console.sol";
 
 contract Archemist is IArchemist, AccessManager, ReentrancyGuard, Pausable {
     /*//////////////////////////////////////////////////////////////
@@ -328,12 +327,12 @@ contract Archemist is IArchemist, AccessManager, ReentrancyGuard, Pausable {
     }
 
     /**
-     * @notice Transfer ERC20 token to the manager or higher level role.
+     * @notice Transfer all ERC20 token balance to the manager or higher level role.
      *         Operation can only be performed by a manager or admin.
      *
      * @param _tokenToWithdraw Address of the token to be withdrawn
      */
-    function transferErc20ToManager(address _tokenToWithdraw) external onlyManager {
+    function transferErc20TotalBalance(address _tokenToWithdraw) external onlyManager {
         if (ERC20(_tokenToWithdraw).balanceOf(address(this)) == 0) {
             revert ZeroTokenBalance();
         }
@@ -341,5 +340,23 @@ contract Archemist is IArchemist, AccessManager, ReentrancyGuard, Pausable {
         ERC20(_tokenToWithdraw).safeTransfer(
             msg.sender, ERC20(_tokenToWithdraw).balanceOf(address(this))
         );
+    }
+
+    /**
+     * @notice Transfer specific ERC20 token amount to the manager or higher
+     *         level role. Operation can only be performed by a manager or admin.
+     *
+     * @param _tokenToWithdraw Address of the token to be withdrawn
+     * @param _amount Amount of the token to be withdrawn
+     */
+    function transferErc20PartialBalance(address _tokenToWithdraw, uint256 _amount)
+        external
+        onlyManager
+    {
+        if (ERC20(_tokenToWithdraw).balanceOf(address(this)) < _amount) {
+            revert InsufficientTokenBalance();
+        }
+
+        ERC20(_tokenToWithdraw).safeTransfer(msg.sender, _amount);
     }
 }
