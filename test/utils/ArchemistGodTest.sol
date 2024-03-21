@@ -19,7 +19,7 @@ contract ArchemistGodTest is Test {
     address public immutable ADDY = 0xAb1B1680f6037006e337764547fb82d17606c187;
 
     function setUp() public {
-        vm.createSelectFork("polygon");
+        vm.createSelectFork("polygon", 54927681);
         vm.startPrank(admin);
         archemistGod = new ArchemistGod();
         validArchemist = archemistGod.createArchemist(ADDY, AEDY, 1000);

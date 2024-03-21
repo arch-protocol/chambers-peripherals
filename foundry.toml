@@ -14,6 +14,7 @@ remappings = [
   "solmate/=lib/solmate/src/",
 ]
 fs_permissions = [{ access = "read", path = "./data"}]
+runs = 50
 
 [fmt]
 line_length = 100

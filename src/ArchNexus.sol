@@ -182,6 +182,7 @@ contract ArchNexus is IArchNexus, Ownable, ReentrancyGuard {
         if (_baseAmount == 0) revert ZeroBaseTokenSent();
         if (_baseToken == _finalToken) revert NoSameAddressAllowed();
         if (_baseToken == address(0) || _finalToken == address(0)) revert ZeroAddressNotAllowed();
+        if (_contractCallInstructions.length == 0) revert NoInstructionsProvided();
 
         IERC20 baseToken = IERC20(_baseToken);
 
@@ -223,6 +224,7 @@ contract ArchNexus is IArchNexus, Ownable, ReentrancyGuard {
     ) external payable nonReentrant returns (uint256 finalAmountBought) {
         if (_nativeAmount == 0) revert ZeroNativeTokenSent();
         if (_finalToken == address(0)) revert ZeroAddressNotAllowed();
+        if (_contractCallInstructions.length == 0) revert NoInstructionsProvided();
 
         wrappedNativeToken.deposit{ value: msg.value }();
 
