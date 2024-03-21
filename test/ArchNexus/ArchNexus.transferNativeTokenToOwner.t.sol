@@ -16,7 +16,7 @@ contract TransferNativeTokenToOwnerTest is ArchNexusTest {
      */
     function test_cannotTransferNativeTokenToOwnerNotOwner(address randomAddress) public {
         vm.assume(randomAddress != admin);
-        vm.assume(randomAddress != address(0))
+        vm.assume(randomAddress != address(0));
         vm.expectRevert(
             abi.encodeWithSelector(Ownable.OwnableUnauthorizedAccount.selector, randomAddress)
         );
