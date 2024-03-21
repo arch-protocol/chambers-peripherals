@@ -55,7 +55,6 @@ import { IChamberGod } from "chambers/interfaces/IChamberGod.sol";
 import { IIssuerWizard } from "chambers/interfaces/IIssuerWizard.sol";
 
 import { IArchNexus } from "./interfaces/IArchNexus.sol";
-import { IArchemistGod } from "./interfaces/IArchemistGod.sol";
 
 contract ArchNexus is IArchNexus, Ownable, ReentrancyGuard {
     /*//////////////////////////////////////////////////////////////
@@ -74,11 +73,6 @@ contract ArchNexus is IArchNexus, Ownable, ReentrancyGuard {
     EnumerableSet.AddressSet private allowedTargets;
     WETH public immutable wrappedNativeToken;
 
-    /**
-     * @notice Address of the Archemist Factory
-     */
-    IArchemistGod public immutable ARCHEMIST_GOD;
-
     /*//////////////////////////////////////////////////////////////
                                CONSTRUCTOR
     //////////////////////////////////////////////////////////////*/
@@ -86,9 +80,8 @@ contract ArchNexus is IArchNexus, Ownable, ReentrancyGuard {
     /**
      * @param _wrappedNativeToken        Wrapped network native token
      */
-    constructor(address _wrappedNativeToken, address _archemistGod) Ownable(msg.sender) {
+    constructor(address _wrappedNativeToken) Ownable(msg.sender) {
         wrappedNativeToken = WETH(payable(_wrappedNativeToken));
-        ARCHEMIST_GOD = IArchemistGod(_archemistGod);
     }
 
     /*//////////////////////////////////////////////////////////////
