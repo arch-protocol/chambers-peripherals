@@ -72,7 +72,6 @@ contract ArchNexus is IArchNexus, Ownable, ReentrancyGuard {
 
     EnumerableSet.AddressSet private allowedTargets;
     WETH public immutable wrappedNativeToken;
-    IChamberGod public chamberGod;
 
     /*//////////////////////////////////////////////////////////////
                                CONSTRUCTOR
@@ -81,9 +80,8 @@ contract ArchNexus is IArchNexus, Ownable, ReentrancyGuard {
     /**
      * @param _wrappedNativeToken        Wrapped network native token
      */
-    constructor(address _wrappedNativeToken, address _chamberGod) Ownable(msg.sender) {
+    constructor(address _wrappedNativeToken) Ownable(msg.sender) {
         wrappedNativeToken = WETH(payable(_wrappedNativeToken));
-        chamberGod = IChamberGod(_chamberGod);
     }
 
     /*//////////////////////////////////////////////////////////////
