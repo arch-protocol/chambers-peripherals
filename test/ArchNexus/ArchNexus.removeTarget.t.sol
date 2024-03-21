@@ -14,13 +14,13 @@ contract RemoveTargetTest is ArchNexusTest {
     /**
      * [REVERT] Should revert if the caller is not owner.
      */
-    function test_cannotRemoveTargetNotOwner(address randomAddress, address target) public {
+    function test_cannotRemoveTargetNotOwner(address randomAddress) public {
         vm.assume(randomAddress != admin);
         vm.expectRevert(
             abi.encodeWithSelector(Ownable.OwnableUnauthorizedAccount.selector, randomAddress)
         );
         vm.prank(randomAddress);
-        archNexus.removeTarget(target);
+        archNexus.removeTarget(vm.addr(0x123123));
     }
 
     /**
@@ -40,8 +40,8 @@ contract RemoveTargetTest is ArchNexusTest {
     /**
      * [SUCCESS] Should remove a target from nexus as owner.
      */
-    function test_removeTargetAsOwner(address target) public {
-        vm.assume(target != address(0));
+    function test_removeTargetAsOwner() public {
+        address target = vm.addr(0x123123);
         vm.startPrank(admin);
         archNexus.addTarget(target);
         archNexus.removeTarget(target);

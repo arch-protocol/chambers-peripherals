@@ -14,19 +14,20 @@ contract AddTargetTest is ArchNexusTest {
     /**
      * [REVERT] Should revert if the caller is not owner.
      */
-    function test_cannotAddTargetNotOwner(address randomAddress, address target) public {
+    function test_cannotAddTargetNotOwner(address randomAddress) public {
         vm.assume(randomAddress != admin);
         vm.expectRevert(
             abi.encodeWithSelector(Ownable.OwnableUnauthorizedAccount.selector, randomAddress)
         );
         vm.prank(randomAddress);
-        archNexus.addTarget(target);
+        archNexus.addTarget(vm.addr(0x123123));
     }
 
     /**
      * [REVERT] Should revert if the target is already allowed.
      */
-    function test_cannotAddTargetAlreadyAllowed(address target) public {
+    function test_cannotAddTargetAlreadyAllowed() public {
+        address target = vm.addr(0x123123);
         vm.prank(admin);
         archNexus.addTarget(target);
         vm.expectRevert(IArchNexus.TargetAlreadyAllowed.selector);
@@ -41,7 +42,8 @@ contract AddTargetTest is ArchNexusTest {
     /**
      * [SUCCESS] Should add target to nexus as owner.
      */
-    function test_addTargetAsOwner(address target) public {
+    function test_addTargetAsOwner() public {
+        address target = vm.addr(0x123123);
         vm.assume(target != address(0));
         vm.prank(admin);
         archNexus.addTarget(target);
