@@ -55,6 +55,7 @@ import { IChamberGod } from "chambers/interfaces/IChamberGod.sol";
 import { IIssuerWizard } from "chambers/interfaces/IIssuerWizard.sol";
 
 import { IArchNexus } from "./interfaces/IArchNexus.sol";
+import { IArchemistGod } from "./interfaces/IArchemistGod.sol";
 
 contract ArchNexus is IArchNexus, Ownable, ReentrancyGuard {
     /*//////////////////////////////////////////////////////////////
@@ -73,6 +74,11 @@ contract ArchNexus is IArchNexus, Ownable, ReentrancyGuard {
     EnumerableSet.AddressSet private allowedTargets;
     WETH public immutable wrappedNativeToken;
 
+    /**
+     * @notice Address of the Archemist Factory
+     */
+    IArchemistGod public immutable ARCHEMIST_GOD;
+
     /*//////////////////////////////////////////////////////////////
                                CONSTRUCTOR
     //////////////////////////////////////////////////////////////*/
@@ -80,8 +86,9 @@ contract ArchNexus is IArchNexus, Ownable, ReentrancyGuard {
     /**
      * @param _wrappedNativeToken        Wrapped network native token
      */
-    constructor(address _wrappedNativeToken) Ownable(msg.sender) {
+    constructor(address _wrappedNativeToken, address _archemistGod) Ownable(msg.sender) {
         wrappedNativeToken = WETH(payable(_wrappedNativeToken));
+        ARCHEMIST_GOD = IArchemistGod(_archemistGod);
     }
 
     /*//////////////////////////////////////////////////////////////
@@ -182,6 +189,9 @@ contract ArchNexus is IArchNexus, Ownable, ReentrancyGuard {
         if (_baseAmount == 0) revert ZeroBaseTokenSent();
         if (_baseToken == _finalToken) revert NoSameAddressAllowed();
         if (_baseToken == address(0) || _finalToken == address(0)) revert ZeroAddressNotAllowed();
+        if (_contractCallInstructions.length == 0) revert NoInstructionsProvided();
+
+        _checkInstructions(_contractCallInstructions);
 
         IERC20 baseToken = IERC20(_baseToken);
 
@@ -223,6 +233,9 @@ contract ArchNexus is IArchNexus, Ownable, ReentrancyGuard {
     ) external payable nonReentrant returns (uint256 finalAmountBought) {
         if (_nativeAmount == 0) revert ZeroNativeTokenSent();
         if (_finalToken == address(0)) revert ZeroAddressNotAllowed();
+        if (_contractCallInstructions.length == 0) revert NoInstructionsProvided();
+
+        _checkInstructions(_contractCallInstructions);
 
         wrappedNativeToken.deposit{ value: msg.value }();
 
@@ -276,6 +289,27 @@ contract ArchNexus is IArchNexus, Ownable, ReentrancyGuard {
                 revert UnderboughtAsset(
                     currentInstruction._buyToken, currentInstruction._minBuyAmount
                 );
+            }
+        }
+    }
+
+    /**
+     * Checks the instructions to ensure that the targets are valid Archemist contracts.
+     *
+     * @param _contractCallInstructions     Instruction array that will be executed in order to get
+     *                                      the final asset to buy.
+     */
+    function _checkInstructions(ContractCallInstruction[] memory _contractCallInstructions)
+        internal
+        pure
+    {
+        for (uint256 i = 0; i < _contractCallInstructions.length; i++) {
+            ContractCallInstruction memory currentInstruction = _contractCallInstructions[i];
+            if (currentInstruction._sellToken == currentInstruction._buyToken) {
+                revert NoSameAddressAllowed();
+            }
+            if (!ARCHEMIST_GOD.isValidArchemist(currentInstruction._target)) {
+                revert InvalidArchemist();
             }
         }
     }

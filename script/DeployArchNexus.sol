@@ -9,6 +9,7 @@ contract DeployArchNexus is Script {
     /**
      * Deploy ArchNexus contract and set the owner to the ARCH_SAFE
      */
+    address public archemistGod = 0xE1E9568B9F735Cafb282BB164687d4c37587Bf90;
     address public web3Archemist = 0xC68140cdf17566F8AD43db8487d6600196d79176;
     address public acaiArchemist = 0x2C0c8A17a58d37F0cA75cf9482307a8c6043d252;
     address public constant POLYGON_WMATIC = 0x0d500B1d8E8eF31E21C99d1Db9A6444d3ADf1270;
@@ -18,7 +19,7 @@ contract DeployArchNexus is Script {
         uint256 deployerPrivateKey = vm.envUint("PRIVATE_KEY");
         vm.startBroadcast(deployerPrivateKey);
 
-        ArchNexus archNexus = new ArchNexus(POLYGON_WMATIC);
+        ArchNexus archNexus = new ArchNexus(POLYGON_WMATIC, archemistGod);
 
         address archSafe = vm.envAddress("ARCH_SAFE");
         archNexus.addTarget(web3Archemist);

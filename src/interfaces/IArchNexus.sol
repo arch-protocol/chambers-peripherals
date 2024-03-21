@@ -96,6 +96,10 @@ interface IArchNexus {
 
     error ZeroAddressNotAllowed();
 
+    error NoInstructionsProvided();
+
+    error InvalidArchemist();
+
     /*//////////////////////////////////////////////////////////////
                                 FUNCTIONS
     //////////////////////////////////////////////////////////////*/
