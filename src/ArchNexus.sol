@@ -301,7 +301,7 @@ contract ArchNexus is IArchNexus, Ownable, ReentrancyGuard {
      */
     function _checkInstructions(ContractCallInstruction[] memory _contractCallInstructions)
         internal
-        pure
+        view
     {
         for (uint256 i = 0; i < _contractCallInstructions.length; i++) {
             ContractCallInstruction memory currentInstruction = _contractCallInstructions[i];
