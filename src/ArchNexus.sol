@@ -191,8 +191,6 @@ contract ArchNexus is IArchNexus, Ownable, ReentrancyGuard {
         if (_baseToken == address(0) || _finalToken == address(0)) revert ZeroAddressNotAllowed();
         if (_contractCallInstructions.length == 0) revert NoInstructionsProvided();
 
-        _checkInstructions(_contractCallInstructions);
-
         IERC20 baseToken = IERC20(_baseToken);
 
         baseToken.safeTransferFrom(msg.sender, address(this), _baseAmount);
@@ -234,8 +232,6 @@ contract ArchNexus is IArchNexus, Ownable, ReentrancyGuard {
         if (_nativeAmount == 0) revert ZeroNativeTokenSent();
         if (_finalToken == address(0)) revert ZeroAddressNotAllowed();
         if (_contractCallInstructions.length == 0) revert NoInstructionsProvided();
-
-        _checkInstructions(_contractCallInstructions);
 
         wrappedNativeToken.deposit{ value: msg.value }();
 
@@ -289,27 +285,6 @@ contract ArchNexus is IArchNexus, Ownable, ReentrancyGuard {
                 revert UnderboughtAsset(
                     currentInstruction._buyToken, currentInstruction._minBuyAmount
                 );
-            }
-        }
-    }
-
-    /**
-     * Checks the instructions to ensure that the targets are valid Archemist contracts.
-     *
-     * @param _contractCallInstructions     Instruction array that will be executed in order to get
-     *                                      the final asset to buy.
-     */
-    function _checkInstructions(ContractCallInstruction[] memory _contractCallInstructions)
-        internal
-        view
-    {
-        for (uint256 i = 0; i < _contractCallInstructions.length; i++) {
-            ContractCallInstruction memory currentInstruction = _contractCallInstructions[i];
-            if (currentInstruction._sellToken == currentInstruction._buyToken) {
-                revert NoSameAddressAllowed();
-            }
-            if (!ARCHEMIST_GOD.isValidArchemist(currentInstruction._target)) {
-                revert InvalidArchemist();
             }
         }
     }

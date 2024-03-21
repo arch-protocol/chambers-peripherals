@@ -37,7 +37,7 @@ contract ArchemistTest is Test {
     //////////////////////////////////////////////////////////////*/
 
     function setUp() public {
-        vm.createSelectFork("polygon");
+        vm.createSelectFork("polygon", 54927681);
         vm.startPrank(admin);
         archemistGod = new ArchemistGod();
         archemist = archemistGod.createArchemist(AEDY, USDC, exchangeFee);
