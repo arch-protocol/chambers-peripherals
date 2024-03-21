@@ -6,11 +6,9 @@ import "forge-std/Script.sol";
 import { ArchemistGod } from "src/ArchemistGod.sol";
 
 contract DeployArchemistGod is Script {
-
     /**
      * Deploy ArchemistGod
-    */
-
+     */
     address public skelli = 0x38133FAfB7CAaEf2aC7e8BEa0CbDf01723b657A3;
 
     function run() external {
@@ -19,7 +17,6 @@ contract DeployArchemistGod is Script {
         vm.startBroadcast(deployerPrivateKey);
 
         ArchemistGod archemistGod = new ArchemistGod();
-
 
         address archSafe = vm.envAddress("ARCH_SAFE");
         archemistGod.grantRole(archemistGod.MANAGER(), skelli);
