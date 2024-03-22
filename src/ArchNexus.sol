@@ -88,6 +88,8 @@ contract ArchNexus is IArchNexus, Ownable, ReentrancyGuard {
                             EXTERNAL FUNCTIONS
     //////////////////////////////////////////////////////////////*/
 
+    receive() external payable { }
+
     /**
      * Returns an array of the allowed targets for the trade issuer
      *
@@ -188,16 +190,17 @@ contract ArchNexus is IArchNexus, Ownable, ReentrancyGuard {
         IERC20 baseToken = IERC20(_baseToken);
         IERC20 finalToken = IERC20(_finalToken);
 
+        uint256 baseBalanceBefore = baseToken.balanceOf(address(this));
         baseToken.safeTransferFrom(msg.sender, address(this), _baseAmount);
 
         uint256 finalTokenBalanceBefore = finalToken.balanceOf(address(this));
 
         _executeInstructions(_contractCallInstructions);
 
-        baseToken.safeTransfer(msg.sender, baseToken.balanceOf(address(this)));
+        uint256 remainingBaseBalance = baseToken.balanceOf(address(this)) - baseBalanceBefore;
+        baseToken.safeTransfer(msg.sender, remainingBaseBalance);
 
         finalAmountBought = finalToken.balanceOf(address(this)) - finalTokenBalanceBefore;
-
         if (finalAmountBought < _minFinalAmount) {
             revert UnderboughtAsset(finalToken, _minFinalAmount);
         }
@@ -211,8 +214,6 @@ contract ArchNexus is IArchNexus, Ownable, ReentrancyGuard {
         } else {
             finalToken.safeTransfer(msg.sender, finalAmountBought);
         }
-
-        finalToken.safeTransfer(msg.sender, finalAmountBought);
 
         emit ExecutionSuccess(_finalToken, finalAmountBought);
     }
