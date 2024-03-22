@@ -37,7 +37,7 @@ contract ArchNexusTest is Test {
                               SET UP
     //////////////////////////////////////////////////////////////*/
 
-    function setUp() public {
+    function setUp() public virtual {
         vm.createSelectFork("ethereum", 19483754);
         vm.startPrank(admin);
         archemistGod = new ArchemistGod();

@@ -314,6 +314,7 @@ contract ArchNexus is IArchNexus, Ownable, ReentrancyGuard {
         uint256 _requiredAmount
     ) internal {
         if (_requiredAmount == 0) revert ZeroRequiredAmount();
+        if (!isAllowedTarget(_target)) revert InvalidTarget(_target);
         uint256 currentAllowance = IERC20(_tokenAddress).allowance(address(this), _target);
         if (currentAllowance < _requiredAmount) {
             IERC20(_tokenAddress).safeIncreaseAllowance(
