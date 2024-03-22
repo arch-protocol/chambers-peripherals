@@ -14,8 +14,8 @@ contract RemoveTargetTest is ArchNexusTest {
     /**
      * [REVERT] Should revert if the caller is not owner.
      */
-    function test_cannotRemoveTargetNotOwner(address randomAddress) public {
-        vm.assume(randomAddress != admin);
+    function test_cannotRemoveTargetNotOwner() public {
+        address randomAddress = vm.addr(0x123123);
         vm.expectRevert(
             abi.encodeWithSelector(Ownable.OwnableUnauthorizedAccount.selector, randomAddress)
         );

@@ -14,9 +14,8 @@ contract TransferERC20ToOwnerTest is ArchNexusTest {
     /**
      * [REVERT] Should revert if the caller is not owner.
      */
-    function test_cannotTransferERC20ToOwnerNotOwner(address randomAddress) public {
-        vm.assume(randomAddress != admin);
-        vm.assume(randomAddress != address(0));
+    function test_cannotTransferERC20ToOwnerNotOwner() public {
+        address randomAddress = vm.addr(0x123123);
         vm.expectRevert(
             abi.encodeWithSelector(Ownable.OwnableUnauthorizedAccount.selector, randomAddress)
         );

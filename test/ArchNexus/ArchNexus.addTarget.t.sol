@@ -14,8 +14,8 @@ contract AddTargetTest is ArchNexusTest {
     /**
      * [REVERT] Should revert if the caller is not owner.
      */
-    function test_cannotAddTargetNotOwner(address randomAddress) public {
-        vm.assume(randomAddress != admin);
+    function test_cannotAddTargetNotOwner() public {
+        address randomAddress = vm.addr(0x123123);
         vm.expectRevert(
             abi.encodeWithSelector(Ownable.OwnableUnauthorizedAccount.selector, randomAddress)
         );
@@ -44,7 +44,6 @@ contract AddTargetTest is ArchNexusTest {
      */
     function test_addTargetAsOwner() public {
         address target = vm.addr(0x123123);
-        vm.assume(target != address(0));
         vm.prank(admin);
         archNexus.addTarget(target);
     }
