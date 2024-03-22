@@ -22,11 +22,11 @@ tab_width = 4
 bracket_spacing = true
 
 [rpc_endpoints]
-mainnet = "${ETHEREUM_RPC_URL}"
+ethereum = "${ETHEREUM_RPC_URL}"
 polygon = "${POLYGON_RPC_URL}"
 anvil = "http://localhost:8545"
 
 [etherscan]
-mainnet = { key = "${ETHERSCAN_MAINNET_KEY}" }
+ethereum = { key = "${ETHERSCAN_MAINNET_KEY}" }
 polygon = { key = "${POLYGONSCAN_MAINNET_KEY}" }
 # See more config options https://github.com/foundry-rs/foundry/tree/master/config
