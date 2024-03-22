@@ -185,16 +185,17 @@ contract ArchNexus is IArchNexus, Ownable, ReentrancyGuard {
         if (_contractCallInstructions.length == 0) revert NoInstructionsProvided();
 
         IERC20 baseToken = IERC20(_baseToken);
+        IERC20 finalToken = IERC20(_finalToken);
 
         baseToken.safeTransferFrom(msg.sender, address(this), _baseAmount);
+
+        uint256 finalTokenBalanceBefore = finalToken.balanceOf(address(this));
 
         _executeInstructions(_contractCallInstructions);
 
         baseToken.safeTransfer(msg.sender, baseToken.balanceOf(address(this)));
 
-        IERC20 finalToken = IERC20(_finalToken);
-
-        finalAmountBought = finalToken.balanceOf(address(this));
+        finalAmountBought = finalToken.balanceOf(address(this)) - finalTokenBalanceBefore;
 
         if (finalAmountBought < _minFinalAmount) {
             revert UnderboughtAsset(finalToken, _minFinalAmount);
