@@ -177,7 +177,8 @@ contract ArchNexus is IArchNexus, Ownable, ReentrancyGuard {
         address _baseToken,
         uint256 _baseAmount,
         address _finalToken,
-        uint256 _minFinalAmount
+        uint256 _minFinalAmount,
+        bool isNativeToken
     ) external nonReentrant returns (uint256 finalAmountBought) {
         if (_baseAmount == 0) revert ZeroBaseTokenSent();
         if (_baseToken == _finalToken) revert NoSameAddressAllowed();
@@ -199,6 +200,16 @@ contract ArchNexus is IArchNexus, Ownable, ReentrancyGuard {
 
         if (finalAmountBought < _minFinalAmount) {
             revert UnderboughtAsset(finalToken, _minFinalAmount);
+        }
+
+        if (_finalToken == address(wrappedNativeToken) && isNativeToken) {
+            wrappedNativeToken.withdraw(finalAmountBought);
+            (bool success,) = address(msg.sender).call{ value: finalAmountBought }("");
+            if (!success) {
+                revert NativeTransferFailed();
+            }
+        } else {
+            finalToken.safeTransfer(msg.sender, finalAmountBought);
         }
 
         finalToken.safeTransfer(msg.sender, finalAmountBought);
@@ -227,15 +238,27 @@ contract ArchNexus is IArchNexus, Ownable, ReentrancyGuard {
         if (_finalToken == address(0)) revert ZeroAddressNotAllowed();
         if (_contractCallInstructions.length == 0) revert NoInstructionsProvided();
 
+        uint256 wrappedBalanceBefore = wrappedNativeToken.balanceOf(address(this));
+
         wrappedNativeToken.deposit{ value: msg.value }();
-
-        _executeInstructions(_contractCallInstructions);
-
-        wrappedNativeToken.transfer(msg.sender, wrappedNativeToken.balanceOf(address(this)));
 
         IERC20 finalToken = IERC20(_finalToken);
 
-        finalAmountBought = finalToken.balanceOf(address(this));
+        uint256 finalTokenBalanceBefore = finalToken.balanceOf(address(this));
+
+        _executeInstructions(_contractCallInstructions);
+
+        uint256 remainingWrappedBalance =
+            wrappedNativeToken.balanceOf(address(this)) - wrappedBalanceBefore;
+
+        wrappedNativeToken.withdraw(remainingWrappedBalance);
+
+        (bool success,) = address(msg.sender).call{ value: remainingWrappedBalance }("");
+        if (!success) {
+            revert NativeTransferFailed();
+        }
+
+        finalAmountBought = finalToken.balanceOf(address(this)) - finalTokenBalanceBefore;
 
         if (finalAmountBought < _minFinalAmount) {
             revert UnderboughtAsset(finalToken, _minFinalAmount);

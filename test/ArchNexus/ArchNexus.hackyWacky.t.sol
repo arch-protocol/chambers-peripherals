@@ -65,7 +65,7 @@ contract HackyWackyTests is ArchNexusTest {
         vm.expectRevert(
             abi.encodeWithSelector(IArchNexus.InvalidTarget.selector, address(malicious))
         );
-        archNexus.executeCalls(calls, WETH, 1, ADDY, 0);
+        archNexus.executeCalls(calls, WETH, 1, ADDY, 0, false);
         vm.stopPrank();
 
         // validate that the hacker did not withdraw the balance
@@ -106,7 +106,7 @@ contract HackyWackyTests is ArchNexusTest {
         // execute
         vm.startPrank(hacker);
         IERC20(WETH).approve(address(archNexus), 100 ether);
-        archNexus.executeCalls(calls, WETH, 1, ADDY, 0);
+        archNexus.executeCalls(calls, WETH, 1, ADDY, 0, false);
         vm.stopPrank();
 
         // validate that the hacker did not withdraw the balance
