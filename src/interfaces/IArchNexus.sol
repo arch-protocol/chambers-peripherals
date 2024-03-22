@@ -98,6 +98,8 @@ interface IArchNexus {
 
     error NoInstructionsProvided();
 
+    error NativeTransferFailed();
+
     /*//////////////////////////////////////////////////////////////
                                 FUNCTIONS
     //////////////////////////////////////////////////////////////*/
@@ -119,7 +121,8 @@ interface IArchNexus {
         address _baseToken,
         uint256 _baseAmount,
         address _finalToken,
-        uint256 _minFinalAmount
+        uint256 _minFinalAmount,
+        bool isNativeToken
     ) external returns (uint256 finalAmountBought);
 
     function executeCallsWithNativeToken(

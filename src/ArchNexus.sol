@@ -204,7 +204,10 @@ contract ArchNexus is IArchNexus, Ownable, ReentrancyGuard {
 
         if (_finalToken == address(wrappedNativeToken) && isNativeToken) {
             wrappedNativeToken.withdraw(finalAmountBought);
-            address(msg.sender).call{ value: finalAmountBought }("");
+            (bool success,) = address(msg.sender).call{ value: finalAmountBought }("");
+            if (!success) {
+                revert NativeTransferFailed();
+            }
         } else {
             finalToken.safeTransfer(msg.sender, finalAmountBought);
         }
@@ -250,7 +253,10 @@ contract ArchNexus is IArchNexus, Ownable, ReentrancyGuard {
 
         wrappedNativeToken.withdraw(remainingWrappedBalance);
 
-        address(msg.sender).call{ value: remainingWrappedBalance }("");
+        (bool success,) = address(msg.sender).call{ value: remainingWrappedBalance }("");
+        if (!success) {
+            revert NativeTransferFailed();
+        }
 
         finalAmountBought = finalToken.balanceOf(address(this)) - finalTokenBalanceBefore;
 
