@@ -22,9 +22,14 @@ contract MaliciousContract is Ownable {
 }
 
 contract HackyWackyTests is ArchNexusTest {
-    function test_shouldNotWithdrawBalanceWhenInstructionsDoNotChangeBalance() public {
+    MaliciousContract malicious;
+
+    address hacker;
+
+    function setUp() public override {
+        super.setUp();
         // setup
-        address hacker = vm.addr(0xD3Ad);
+        hacker = vm.addr(0xD3Ad);
         deal(WETH, hacker, 100 ether);
         deal(ADDY, address(archNexus), 100 ether);
         deal(AEDY, address(archemist), 100 ether);
@@ -34,6 +39,55 @@ contract HackyWackyTests is ArchNexusTest {
         vm.prank(admin);
         archemist.updatePricePerShare(15000000000);
 
+        vm.prank(hacker);
+        malicious = new MaliciousContract();
+    }
+
+    function test_shouldNotAllowMaliciousAllowanceTarget() public {
+        // call instruction that does nothing
+        IArchNexus.ContractCallInstruction memory callInstruction = IArchNexus
+            .ContractCallInstruction({
+            _target: payable(address(archemist)),
+            _allowanceTarget: address(malicious), // malicious contract has allowance
+            _sellToken: IERC20(ADDY),
+            _buyToken: IERC20(USDC),
+            _sellAmount: 100 ether,
+            _minBuyAmount: 0,
+            _callData: abi.encodeWithSelector(IArchemist.previewDeposit.selector, 100e6)
+        });
+        IArchNexus.ContractCallInstruction[] memory calls =
+            new IArchNexus.ContractCallInstruction[](1);
+        calls[0] = callInstruction;
+
+        // execute
+        vm.startPrank(hacker);
+        IERC20(WETH).approve(address(archNexus), 100 ether);
+        vm.expectRevert(
+            abi.encodeWithSelector(IArchNexus.InvalidTarget.selector, address(malicious))
+        );
+        archNexus.executeCalls(calls, WETH, 1, ADDY, 0);
+        vm.stopPrank();
+
+        // validate that the hacker did not withdraw the balance
+        assertEq(IERC20(ADDY).balanceOf(hacker), 0);
+        assertEq(IERC20(ADDY).balanceOf(address(archNexus)), 100 ether);
+
+        /**
+         * With the fix now in place, the malicious contract
+         * should not be able to drain the funds
+         */
+        vm.startPrank(hacker);
+        vm.expectRevert();
+        malicious.drain(ADDY, address(archNexus), 100 ether);
+        malicious.withdraw(ADDY);
+        vm.stopPrank();
+
+        // validate that the hacker did not withdraw the balance
+        assertEq(IERC20(ADDY).balanceOf(hacker), 0);
+        assertEq(IERC20(ADDY).balanceOf(address(archNexus)), 100 ether);
+    }
+
+    function test_shouldNotWithdrawBalanceWhenInstructionsDoNotChangeBalance() public {
         // call instruction that does nothing
         IArchNexus.ContractCallInstruction memory callInstruction = IArchNexus
             .ContractCallInstruction({
