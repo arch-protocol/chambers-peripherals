@@ -45,6 +45,9 @@ contract ArchNexusTest is Test {
         archemist = archemistGod.createArchemist(AEDY, WETH, exchangeFee);
         archemistAedyAddy = archemistGod.createArchemist(AEDY, ADDY, exchangeFee);
         archemistAddyUsdc = archemistGod.createArchemist(USDC, ADDY, exchangeFee);
+        archemist.unpause();
+        archemistAedyAddy.unpause();
+        archemistAddyUsdc.unpause();
         vm.stopPrank();
     }
 }
