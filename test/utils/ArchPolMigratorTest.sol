@@ -3,14 +3,14 @@ pragma solidity ^0.8.24;
 
 import { Test } from "forge-std/Test.sol";
 
-import { PolMigrator } from "src/PolMigrator.sol";
+import { ArchPolMigrator } from "src/ArchPolMigrator.sol";
 
-contract PolMigratorTest is Test {
+contract ArchPolMigratorTest is Test {
     /*//////////////////////////////////////////////////////////////
                               VARIABLES
     //////////////////////////////////////////////////////////////*/
 
-    PolMigrator public polMigrator;
+    ArchPolMigrator public archPolMigrator;
 
 
 
@@ -25,6 +25,6 @@ contract PolMigratorTest is Test {
 
     function setUp() public virtual {
         vm.createSelectFork("ethereum");
-        polMigrator = new PolMigrator(PolygonMigrator, MATIC, POL);
+        archPolMigrator = new ArchPolMigrator(PolygonMigrator, MATIC, POL);
     }
 }

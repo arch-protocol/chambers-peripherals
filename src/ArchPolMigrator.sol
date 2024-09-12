@@ -10,7 +10,7 @@ import { IERC20 } from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import { IPolygonMigrator } from "./interfaces/IPolygonMigrator.sol";
 
 
-contract PolMigrator {
+contract ArchPolMigrator {
     using Address for address;
     using SafeERC20 for IERC20;
 
