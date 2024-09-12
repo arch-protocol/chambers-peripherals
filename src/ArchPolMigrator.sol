@@ -35,7 +35,7 @@ contract ArchPolMigrator {
         MATIC.safeIncreaseAllowance(polygonMigrationContract, _amount);
         IPolygonMigrator(polygonMigrationContract).migrate(_amount);
 
-        require(POL.balanceOf(address(this)) == _amount, "UNDEBOUGHT");
+        require(POL.balanceOf(address(this)) == _amount, "UNDERBOUGHT");
 
         POL.safeTransfer(msg.sender, _amount);
 
