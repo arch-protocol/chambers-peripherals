@@ -18,11 +18,7 @@ contract DeployScript is Script {
         uint256 deployerPrivateKey = vm.envUint("PRIVATE_KEY");
         vm.startBroadcast(deployerPrivateKey);
 
-        new ArchPolMigrator(
-            PolygonMigrator,
-            MATIC,
-            POL
-        );
+        new ArchPolMigrator(PolygonMigrator, MATIC, POL);
         vm.stopBroadcast();
     }
 }

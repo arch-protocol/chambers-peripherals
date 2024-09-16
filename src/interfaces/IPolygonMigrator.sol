@@ -2,7 +2,5 @@
 pragma solidity ^0.8.24;
 
 interface IPolygonMigrator {
-
     function migrate(uint256 amount) external;
-
 }

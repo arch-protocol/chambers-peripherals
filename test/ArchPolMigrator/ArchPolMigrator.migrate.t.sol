@@ -1,8 +1,6 @@
 // SPDX-License-Identifier: Apache License 2.0
 pragma solidity ^0.8.24;
 
-
-
 import { ArchPolMigratorTest } from "test/utils/ArchPolMigratorTest.sol";
 import { IERC20 } from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 
