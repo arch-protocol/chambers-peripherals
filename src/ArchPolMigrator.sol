@@ -39,8 +39,6 @@ contract ArchPolMigrator is Ownable, ReentrancyGuard {
 
         POL.safeTransfer(msg.sender, _amount);
 
-        require(POL.balanceOf(msg.sender) == _amount, "UNTRANSFERRED");
-
         return (_amount);
     }
 
