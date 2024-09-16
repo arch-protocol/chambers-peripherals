@@ -12,8 +12,7 @@ contract ArchPolMigratorTest is Test {
 
     ArchPolMigrator public archPolMigrator;
 
-
-
+    address public admin = vm.addr(0x1);
     address public immutable ALICE = vm.addr(0x2);
     address public constant MATIC = 0x7D1AfA7B718fb893dB30A3aBc0Cfc608AaCfeBB0;
     address public constant POL = 0x455e53CBB86018Ac2B8092FdCd39d8444aFFC3F6;
@@ -25,6 +24,8 @@ contract ArchPolMigratorTest is Test {
 
     function setUp() public virtual {
         vm.createSelectFork("ethereum");
+        vm.startPrank(admin);
         archPolMigrator = new ArchPolMigrator(PolygonMigrator, MATIC, POL);
+        vm.stopPrank();
     }
 }
