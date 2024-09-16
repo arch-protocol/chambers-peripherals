@@ -29,6 +29,7 @@ contract ArchPolMigrator is Ownable, ReentrancyGuard {
      *
      * @param _amount     Token amount to migrate
      */
+
     function migrate(uint256 _amount) external nonReentrant returns (uint256) {
         MATIC.safeTransferFrom(msg.sender, address(this), _amount);
         MATIC.safeIncreaseAllowance(polygonMigrationContract, _amount);
