@@ -16,7 +16,7 @@ contract MigrateTest is ArchPolMigratorTest {
         vm.startPrank(ALICE);
         IERC20(MATIC).approve(address(archPolMigrator), 10000 ether);
         vm.expectRevert();
-        uint256 amount = archPolMigrator.migrate(10000 ether);
+        archPolMigrator.migrate(10000 ether);
         assertEq(IERC20(MATIC).balanceOf(address(ALICE)), 0);
         assertEq(IERC20(MATIC).balanceOf(address(archPolMigrator)), 0);
         assertEq(IERC20(POL).balanceOf(address(ALICE)), 0);
